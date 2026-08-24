@@ -67,6 +67,26 @@ export function renderIntermediaryDashboard(container) {
             </div>
           </div>
 
+          <!-- zk-SNARK Privacy Toggle -->
+          <div class="zk-shield-banner" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.06), rgba(59, 130, 246, 0.06)); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.3rem;">🔒</span>
+              <div>
+                <div style="font-size: 0.82rem; font-weight: 700; color: var(--accent-purple);">Zero-Knowledge Volume Privacy</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Shield your wholesale volumes & revenue from competitors using zk-SNARK proofs</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 0.75rem; color: var(--text-muted);" id="zk-status-label">Unshielded</span>
+              <label class="toggle-switch" style="position: relative; width: 44px; height: 24px; display: inline-block;">
+                <input type="checkbox" id="zk-toggle" style="opacity: 0; width: 0; height: 0;">
+                <span class="toggle-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); border-radius: 24px; transition: 0.3s;">
+                  <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s;" id="zk-toggle-dot"></span>
+                </span>
+              </label>
+            </div>
+          </div>
+
           <div class="charts-grid">
             <div class="chart-card">
               <div class="chart-card-header">
@@ -269,4 +289,75 @@ export function renderIntermediaryDashboard(container) {
       }],
     });
   }, 100);
+
+  // ==========================================
+  // zk-SNARK Privacy Toggle Handler
+  // ==========================================
+  const zkToggle = container.querySelector('#zk-toggle');
+  const zkStatusLabel = container.querySelector('#zk-status-label');
+  const zkDot = container.querySelector('#zk-toggle-dot');
+
+  if (zkToggle) {
+    zkToggle.addEventListener('change', () => {
+      const isShielded = zkToggle.checked;
+      const statValues = container.querySelectorAll('.stat-card-value');
+
+      if (isShielded) {
+        // Shield all values
+        statValues.forEach(el => {
+          el.dataset.original = el.textContent;
+          el.textContent = '🔒';
+          el.style.color = 'var(--accent-purple)';
+          el.style.fontSize = '1.6rem';
+        });
+        zkStatusLabel.textContent = 'zk-SHIELDED';
+        zkStatusLabel.style.color = 'var(--accent-purple)';
+        zkStatusLabel.style.fontWeight = '700';
+        zkDot.style.transform = 'translateX(20px)';
+        zkDot.style.background = 'var(--accent-purple)';
+        zkToggle.parentElement.querySelector('.toggle-slider').style.background = 'rgba(168, 85, 247, 0.4)';
+
+        // Mask chart canvases
+        container.querySelectorAll('.chart-wrapper').forEach(wrapper => {
+          wrapper.style.filter = 'blur(8px)';
+          wrapper.style.pointerEvents = 'none';
+          if (!wrapper.querySelector('.zk-overlay')) {
+            const overlay = document.createElement('div');
+            overlay.className = 'zk-overlay';
+            overlay.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.85rem; font-weight: 700; color: var(--accent-purple); z-index: 10; text-align: center; background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: var(--radius-sm); backdrop-filter: blur(4px);';
+            overlay.textContent = '🔒 ZK-SHIELDED';
+            wrapper.style.position = 'relative';
+            wrapper.appendChild(overlay);
+          }
+        });
+
+        showToast('🔒 Zero-Knowledge privacy activated — volume data shielded from competitors', 'success');
+      } else {
+        // Restore values
+        statValues.forEach(el => {
+          if (el.dataset.original) {
+            el.textContent = el.dataset.original;
+            el.style.color = '';
+            el.style.fontSize = '';
+          }
+        });
+        zkStatusLabel.textContent = 'Unshielded';
+        zkStatusLabel.style.color = 'var(--text-muted)';
+        zkStatusLabel.style.fontWeight = '';
+        zkDot.style.transform = '';
+        zkDot.style.background = 'white';
+        zkToggle.parentElement.querySelector('.toggle-slider').style.background = 'rgba(255,255,255,0.1)';
+
+        // Unmask charts
+        container.querySelectorAll('.chart-wrapper').forEach(wrapper => {
+          wrapper.style.filter = '';
+          wrapper.style.pointerEvents = '';
+          const overlay = wrapper.querySelector('.zk-overlay');
+          if (overlay) overlay.remove();
+        });
+
+        showToast('🔓 Privacy shield deactivated — data visible', 'info');
+      }
+    });
+  }
 }

@@ -1,11 +1,13 @@
 // ============================================
 // FarmChain AI — Admin Fraud Alerts Page
+// + Sybil QR Attack Simulation
 // ============================================
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
 import { FraudDetector } from '../../ai/fraud-detector.js';
-import { formatNumber, timeAgo } from '../../utils/helpers.js';
+import { GeoVelocityChecker } from '../../ai/geo-velocity.js';
+import { formatNumber, timeAgo, showToast } from '../../utils/helpers.js';
 
 export function renderAdminFraud(container) {
   const sidebarContainer = document.createElement('div');
@@ -55,10 +57,19 @@ export function renderAdminFraud(container) {
           <div class="card">
             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
               <div class="card-title">🤖 AI-Detected Anomalies</div>
-              <button class="btn btn-primary btn-sm" id="trigger-live-fraud-demo" style="background: var(--accent-red); border-color: var(--accent-red); display: flex; align-items: center; gap: 6px;">
-                🧪 Trigger Live Fraud Spike (+140% Markup)
-              </button>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-primary btn-sm" id="trigger-sybil-demo" style="background: var(--accent-amber); border-color: var(--accent-amber); display: flex; align-items: center; gap: 6px; font-size: 0.75rem;">
+                  🧪 Simulate Sybil QR Attack (Cloned Labels)
+                </button>
+                <button class="btn btn-primary btn-sm" id="trigger-live-fraud-demo" style="background: var(--accent-red); border-color: var(--accent-red); display: flex; align-items: center; gap: 6px; font-size: 0.75rem;">
+                  🧪 Trigger Live Fraud Spike (+140% Markup)
+                </button>
+              </div>
             </div>
+
+            <!-- Sybil Attack Result Panel (hidden initially) -->
+            <div id="sybil-attack-panel" style="display: none;"></div>
+
             <div id="fraud-alerts-container" style="display: flex; flex-direction: column; gap: 16px; margin-top: 12px;">
               ${alerts.map(alert => `
                 <div class="ai-insight-card" style="background: ${alert.riskLevel === 'critical' ? 'var(--accent-red-dim)' : alert.riskLevel === 'high' ? 'var(--accent-amber-dim)' : 'var(--accent-cyan-dim)'}; border-color: ${alert.riskLevel === 'critical' ? 'rgba(239,68,68,0.3)' : alert.riskLevel === 'high' ? 'rgba(245,158,11,0.3)' : 'rgba(6,182,212,0.3)'};">
@@ -96,7 +107,78 @@ export function renderAdminFraud(container) {
     </div>
   `;
 
-  // Live Fraud Demo Button
+  // ==========================================
+  // Sybil QR Attack Simulation
+  // ==========================================
+  container.querySelector('#trigger-sybil-demo')?.addEventListener('click', () => {
+    const products = store.get('products') || [];
+    const targetProduct = products[0];
+    const batchId = targetProduct?.productId || `SYBIL-DEMO-${Date.now()}`;
+    const batchName = targetProduct?.name || 'Organic Rice Batch';
+
+    const attackResult = GeoVelocityChecker.simulateSybilAttack(batchId);
+
+    const sybilPanel = container.querySelector('#sybil-attack-panel');
+    if (sybilPanel) {
+      sybilPanel.style.display = 'block';
+      sybilPanel.innerHTML = `
+        <div class="animate-fade-in" style="margin: 16px 0; padding: 16px; background: rgba(239, 68, 68, 0.06); border: 2px solid var(--accent-red); border-radius: var(--radius-lg); box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+            <div>
+              <div style="font-weight: 800; font-size: 1rem; color: var(--accent-red); display: flex; align-items: center; gap: 8px;">
+                🚨 SYBIL QR ATTACK DETECTED
+                <span class="badge badge-danger" style="animation: pulse-glow 1.5s infinite;">LIVE</span>
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Batch: ${batchName} (${batchId.slice(0, 20)}...)
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--accent-red);">
+                ${attackResult.maxVelocity.toLocaleString()} km/h
+              </div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">Max Velocity</div>
+            </div>
+          </div>
+
+          <!-- City Scan Map Visualization -->
+          <div style="padding: 12px; background: rgba(0,0,0,0.3); border-radius: var(--radius-md); margin-bottom: 12px;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase;">
+              📍 Simultaneous Scan Locations (All within 2 minutes)
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              ${attackResult.attackCities.map((city, i) => `
+                <div style="flex: 1; min-width: 100px; padding: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-sm); text-align: center; animation: fade-in 0.3s ease ${i * 0.15}s both;">
+                  <div style="font-size: 1.2rem;">📍</div>
+                  <div style="font-weight: 700; font-size: 0.82rem; color: var(--accent-red);">${city.city}</div>
+                  <div style="font-size: 0.7rem; color: var(--text-muted);">${city.timeFormatted}</div>
+                  <div style="font-size: 0.65rem; color: var(--text-muted);">${city.lat.toFixed(2)}°N, ${city.lon.toFixed(2)}°E</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Escrow Freeze Notice -->
+          <div style="padding: 10px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid var(--accent-red); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">🔒</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-red);">SMART CONTRACT ACTION: Escrow Funds FROZEN</div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                MarketplaceEscrow.sol has automatically frozen all escrow funds for batch ${batchId.slice(0, 16)}... pending manual review. 
+                ${attackResult.attackCities.length} simultaneous scans across ${attackResult.attackCities.map(c => c.city).join(', ')}.
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    showToast(`🚨 Sybil Attack Simulated: ${attackResult.attackCities.length} cloned scans detected across India. Escrow FROZEN.`, 'error');
+  });
+
+  // ==========================================
+  // Live Fraud Demo Button (existing)
+  // ==========================================
   container.querySelector('#trigger-live-fraud-demo')?.addEventListener('click', () => {
     const anomalousTx = {
       productName: '🚨 Predatory Aggregator Rice Batch',
@@ -148,9 +230,8 @@ export function renderAdminFraud(container) {
         </div>
       `;
       containerEl.insertAdjacentHTML('afterbegin', alertHtml);
-      import('../../utils/helpers.js').then(({ showToast }) => {
-        showToast('🚨 Live Anomaly Flagged! +142% Price Markup & Rapid Transfers Detected', 'error');
-      });
+      showToast('🚨 Live Anomaly Flagged! +142% Price Markup & Rapid Transfers Detected', 'error');
     }
   });
 }
+

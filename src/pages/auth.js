@@ -1,11 +1,14 @@
 // src/pages/auth.js
 // Firebase Authentication & Registration Page for all 5 Stakeholder Roles
+// + Phone OTP Login (ERC-4337 Account Abstraction)
 
 import { loginWithEmail, registerWithEmail, loginWithGoogle, DEMO_CREDENTIALS } from '../firebase/auth.js';
 import { web3Service } from '../web3/provider.js';
+import { GaslessProvider } from '../web3/gasless.js';
 import { router } from '../utils/router.js';
 import { showToast, getCropEmoji } from '../utils/helpers.js';
 import { i18n } from '../i18n/index.js';
+import { store } from '../data/store.js';
 
 export function renderAuthPage(container) {
   const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
@@ -79,6 +82,32 @@ export function renderAuthPage(container) {
                 ${isRegisterMode ? '🚀 Complete Registration' : '🔑 Sign In'}
               </button>
             </form>
+
+            <!-- Phone OTP Login (Account Abstraction) -->
+            <div style="display: flex; align-items: center; margin: 18px 0; color: var(--text-muted); font-size: 0.75rem;">
+              <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
+              <span style="padding: 0 10px;">OR LOGIN WITHOUT WALLET</span>
+              <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.06), rgba(59, 130, 246, 0.06)); border: 1px dashed rgba(168, 85, 247, 0.3); border-radius: var(--radius-md); padding: 14px;">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--accent-purple); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                📱 Phone OTP Login <span class="badge badge-purple" style="font-size: 0.6rem;">ERC-4337</span>
+              </div>
+              <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 10px;">No MetaMask, no seed phrase — your smart wallet is created automatically via Account Abstraction.</p>
+              <div style="display: flex; gap: 8px;" id="otp-login-section">
+                <input type="tel" class="form-input" id="otp-phone" placeholder="+91 98765 43210" style="flex: 1; font-size: 0.82rem;" />
+                <button type="button" class="btn btn-primary btn-sm" id="send-otp-btn" style="white-space: nowrap;">📱 Send OTP</button>
+              </div>
+              <div id="otp-verify-section" style="display: none; margin-top: 10px;">
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" class="form-input" id="otp-code" placeholder="6-digit OTP" maxlength="6" style="flex: 1; font-size: 0.82rem; text-align: center; letter-spacing: 6px; font-weight: 700;" />
+                  <button type="button" class="btn btn-primary btn-sm" id="verify-otp-btn" style="white-space: nowrap;">✅ Verify</button>
+                </div>
+                <div id="otp-hint" style="font-size: 0.7rem; color: var(--accent-green); margin-top: 6px;"></div>
+              </div>
+              <div id="otp-success-section" style="display: none; margin-top: 10px; padding: 10px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: var(--radius-sm); text-align: center;"></div>
+            </div>
 
             <div style="display: flex; align-items: center; margin: 18px 0; color: var(--text-muted); font-size: 0.75rem;">
               <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
@@ -173,6 +202,101 @@ export function renderAuthPage(container) {
         }, 150);
       } catch (err) {
         showToast(err.message || 'Authentication failed', 'error');
+      }
+    });
+
+    // ==========================================
+    // Phone OTP Login (Account Abstraction)
+    // ==========================================
+    container.querySelector('#send-otp-btn')?.addEventListener('click', async () => {
+      const phone = document.getElementById('otp-phone')?.value.trim();
+      if (!phone || phone.length < 10) {
+        showToast('Please enter a valid phone number', 'warning');
+        return;
+      }
+
+      const sendBtn = container.querySelector('#send-otp-btn');
+      sendBtn.disabled = true;
+      sendBtn.textContent = '⏳ Sending...';
+
+      try {
+        GaslessProvider.init();
+        const result = await GaslessProvider.loginWithPhone(phone);
+
+        // Show verify section
+        const verifySection = document.getElementById('otp-verify-section');
+        const hint = document.getElementById('otp-hint');
+        if (verifySection) verifySection.style.display = 'block';
+        if (hint) hint.textContent = `🔑 Demo OTP: ${result.otp} (Auto-displayed for hackathon judges)`;
+
+        sendBtn.textContent = '✅ OTP Sent';
+        sendBtn.style.background = 'var(--accent-green)';
+        sendBtn.style.borderColor = 'var(--accent-green)';
+
+        showToast(`OTP sent to ${phone}! Check the hint below.`, 'success');
+      } catch (err) {
+        showToast('Failed to send OTP: ' + err.message, 'error');
+        sendBtn.disabled = false;
+        sendBtn.textContent = '📱 Send OTP';
+      }
+    });
+
+    container.querySelector('#verify-otp-btn')?.addEventListener('click', async () => {
+      const phone = document.getElementById('otp-phone')?.value.trim();
+      const otp = document.getElementById('otp-code')?.value.trim();
+      if (!otp || otp.length !== 6) {
+        showToast('Please enter the 6-digit OTP', 'warning');
+        return;
+      }
+
+      const verifyBtn = container.querySelector('#verify-otp-btn');
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = '⏳ Verifying...';
+
+      try {
+        const result = await GaslessProvider.verifyOtpAndCreateAccount(phone, otp);
+        const selectedRole = container.querySelector('.role-tab.active')?.dataset.role || 'farmer';
+
+        // Show success
+        const successSection = document.getElementById('otp-success-section');
+        if (successSection) {
+          successSection.style.display = 'block';
+          successSection.innerHTML = `
+            <div style="font-size: 1.5rem; margin-bottom: 6px;">✅</div>
+            <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-green);">Smart Wallet Created!</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+              Your blockchain wallet was created automatically — <strong>no seed phrase needed!</strong>
+            </div>
+            <div style="font-size: 0.65rem; color: var(--accent-cyan); margin-top: 6px; font-family: monospace;">
+              Wallet: ${result.account.address.slice(0, 10)}...${result.account.address.slice(-8)}
+            </div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">
+              Type: ${result.account.type} · Gas: Sponsored by Paymaster
+            </div>
+          `;
+        }
+
+        // Auto-login after 1.5 seconds
+        showToast('🎉 Smart wallet created! Logging you in...', 'success');
+
+        setTimeout(() => {
+          store.login(selectedRole, `phone-${phone}`, {
+            id: `phone-${phone}`,
+            role: selectedRole,
+            name: `${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} User`,
+            email: `${phone}@farmchain.phone`,
+            phone: phone,
+            loginMethod: 'Phone OTP (ERC-4337)',
+            walletAddress: result.account.address,
+          });
+
+          router.navigate(`/${selectedRole}/dashboard`);
+        }, 1500);
+
+      } catch (err) {
+        showToast('OTP verification failed: ' + err.message, 'error');
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = '✅ Verify';
       }
     });
   }

@@ -1,6 +1,8 @@
 // ============================================
 // FarmChain AI — Fraud Detection Engine
 // Scores transactions based on anomaly signals
+// + QR Clone Velocity Detection
+// + AI Visual Oracle quality gate
 // ============================================
 
 export class FraudDetector {
@@ -72,6 +74,43 @@ export class FraudDetector {
       });
     }
 
+    // 6. QR Clone Velocity Detection (Spatial-Temporal Anti-Cloning)
+    if (transaction.qrCloneVelocity && transaction.qrCloneVelocity > 500) {
+      riskScore += 50;
+      flags.push({
+        type: 'QR_CLONE_VELOCITY',
+        severity: 'high',
+        message: `🚨 QR scanned at ${transaction.qrCloneVelocity.toLocaleString()} km/h — physically impossible velocity detected`,
+      });
+    } else if (transaction.qrCloneVelocity && transaction.qrCloneVelocity > 120) {
+      riskScore += 20;
+      flags.push({
+        type: 'QR_VELOCITY_WARNING',
+        severity: 'medium',
+        message: `QR scan velocity ${transaction.qrCloneVelocity.toLocaleString()} km/h — possible QR sharing or rapid transport`,
+      });
+    }
+
+    // 7. AI Visual Oracle — No quality verification
+    if (transaction.noAiVerification) {
+      riskScore += 10;
+      flags.push({
+        type: 'NO_AI_VERIFICATION',
+        severity: 'low',
+        message: 'Product registered without AI Visual Oracle quality verification (GIGO risk)',
+      });
+    }
+
+    // 8. AI quality score below threshold
+    if (transaction.aiQualityScore && transaction.aiQualityScore < 40) {
+      riskScore += 25;
+      flags.push({
+        type: 'LOW_AI_QUALITY',
+        severity: 'high',
+        message: `AI Visual Oracle scored ${transaction.aiQualityScore}% — below quality gate threshold`,
+      });
+    }
+
     // Cap risk score at 100
     riskScore = Math.min(riskScore, 100);
 
@@ -122,6 +161,10 @@ export class FraudDetector {
       { productName: 'Fresh Onions', quantity: 3000, unit: 'kg', priceDeviation: 45, locationMismatch: true },
       { productName: 'Alphonso Mangoes', quantity: 200, unit: 'kg', priceDeviation: 10, accountAge: 120 },
       { productName: 'Raw Cotton', quantity: 6000, unit: 'kg', priceDeviation: 25, accountAge: 5, transferCount: 4 },
+      // QR Clone demo alert
+      { productName: '🚨 Cloned QR — Organic Rice Batch', quantity: 500, unit: 'kg', priceDeviation: 0, qrCloneVelocity: 12500, accountAge: 45 },
+      // No AI verification demo
+      { productName: 'Unverified Wheat Batch', quantity: 1000, unit: 'kg', priceDeviation: 15, noAiVerification: true, accountAge: 3 },
     ];
 
     return demoTransactions.map(tx => ({
@@ -132,3 +175,4 @@ export class FraudDetector {
     })).sort((a, b) => b.riskScore - a.riskScore);
   }
 }
+

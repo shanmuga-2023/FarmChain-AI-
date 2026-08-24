@@ -751,3 +751,220 @@
   font-size: 0.9rem;
   color: var(--text-secondary);
 }
+
+/* ============================================
+   FarmChain AI 2.0 — Killer Feature Styles
+   ============================================ */
+
+/* --- Clone Alert Card (Spatial-Temporal) --- */
+.clone-alert-card {
+  animation: clone-alert-appear 0.5s ease-out;
+}
+
+@keyframes clone-alert-appear {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- AI Quality Gauge --- */
+.quality-gauge svg {
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.quality-gauge svg path:last-child {
+  transition: stroke-dasharray 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Gasless Transaction Banner --- */
+.gasless-banner {
+  animation: fade-in 0.5s ease-out;
+}
+
+.gasless-banner .badge {
+  animation: fade-in 0.6s ease-out 0.2s both;
+}
+
+/* --- Gasless Pipeline Animation --- */
+.gasless-pipeline-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 0.78rem;
+  transition: all 0.3s ease;
+}
+
+.gasless-pipeline-step.done {
+  color: var(--accent-green);
+  border-left: 2px solid var(--accent-green);
+}
+
+.gasless-pipeline-step.pending {
+  color: var(--text-muted);
+  border-left: 2px solid var(--border-subtle);
+}
+
+/* --- zk-SNARK Shield --- */
+.zk-shield-banner {
+  transition: all 0.3s ease;
+}
+
+.zk-shield-banner:has(#zk-toggle:checked) {
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
+}
+
+/* --- Sybil Attack Visualization --- */
+.sybil-city-card {
+  padding: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  animation: fade-in 0.3s ease both;
+}
+
+/* --- Product Card AI Quality Badge --- */
+.product-card .badge[title="AI Visual Oracle Quality Score"] {
+  animation: fade-in 0.4s ease-out 0.3s both;
+}
+
+/* --- Trace Hero with AI Quality --- */
+.trace-hero {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.trace-hero-qr {
+  flex-shrink: 0;
+}
+
+.trace-hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.trace-hero-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.trace-hero-origin {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.trace-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 12px;
+}
+
+.trace-detail {
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.trace-detail-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+.trace-detail-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* --- Price Breakdown --- */
+.price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.82rem;
+}
+
+.price-row:last-child {
+  border-bottom: none;
+}
+
+.price-row-label {
+  color: var(--text-secondary);
+}
+
+.price-row-value {
+  font-weight: 700;
+}
+
+/* --- Blockchain Explorer Chain View --- */
+.explorer-chain {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.chain-connector {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.chain-connector-line {
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(to bottom, var(--accent-cyan), transparent);
+}
+
+/* --- OTP Input Styling --- */
+#otp-code:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+/* --- Responsive Adjustments for Killer Features --- */
+@media (max-width: 768px) {
+  .trace-hero {
+    flex-direction: column;
+  }
+
+  .trace-details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .clone-alert-card {
+    margin: 12px auto;
+  }
+}
