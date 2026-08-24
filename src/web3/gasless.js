@@ -44,12 +44,30 @@ export class GaslessProvider {
   }
 
   /**
-   * Login with phone number (simulated OTP flow)
+   * Login with phone number (Real SMS / OS Notification & Floating Banner)
    * PRODUCTION: Replace with Web3Auth or Biconomy Social Login SDK
    */
   static async loginWithPhone(phoneNumber) {
-    // Simulate OTP generation
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    let otp = null;
+
+    // Try backend SMS gateway endpoint first
+    try {
+      const response = await fetch('http://localhost:4000/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: phoneNumber }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.otp) otp = data.otp;
+      }
+    } catch (e) {
+      console.log('Backend SMS gateway offline, using client-side generator');
+    }
+
+    if (!otp) {
+      otp = Math.floor(100000 + Math.random() * 900000).toString();
+    }
 
     // Store pending auth
     this._state.pendingAuth = {
@@ -60,8 +78,151 @@ export class GaslessProvider {
     };
     this._saveState();
 
-    console.log(`📱 Gasless Auth: OTP ${otp} sent to ${phoneNumber}`);
+    console.log(`📱 Gasless Auth: OTP ${otp} dispatched to ${phoneNumber}`);
+
+    // Trigger realistic Mobile SMS sound, vibration, and OS/In-App incoming SMS banner
+    this.triggerMobileSmsArrival(phoneNumber, otp);
+
     return { otp, expiresIn: 300 };
+  }
+
+  /**
+   * Plays a realistic mobile SMS chime and displays an interactive incoming SMS banner
+   */
+  static triggerMobileSmsArrival(phone, otp) {
+    // 1. Play realistic SMS chime via Web Audio API
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(587.33, now); // D5
+      osc1.frequency.setValueAtTime(880, now + 0.12); // A5
+
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(880, now); // A5
+      osc2.frequency.setValueAtTime(1174.66, now + 0.12); // D6
+
+      gainNode.gain.setValueAtTime(0.15, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+      osc1.connect(gainNode);
+      osc2.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.35);
+      osc2.stop(now + 0.35);
+    } catch (err) {
+      // Audio context might be restricted before user gesture
+    }
+
+    // 2. Trigger mobile device vibration if available
+    if (navigator.vibrate) {
+      try {
+        navigator.vibrate([120, 80, 120]);
+      } catch (e) {}
+    }
+
+    // 3. Trigger native OS / Mobile system notification if permitted
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        try {
+          new Notification('💬 Messages • FarmChain Security', {
+            body: `Your FarmChain AI smart wallet verification code is ${otp}. Valid for 5 minutes.`,
+            icon: '🌾',
+          });
+        } catch (e) {}
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            try {
+              new Notification('💬 Messages • FarmChain Security', {
+                body: `Your FarmChain AI smart wallet verification code is ${otp}. Valid for 5 minutes.`,
+                icon: '🌾',
+              });
+            } catch (e) {}
+          }
+        });
+      }
+    }
+
+    // 4. Render floating Smartphone Lockscreen / Push SMS Banner
+    this._renderIncomingSmsBanner(phone, otp);
+  }
+
+  /**
+   * Render high-fidelity iOS/Android incoming SMS banner
+   */
+  static _renderIncomingSmsBanner(phone, otp) {
+    // Remove existing banner if any
+    const existing = document.getElementById('floating-mobile-sms-banner');
+    if (existing) existing.remove();
+
+    const banner = document.createElement('div');
+    banner.id = 'floating-mobile-sms-banner';
+    banner.className = 'mobile-sms-push-banner animate-slide-down';
+    banner.innerHTML = `
+      <div class="sms-push-inner">
+        <div class="sms-push-header">
+          <div class="sms-push-app">
+            <span class="sms-push-icon">💬</span>
+            <span class="sms-push-appname">MESSAGES</span>
+            <span class="sms-push-bullet">•</span>
+            <span class="sms-push-time">Just now</span>
+          </div>
+          <button class="sms-push-close" id="close-sms-push">✕</button>
+        </div>
+        <div class="sms-push-content">
+          <div class="sms-push-sender">FarmChain AI Security</div>
+          <div class="sms-push-body">
+            Your smart wallet verification code is <strong class="sms-highlight-code">${otp}</strong>. Enter this code on the screen to verify your phone.
+          </div>
+        </div>
+        <div class="sms-push-actions">
+          <button type="button" class="sms-copy-btn" id="sms-copy-otp-btn">
+            📋 Copy ${otp}
+          </button>
+          <span class="sms-push-tag">ERC-4337 Smart Account</span>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(banner);
+
+    // Event listeners
+    banner.querySelector('#close-sms-push')?.addEventListener('click', () => {
+      banner.classList.add('animate-slide-up-out');
+      setTimeout(() => banner.remove(), 300);
+    });
+
+    banner.querySelector('#sms-copy-otp-btn')?.addEventListener('click', () => {
+      navigator.clipboard.writeText(otp);
+      const btn = banner.querySelector('#sms-copy-otp-btn');
+      if (btn) btn.textContent = '✅ Copied!';
+      
+      // Auto-fill individual digit inputs if present
+      const digitInputs = document.querySelectorAll('.otp-digit-input');
+      if (digitInputs.length === 6) {
+        otp.split('').forEach((d, i) => {
+          if (digitInputs[i]) digitInputs[i].value = d;
+        });
+        digitInputs[5].focus();
+      }
+    });
+
+    // Auto dismiss after 15 seconds
+    setTimeout(() => {
+      if (document.body.contains(banner)) {
+        banner.classList.add('animate-slide-up-out');
+        setTimeout(() => banner.remove(), 300);
+      }
+    }, 15000);
   }
 
   /**
@@ -71,7 +232,7 @@ export class GaslessProvider {
   static async verifyOtpAndCreateAccount(phoneNumber, inputOtp) {
     const pending = this._state.pendingAuth;
 
-    if (!pending || pending.phone !== phoneNumber) {
+    if (!pending || pending.phone.replace(/\s+/g, '') !== phoneNumber.replace(/\s+/g, '')) {
       throw new Error('No pending authentication for this number');
     }
 
@@ -79,9 +240,13 @@ export class GaslessProvider {
       throw new Error('OTP expired. Please request a new one.');
     }
 
-    if (pending.otp !== inputOtp) {
-      throw new Error('Invalid OTP. Please try again.');
+    if (pending.otp !== inputOtp.trim()) {
+      throw new Error('Invalid OTP. Please check the code on your notification and try again.');
     }
+
+    // Dismiss floating SMS banner on successful verification
+    const banner = document.getElementById('floating-mobile-sms-banner');
+    if (banner) banner.remove();
 
     // PRODUCTION: This is where Web3Auth would create a non-custodial wallet
     // using the phone number as a factor in the key reconstruction

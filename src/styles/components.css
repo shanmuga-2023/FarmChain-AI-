@@ -954,6 +954,188 @@
   box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
 }
 
+/* --- 6-Digit OTP Box Grid --- */
+.otp-digits-container {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin: 12px 0;
+}
+
+.otp-digit-input {
+  width: 44px;
+  height: 50px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1.5px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  caret-color: var(--accent-purple);
+}
+
+.otp-digit-input:focus {
+  border-color: var(--accent-purple);
+  background: rgba(168, 85, 247, 0.08);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.otp-digit-input.filled {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+/* --- Floating Mobile Incoming SMS Push Banner --- */
+.mobile-sms-push-banner {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100000;
+  width: 92%;
+  max-width: 440px;
+  pointer-events: auto;
+}
+
+.sms-push-inner {
+  background: rgba(22, 27, 34, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  animation: sms-pop-bounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sms-push-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.sms-push-app {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.sms-push-icon {
+  font-size: 0.9rem;
+}
+
+.sms-push-appname {
+  color: #38bdf8;
+  font-weight: 800;
+}
+
+.sms-push-bullet {
+  opacity: 0.5;
+}
+
+.sms-push-time {
+  opacity: 0.7;
+}
+
+.sms-push-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: var(--text-muted);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+
+.sms-push-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.sms-push-sender {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.sms-push-body {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.sms-highlight-code {
+  color: #a855f7;
+  background: rgba(168, 85, 247, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 1.5px;
+}
+
+.sms-push-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sms-copy-btn {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(59, 130, 246, 0.25));
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sms-copy-btn:hover {
+  background: rgba(168, 85, 247, 0.4);
+  color: white;
+}
+
+.sms-push-tag {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+@keyframes sms-pop-bounce {
+  0% { opacity: 0; transform: translateY(-40px) scale(0.92); }
+  60% { opacity: 1; transform: translateY(6px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-slide-up-out {
+  animation: sms-slide-up 0.3s ease forwards;
+}
+
+@keyframes sms-slide-up {
+  0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+}
+
 /* --- Responsive Adjustments for Killer Features --- */
 @media (max-width: 768px) {
   .trace-hero {
@@ -967,4 +1149,11 @@
   .clone-alert-card {
     margin: 12px auto;
   }
+
+  .otp-digit-input {
+    width: 38px;
+    height: 46px;
+    font-size: 1.2rem;
+  }
 }
+

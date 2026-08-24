@@ -90,23 +90,52 @@ export function renderAuthPage(container) {
               <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
             </div>
 
-            <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.06), rgba(59, 130, 246, 0.06)); border: 1px dashed rgba(168, 85, 247, 0.3); border-radius: var(--radius-md); padding: 14px;">
-              <div style="font-size: 0.8rem; font-weight: 700; color: var(--accent-purple); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                📱 Phone OTP Login <span class="badge badge-purple" style="font-size: 0.6rem;">ERC-4337</span>
+            <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.06), rgba(59, 130, 246, 0.06)); border: 1px dashed rgba(168, 85, 247, 0.3); border-radius: var(--radius-md); padding: 16px;">
+              <div style="font-size: 0.85rem; font-weight: 700; color: var(--accent-purple); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                <span style="display: flex; align-items: center; gap: 6px;">📱 Phone OTP Login</span>
+                <span class="badge badge-purple" style="font-size: 0.65rem;">ERC-4337</span>
               </div>
-              <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 10px;">No MetaMask, no seed phrase — your smart wallet is created automatically via Account Abstraction.</p>
-              <div style="display: flex; gap: 8px;" id="otp-login-section">
-                <input type="tel" class="form-input" id="otp-phone" placeholder="+91 98765 43210" style="flex: 1; font-size: 0.82rem;" />
-                <button type="button" class="btn btn-primary btn-sm" id="send-otp-btn" style="white-space: nowrap;">📱 Send OTP</button>
-              </div>
-              <div id="otp-verify-section" style="display: none; margin-top: 10px;">
+              <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                Receive an OTP on your mobile notification bar. No MetaMask, no seed phrase — your smart wallet is auto-created.
+              </p>
+              
+              <!-- Phone Input Step -->
+              <div id="otp-phone-step">
                 <div style="display: flex; gap: 8px;">
-                  <input type="text" class="form-input" id="otp-code" placeholder="6-digit OTP" maxlength="6" style="flex: 1; font-size: 0.82rem; text-align: center; letter-spacing: 6px; font-weight: 700;" />
-                  <button type="button" class="btn btn-primary btn-sm" id="verify-otp-btn" style="white-space: nowrap;">✅ Verify</button>
+                  <div style="display: flex; align-items: center; background: rgba(0,0,0,0.3); padding: 0 10px; border-radius: var(--radius-md); border: 1px solid var(--border-medium); font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">
+                    🇮🇳 +91
+                  </div>
+                  <input type="tel" class="form-input" id="otp-phone" placeholder="98765 43210" maxlength="10" style="flex: 1; font-size: 0.88rem; font-family: var(--font-display); letter-spacing: 1px;" />
+                  <button type="button" class="btn btn-primary btn-sm" id="send-otp-btn" style="white-space: nowrap; padding: 8px 14px;">📱 Send OTP</button>
                 </div>
-                <div id="otp-hint" style="font-size: 0.7rem; color: var(--accent-green); margin-top: 6px;"></div>
               </div>
-              <div id="otp-success-section" style="display: none; margin-top: 10px; padding: 10px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: var(--radius-sm); text-align: center;"></div>
+
+              <!-- 6-Digit OTP Verification Step -->
+              <div id="otp-verify-section" style="display: none; margin-top: 14px;">
+                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                  <span>📲 Look at the notification on top of your screen & enter 6-digit code:</span>
+                </div>
+
+                <div class="otp-digits-container" id="otp-digits-group">
+                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="0" autocomplete="off" />
+                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="1" autocomplete="off" />
+                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="2" data-index="2" autocomplete="off" />
+                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="3" autocomplete="off" />
+                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="4" autocomplete="off" />
+                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="5" autocomplete="off" />
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                  <button type="button" id="resend-otp-btn" style="background: none; border: none; font-size: 0.72rem; color: var(--accent-purple); cursor: pointer; text-decoration: underline; padding: 0;">
+                    Resend code
+                  </button>
+                  <button type="button" class="btn btn-primary btn-sm" id="verify-otp-btn" style="padding: 6px 16px; font-weight: 700;">
+                    ✅ Verify & Enter
+                  </button>
+                </div>
+              </div>
+
+              <div id="otp-success-section" style="display: none; margin-top: 12px; padding: 12px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25); border-radius: var(--radius-md); text-align: center;"></div>
             </div>
 
             <div style="display: flex; align-items: center; margin: 18px 0; color: var(--text-muted); font-size: 0.75rem;">
@@ -208,53 +237,159 @@ export function renderAuthPage(container) {
     // ==========================================
     // Phone OTP Login (Account Abstraction)
     // ==========================================
-    container.querySelector('#send-otp-btn')?.addEventListener('click', async () => {
-      const phone = document.getElementById('otp-phone')?.value.trim();
-      if (!phone || phone.length < 10) {
-        showToast('Please enter a valid phone number', 'warning');
+    let resendTimer = null;
+
+    function startResendCountdown() {
+      let seconds = 30;
+      const resendBtn = container.querySelector('#resend-otp-btn');
+      if (!resendBtn) return;
+
+      resendBtn.disabled = true;
+      resendBtn.style.color = 'var(--text-muted)';
+      resendBtn.style.textDecoration = 'none';
+      resendBtn.textContent = `Resend in ${seconds}s`;
+
+      clearInterval(resendTimer);
+      resendTimer = setInterval(() => {
+        seconds--;
+        if (seconds > 0) {
+          resendBtn.textContent = `Resend in ${seconds}s`;
+        } else {
+          clearInterval(resendTimer);
+          resendBtn.disabled = false;
+          resendBtn.style.color = 'var(--accent-purple)';
+          resendBtn.style.textDecoration = 'underline';
+          resendBtn.textContent = 'Resend code';
+        }
+      }, 1000);
+    }
+
+    async function sendOtpAction() {
+      const phoneInput = document.getElementById('otp-phone');
+      const rawPhone = phoneInput?.value.trim();
+      if (!rawPhone || rawPhone.length < 10) {
+        showToast('Please enter a valid 10-digit mobile number', 'warning');
+        phoneInput?.focus();
         return;
       }
 
       const sendBtn = container.querySelector('#send-otp-btn');
-      sendBtn.disabled = true;
-      sendBtn.textContent = '⏳ Sending...';
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = '⏳ Sending...';
+      }
 
       try {
         GaslessProvider.init();
-        const result = await GaslessProvider.loginWithPhone(phone);
+        await GaslessProvider.loginWithPhone(rawPhone);
 
         // Show verify section
         const verifySection = document.getElementById('otp-verify-section');
-        const hint = document.getElementById('otp-hint');
-        if (verifySection) verifySection.style.display = 'block';
-        if (hint) hint.textContent = `🔑 Demo OTP: ${result.otp} (Auto-displayed for hackathon judges)`;
+        if (verifySection) {
+          verifySection.style.display = 'block';
+          verifySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
 
-        sendBtn.textContent = '✅ OTP Sent';
-        sendBtn.style.background = 'var(--accent-green)';
-        sendBtn.style.borderColor = 'var(--accent-green)';
+        if (sendBtn) {
+          sendBtn.textContent = '✅ Sent';
+          sendBtn.style.background = 'var(--accent-green)';
+          sendBtn.style.borderColor = 'var(--accent-green)';
+        }
 
-        showToast(`OTP sent to ${phone}! Check the hint below.`, 'success');
+        startResendCountdown();
+
+        // Focus first digit box
+        setTimeout(() => {
+          const firstDigit = container.querySelector('.otp-digit-input[data-index="0"]');
+          firstDigit?.focus();
+        }, 100);
+
+        showToast(`📲 OTP dispatched to ${rawPhone}! Check notification at top of screen`, 'success');
       } catch (err) {
         showToast('Failed to send OTP: ' + err.message, 'error');
-        sendBtn.disabled = false;
-        sendBtn.textContent = '📱 Send OTP';
+        if (sendBtn) {
+          sendBtn.disabled = false;
+          sendBtn.textContent = '📱 Send OTP';
+        }
+      }
+    }
+
+    container.querySelector('#send-otp-btn')?.addEventListener('click', sendOtpAction);
+    container.querySelector('#resend-otp-btn')?.addEventListener('click', () => {
+      const resendBtn = container.querySelector('#resend-otp-btn');
+      if (resendBtn && !resendBtn.disabled) {
+        sendOtpAction();
       }
     });
 
+    // Setup 6-digit input auto-advancing, paste and backspace handlers
+    const digitInputs = container.querySelectorAll('.otp-digit-input');
+    digitInputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (val.length > 0) {
+          input.classList.add('filled');
+          // Move to next input if available
+          if (index < digitInputs.length - 1) {
+            digitInputs[index + 1].focus();
+          } else {
+            // All 6 digits filled, trigger auto-verify
+            container.querySelector('#verify-otp-btn')?.click();
+          }
+        } else {
+          input.classList.remove('filled');
+        }
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !input.value && index > 0) {
+          digitInputs[index - 1].focus();
+          digitInputs[index - 1].value = '';
+          digitInputs[index - 1].classList.remove('filled');
+        }
+      });
+
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData('text').trim().replace(/\D/g, '');
+        if (pasted) {
+          pasted.split('').slice(0, 6).forEach((char, i) => {
+            if (digitInputs[i]) {
+              digitInputs[i].value = char;
+              digitInputs[i].classList.add('filled');
+            }
+          });
+          const targetIndex = Math.min(pasted.length, 5);
+          digitInputs[targetIndex].focus();
+          if (pasted.length >= 6) {
+            container.querySelector('#verify-otp-btn')?.click();
+          }
+        }
+      });
+    });
+
+    // Verification Submit Handler
     container.querySelector('#verify-otp-btn')?.addEventListener('click', async () => {
-      const phone = document.getElementById('otp-phone')?.value.trim();
-      const otp = document.getElementById('otp-code')?.value.trim();
+      const phoneInput = document.getElementById('otp-phone');
+      const rawPhone = phoneInput?.value.trim();
+      
+      // Gather 6 digits from individual boxes
+      let otp = '';
+      digitInputs.forEach(inp => { otp += inp.value.trim(); });
+
       if (!otp || otp.length !== 6) {
-        showToast('Please enter the 6-digit OTP', 'warning');
+        showToast('Please enter the complete 6-digit verification code', 'warning');
         return;
       }
 
       const verifyBtn = container.querySelector('#verify-otp-btn');
-      verifyBtn.disabled = true;
-      verifyBtn.textContent = '⏳ Verifying...';
+      if (verifyBtn) {
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = '⏳ Verifying...';
+      }
 
       try {
-        const result = await GaslessProvider.verifyOtpAndCreateAccount(phone, otp);
+        const result = await GaslessProvider.verifyOtpAndCreateAccount(rawPhone, otp);
         const selectedRole = container.querySelector('.role-tab.active')?.dataset.role || 'farmer';
 
         // Show success
@@ -262,30 +397,29 @@ export function renderAuthPage(container) {
         if (successSection) {
           successSection.style.display = 'block';
           successSection.innerHTML = `
-            <div style="font-size: 1.5rem; margin-bottom: 6px;">✅</div>
-            <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-green);">Smart Wallet Created!</div>
+            <div style="font-size: 1.6rem; margin-bottom: 4px;">🎉</div>
+            <div style="font-weight: 800; font-size: 0.9rem; color: var(--accent-green);">Smart Contract Wallet Deployed!</div>
             <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
-              Your blockchain wallet was created automatically — <strong>no seed phrase needed!</strong>
+              Authenticated via Phone OTP — <strong>Zero seed phrase required.</strong>
             </div>
-            <div style="font-size: 0.65rem; color: var(--accent-cyan); margin-top: 6px; font-family: monospace;">
-              Wallet: ${result.account.address.slice(0, 10)}...${result.account.address.slice(-8)}
+            <div style="font-size: 0.68rem; color: var(--accent-cyan); margin-top: 6px; font-family: monospace; word-break: break-all;">
+              Wallet: ${result.account.address}
             </div>
             <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">
-              Type: ${result.account.type} · Gas: Sponsored by Paymaster
+              Type: ${result.account.type} · Gas: 100% Sponsored by Paymaster
             </div>
           `;
         }
 
-        // Auto-login after 1.5 seconds
-        showToast('🎉 Smart wallet created! Logging you in...', 'success');
+        showToast('🎉 Smart account verified! Logging you in...', 'success');
 
         setTimeout(() => {
-          store.login(selectedRole, `phone-${phone}`, {
-            id: `phone-${phone}`,
+          store.login(selectedRole, `phone-${rawPhone}`, {
+            id: `phone-${rawPhone}`,
             role: selectedRole,
             name: `${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} User`,
-            email: `${phone}@farmchain.phone`,
-            phone: phone,
+            email: `${rawPhone}@farmchain.phone`,
+            phone: rawPhone,
             loginMethod: 'Phone OTP (ERC-4337)',
             walletAddress: result.account.address,
           });
@@ -294,12 +428,15 @@ export function renderAuthPage(container) {
         }, 1500);
 
       } catch (err) {
-        showToast('OTP verification failed: ' + err.message, 'error');
-        verifyBtn.disabled = false;
-        verifyBtn.textContent = '✅ Verify';
+        showToast(err.message || 'OTP verification failed', 'error');
+        if (verifyBtn) {
+          verifyBtn.disabled = false;
+          verifyBtn.textContent = '✅ Verify & Enter';
+        }
       }
     });
   }
 
   renderForm();
 }
+

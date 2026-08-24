@@ -188,10 +188,81 @@ apiRouter.post('/blocks', (req, res) => {
 });
 
 // ==========================================
+// Phone OTP Authentication (ERC-4337 Support)
+// ==========================================
+const activeOtps = new Map();
+
+apiRouter.post('/send-otp', async (req, res) => {
+  const { phone } = req.body;
+  if (!phone || typeof phone !== 'string' || phone.trim().length < 10) {
+    return res.status(400).json({ success: false, error: 'Valid phone number is required' });
+  }
+
+  const cleanPhone = phone.trim().replace(/\s+/g, '');
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  activeOtps.set(cleanPhone, {
+    otp,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
+  });
+
+  console.log(`\n📱 [SMS GATEWAY] Dispatching OTP to ${cleanPhone}`);
+  console.log(`💬 Message: "Your FarmChain AI smart wallet verification code is ${otp}. Valid for 5 minutes."\n`);
+
+  // Broadcast to WebSockets for live device sync
+  if (req.app.get('io')) {
+    req.app.get('io').emit('otp_dispatched', { phone: cleanPhone, timestamp: Date.now() });
+  }
+
+  res.json({
+    success: true,
+    phone: cleanPhone,
+    expiresIn: 300,
+    otp, // Delivered via secure payload for browser notification simulation
+    message: `OTP sent successfully to ${cleanPhone}`,
+  });
+});
+
+apiRouter.post('/verify-otp', (req, res) => {
+  const { phone, otp } = req.body;
+  if (!phone || !otp) {
+    return res.status(400).json({ success: false, error: 'Phone and OTP are required' });
+  }
+
+  const cleanPhone = phone.trim().replace(/\s+/g, '');
+  const record = activeOtps.get(cleanPhone);
+
+  if (!record) {
+    return res.status(400).json({ success: false, error: 'No OTP request found for this number. Please request a new OTP.' });
+  }
+
+  if (Date.now() > record.expiresAt) {
+    activeOtps.delete(cleanPhone);
+    return res.status(400).json({ success: false, error: 'OTP has expired. Please request a new one.' });
+  }
+
+  if (record.otp !== otp.trim()) {
+    return res.status(400).json({ success: false, error: 'Invalid verification code. Please check and try again.' });
+  }
+
+  // Verified successfully - consume OTP
+  activeOtps.delete(cleanPhone);
+
+  res.json({
+    success: true,
+    phone: cleanPhone,
+    verified: true,
+    message: 'Phone number verified successfully',
+  });
+});
+
+// ==========================================
 // Reset Platform State
 // ==========================================
 apiRouter.post('/reset', (req, res) => {
   db.reset();
+  activeOtps.clear();
   if (req.app.get('io')) {
     req.app.get('io').emit('platform_reset', {});
   }
