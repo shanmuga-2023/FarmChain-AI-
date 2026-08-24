@@ -281,7 +281,7 @@ export function renderAuthPage(container) {
 
       try {
         GaslessProvider.init();
-        await GaslessProvider.loginWithPhone(rawPhone);
+        const loginRes = await GaslessProvider.loginWithPhone(rawPhone);
 
         // Show verify section
         const verifySection = document.getElementById('otp-verify-section');
@@ -304,7 +304,11 @@ export function renderAuthPage(container) {
           firstDigit?.focus();
         }, 100);
 
-        showToast(`📲 OTP dispatched to ${rawPhone}! Check notification at top of screen`, 'success');
+        if (loginRes.method === 'firebase') {
+          showToast(`📲 SMS sent to ${rawPhone}! Check your mobile messages for the 6-digit code.`, 'success');
+        } else {
+          showToast(`📲 Demo OTP dispatched! Check the notification banner at the top.`, 'info');
+        }
       } catch (err) {
         showToast('Failed to send OTP: ' + err.message, 'error');
         if (sendBtn) {
@@ -372,7 +376,7 @@ export function renderAuthPage(container) {
     container.querySelector('#verify-otp-btn')?.addEventListener('click', async () => {
       const phoneInput = document.getElementById('otp-phone');
       const rawPhone = phoneInput?.value.trim();
-      
+
       // Gather 6 digits from individual boxes
       let otp = '';
       digitInputs.forEach(inp => { otp += inp.value.trim(); });

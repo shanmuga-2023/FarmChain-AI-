@@ -4,21 +4,10 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
-// Default / Demo Firebase Config (can be overridden via localStorage or custom setup)
-const storedConfig = localStorage.getItem('farmchain_firebase_config');
-let customConfig = null;
-if (storedConfig) {
-  try {
-    customConfig = JSON.parse(storedConfig);
-  } catch (e) {
-    console.warn('Failed to parse custom Firebase config:', e);
-  }
-}
-
-export const firebaseConfig = customConfig || {
+// Your web app's Firebase configuration
+export const firebaseConfig = {
   apiKey: "AIzaSyDTdSIlJLs6_ihB26HBseo7mGuG3l36SDE",
   authDomain: "farmchainai.firebaseapp.com",
   projectId: "farmchainai",
@@ -52,7 +41,7 @@ try {
 
   console.log("🔥 Firebase initialized successfully for farmchainai!");
 } catch (error) {
-  console.warn("⚠️ Firebase live connection pending config:", error.message);
+  console.warn("⚠️ Firebase live connection warning:", error.message);
 }
 
 export { app, auth, db, analytics, googleProvider };

@@ -35,6 +35,8 @@ const GAS_COST_ESTIMATES = {
 
 export class GaslessProvider {
   static _state = null;
+  static _confirmationResult = null; // Firebase Phone Auth confirmation
+  static _recaptchaVerifier = null;
 
   /**
    * Initialize gasless provider
@@ -44,123 +46,175 @@ export class GaslessProvider {
   }
 
   /**
-   * Login with phone number (Real SMS / OS Notification & Floating Banner)
-   * PRODUCTION: Replace with Web3Auth or Biconomy Social Login SDK
+   * Login with phone number — Firebase Phone Auth (Real SMS)
+   * Sends a REAL SMS to the user's phone via Firebase.
+   * Falls back to demo simulation ONLY if Firebase is offline.
    */
   static async loginWithPhone(phoneNumber) {
-    let otp = null;
+    // Normalize to E.164 format for Firebase (+91XXXXXXXXXX)
+    let e164Phone = phoneNumber.trim().replace(/\s+/g, '');
+    if (!e164Phone.startsWith('+')) {
+      e164Phone = '+91' + e164Phone.replace(/^0+/, '');
+    }
 
-    // Try backend SMS gateway endpoint first
+    // Try Firebase Phone Authentication first (sends REAL SMS)
     try {
-      const response = await fetch('http://localhost:4000/api/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: phoneNumber }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.otp) otp = data.otp;
-      }
-    } catch (e) {
-      console.log('Backend SMS gateway offline, using client-side generator');
-    }
+      const { auth, isFirebaseReady } = await import('../firebase/config.js');
+      const { signInWithPhoneNumber, RecaptchaVerifier } = await import('firebase/auth');
 
-    if (!otp) {
-      otp = Math.floor(100000 + Math.random() * 900000).toString();
-    }
+      if (!isFirebaseReady || !auth) throw new Error('Firebase offline');
 
-    // Store pending auth
-    this._state.pendingAuth = {
-      phone: phoneNumber,
-      otp,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 300000, // 5 minutes
-    };
-    this._saveState();
+      // Create invisible reCAPTCHA verifier (required by Firebase Phone Auth)
+      if (!this._recaptchaVerifier) {
+        // Create a container for reCAPTCHA if it doesn't exist
+        let recaptchaContainer = document.getElementById('recaptcha-container');
+        if (!recaptchaContainer) {
+          recaptchaContainer = document.createElement('div');
+          recaptchaContainer.id = 'recaptcha-container';
+          recaptchaContainer.style.position = 'fixed';
+          recaptchaContainer.style.bottom = '0';
+          recaptchaContainer.style.right = '0';
+          recaptchaContainer.style.zIndex = '99999';
+          document.body.appendChild(recaptchaContainer);
+        }
 
-    console.log(`📱 Gasless Auth: OTP ${otp} dispatched to ${phoneNumber}`);
-
-    // Trigger realistic Mobile SMS sound, vibration, and OS/In-App incoming SMS banner
-    this.triggerMobileSmsArrival(phoneNumber, otp);
-
-    return { otp, expiresIn: 300 };
-  }
-
-  /**
-   * Plays a realistic mobile SMS chime and displays an interactive incoming SMS banner
-   */
-  static triggerMobileSmsArrival(phone, otp) {
-    // 1. Play realistic SMS chime via Web Audio API
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const now = audioCtx.currentTime;
-      
-      const osc1 = audioCtx.createOscillator();
-      const osc2 = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(587.33, now); // D5
-      osc1.frequency.setValueAtTime(880, now + 0.12); // A5
-
-      osc2.type = 'triangle';
-      osc2.frequency.setValueAtTime(880, now); // A5
-      osc2.frequency.setValueAtTime(1174.66, now + 0.12); // D6
-
-      gainNode.gain.setValueAtTime(0.15, now);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-
-      osc1.connect(gainNode);
-      osc2.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
-      osc1.start(now);
-      osc2.start(now);
-      osc1.stop(now + 0.35);
-      osc2.stop(now + 0.35);
-    } catch (err) {
-      // Audio context might be restricted before user gesture
-    }
-
-    // 2. Trigger mobile device vibration if available
-    if (navigator.vibrate) {
-      try {
-        navigator.vibrate([120, 80, 120]);
-      } catch (e) {}
-    }
-
-    // 3. Trigger native OS / Mobile system notification if permitted
-    if ('Notification' in window) {
-      if (Notification.permission === 'granted') {
-        try {
-          new Notification('💬 Messages • FarmChain Security', {
-            body: `Your FarmChain AI smart wallet verification code is ${otp}. Valid for 5 minutes.`,
-            icon: '🌾',
-          });
-        } catch (e) {}
-      } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            try {
-              new Notification('💬 Messages • FarmChain Security', {
-                body: `Your FarmChain AI smart wallet verification code is ${otp}. Valid for 5 minutes.`,
-                icon: '🌾',
-              });
-            } catch (e) {}
-          }
+        this._recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          size: 'invisible',
+          callback: () => {
+            console.log('📱 reCAPTCHA verified — sending SMS...');
+          },
+          'expired-callback': () => {
+            console.warn('⚠️ reCAPTCHA expired, resetting...');
+            this._recaptchaVerifier = null;
+          },
         });
       }
-    }
 
-    // 4. Render floating Smartphone Lockscreen / Push SMS Banner
-    this._renderIncomingSmsBanner(phone, otp);
+      console.log(`📱 Firebase Phone Auth: Sending real SMS to ${e164Phone}...`);
+
+      // This triggers Firebase to send a REAL SMS to the user's phone
+      this._confirmationResult = await signInWithPhoneNumber(auth, e164Phone, this._recaptchaVerifier);
+
+      // Store pending auth (no OTP stored — only Firebase knows the code)
+      this._state.pendingAuth = {
+        phone: e164Phone,
+        method: 'firebase',
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 300000,
+      };
+      this._saveState();
+
+      console.log(`✅ Firebase SMS dispatched to ${e164Phone} — OTP is ONLY on the user's phone`);
+
+      return { method: 'firebase', expiresIn: 300, phone: e164Phone };
+
+    } catch (firebaseErr) {
+      console.warn('⚠️ Firebase Phone Auth failed/offline:', firebaseErr);
+      console.log('📱 Falling back to demo OTP mode...');
+
+      // Fallback: demo simulation (only used if Firebase is offline or rejected)
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+      this._state.pendingAuth = {
+        phone: e164Phone,
+        otp,
+        method: 'demo',
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 300000,
+      };
+      this._saveState();
+
+      // Show the demo banner with error reason in fallback mode
+      this._renderDemoFallbackBanner(e164Phone, otp, firebaseErr.message || 'Firebase service unreachable');
+
+      return { method: 'demo', otp, expiresIn: 300, phone: e164Phone, error: firebaseErr.message };
+    }
   }
 
   /**
-   * Render high-fidelity iOS/Android incoming SMS banner
+   * Verify OTP and create smart account
+   * Uses Firebase confirmationResult.confirm() for real SMS verification.
    */
-  static _renderIncomingSmsBanner(phone, otp) {
-    // Remove existing banner if any
+  static async verifyOtpAndCreateAccount(phoneNumber, inputOtp) {
+    const pending = this._state.pendingAuth;
+
+    if (!pending) {
+      throw new Error('No pending authentication. Please request a new OTP.');
+    }
+
+    // === Firebase Real SMS Verification ===
+    if (pending.method === 'firebase' && this._confirmationResult) {
+      try {
+        const credential = await this._confirmationResult.confirm(inputOtp.trim());
+        const firebaseUser = credential.user;
+
+        console.log('✅ Firebase Phone Auth verified! UID:', firebaseUser.uid);
+
+        // Create smart account linked to Firebase UID
+        const smartAccount = this._generateSmartAccount(firebaseUser.uid);
+        smartAccount.firebaseUid = firebaseUser.uid;
+        smartAccount.phoneNumber = firebaseUser.phoneNumber;
+        smartAccount.loginMethod = 'Firebase Phone Auth + ERC-4337';
+
+        this._state.currentAccount = smartAccount;
+        this._state.isAuthenticated = true;
+        this._state.pendingAuth = null;
+        this._confirmationResult = null;
+        this._saveState();
+
+        return {
+          success: true,
+          account: smartAccount,
+          firebaseUser,
+          message: '✅ Phone verified via Firebase SMS — Smart wallet created!',
+        };
+
+      } catch (err) {
+        if (err.code === 'auth/invalid-verification-code') {
+          throw new Error('Wrong OTP. Please check the SMS on your phone and try again.');
+        }
+        if (err.code === 'auth/code-expired') {
+          throw new Error('OTP expired. Please request a new code.');
+        }
+        throw new Error('Verification failed: ' + (err.message || 'Unknown error'));
+      }
+    }
+
+    // === Demo Fallback Verification ===
+    if (pending.method === 'demo') {
+      if (Date.now() > pending.expiresAt) {
+        throw new Error('OTP expired. Please request a new one.');
+      }
+
+      if (pending.otp !== inputOtp.trim()) {
+        throw new Error('Invalid OTP. Check the notification banner and try again.');
+      }
+
+      // Dismiss demo banner
+      const banner = document.getElementById('floating-mobile-sms-banner');
+      if (banner) banner.remove();
+
+      const smartAccount = this._generateSmartAccount(phoneNumber);
+
+      this._state.currentAccount = smartAccount;
+      this._state.isAuthenticated = true;
+      this._state.pendingAuth = null;
+      this._saveState();
+
+      return {
+        success: true,
+        account: smartAccount,
+        message: '✅ Smart account created (demo mode)',
+      };
+    }
+
+    throw new Error('No valid verification session found. Please request a new OTP.');
+  }
+
+  /**
+   * Demo fallback banner — only shown when Firebase is offline
+   */
+  static _renderDemoFallbackBanner(phone, otp, reason = 'Firebase Phone Auth offline') {
     const existing = document.getElementById('floating-mobile-sms-banner');
     if (existing) existing.remove();
 
@@ -171,31 +225,28 @@ export class GaslessProvider {
       <div class="sms-push-inner">
         <div class="sms-push-header">
           <div class="sms-push-app">
-            <span class="sms-push-icon">💬</span>
-            <span class="sms-push-appname">MESSAGES</span>
+            <span class="sms-push-icon">⚠️</span>
+            <span class="sms-push-appname">DEMO MODE</span>
             <span class="sms-push-bullet">•</span>
-            <span class="sms-push-time">Just now</span>
+            <span class="sms-push-time">Live SMS offline</span>
           </div>
           <button class="sms-push-close" id="close-sms-push">✕</button>
         </div>
         <div class="sms-push-content">
-          <div class="sms-push-sender">FarmChain AI Security</div>
+          <div class="sms-push-sender">FarmChain Demo OTP (${reason})</div>
           <div class="sms-push-body">
-            Your smart wallet verification code is <strong class="sms-highlight-code">${otp}</strong>. Enter this code on the screen to verify your phone.
+            Live SMS unavailable (${reason}). Your demo code is <strong class="sms-highlight-code">${otp}</strong>
           </div>
         </div>
         <div class="sms-push-actions">
-          <button type="button" class="sms-copy-btn" id="sms-copy-otp-btn">
-            📋 Copy ${otp}
-          </button>
-          <span class="sms-push-tag">ERC-4337 Smart Account</span>
+          <button type="button" class="sms-copy-btn" id="sms-copy-otp-btn">📋 Copy ${otp}</button>
+          <span class="sms-push-tag">Demo Fallback</span>
         </div>
       </div>
     `;
 
     document.body.appendChild(banner);
 
-    // Event listeners
     banner.querySelector('#close-sms-push')?.addEventListener('click', () => {
       banner.classList.add('animate-slide-up-out');
       setTimeout(() => banner.remove(), 300);
@@ -205,63 +256,14 @@ export class GaslessProvider {
       navigator.clipboard.writeText(otp);
       const btn = banner.querySelector('#sms-copy-otp-btn');
       if (btn) btn.textContent = '✅ Copied!';
-      
-      // Auto-fill individual digit inputs if present
-      const digitInputs = document.querySelectorAll('.otp-digit-input');
-      if (digitInputs.length === 6) {
-        otp.split('').forEach((d, i) => {
-          if (digitInputs[i]) digitInputs[i].value = d;
-        });
-        digitInputs[5].focus();
-      }
     });
 
-    // Auto dismiss after 15 seconds
     setTimeout(() => {
       if (document.body.contains(banner)) {
         banner.classList.add('animate-slide-up-out');
         setTimeout(() => banner.remove(), 300);
       }
-    }, 15000);
-  }
-
-  /**
-   * Verify OTP and create smart account
-   * PRODUCTION: Replace with Web3Auth verifier + Account Factory
-   */
-  static async verifyOtpAndCreateAccount(phoneNumber, inputOtp) {
-    const pending = this._state.pendingAuth;
-
-    if (!pending || pending.phone.replace(/\s+/g, '') !== phoneNumber.replace(/\s+/g, '')) {
-      throw new Error('No pending authentication for this number');
-    }
-
-    if (Date.now() > pending.expiresAt) {
-      throw new Error('OTP expired. Please request a new one.');
-    }
-
-    if (pending.otp !== inputOtp.trim()) {
-      throw new Error('Invalid OTP. Please check the code on your notification and try again.');
-    }
-
-    // Dismiss floating SMS banner on successful verification
-    const banner = document.getElementById('floating-mobile-sms-banner');
-    if (banner) banner.remove();
-
-    // PRODUCTION: This is where Web3Auth would create a non-custodial wallet
-    // using the phone number as a factor in the key reconstruction
-    const smartAccount = this._generateSmartAccount(phoneNumber);
-
-    this._state.currentAccount = smartAccount;
-    this._state.isAuthenticated = true;
-    this._state.pendingAuth = null;
-    this._saveState();
-
-    return {
-      success: true,
-      account: smartAccount,
-      message: '✅ Smart account created — no seed phrase needed!',
-    };
+    }, 20000);
   }
 
   /**
