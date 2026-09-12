@@ -5,6 +5,7 @@ node_modules/
 .env.local
 
 # Frontend build output
+dist/
 frontend/dist/
 
 # Blockchain build output
