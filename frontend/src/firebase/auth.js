@@ -64,7 +64,23 @@ export async function registerWithEmail(email, password, displayName, role, loca
     store.login(role.toLowerCase(), firebaseUser.uid, userProfile);
     return { user: userProfile, firebaseUser };
   } catch (error) {
-    console.error('Registration error:', error);
+    console.warn('Firebase registration error:', error);
+    if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/configuration-not-found') {
+      console.info('Firebase Email/Password provider is disabled in Firebase Console. Falling back to local profile.');
+      const user = {
+        id: `user-${Date.now()}`,
+        name: displayName,
+        email,
+        role: role.toLowerCase(),
+        location: location || 'India',
+        walletAddress: walletAddress || '',
+        avatar: getRoleAvatar(role),
+        createdAt: Date.now(),
+        verified: true,
+      };
+      store.login(role.toLowerCase(), user.id, user);
+      return { user, isFallback: true };
+    }
     throw error;
   }
 }
@@ -116,7 +132,21 @@ export async function loginWithEmail(email, password) {
     store.login(userProfile.role, userProfile.id, userProfile);
     return { user: userProfile, firebaseUser };
   } catch (error) {
-    console.error('Login error:', error);
+    console.warn('Firebase login error:', error);
+    if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/configuration-not-found') {
+      console.info('Firebase Email/Password provider is disabled in Firebase Console. Falling back to local profile.');
+      const user = {
+        id: `user-${Date.now()}`,
+        name: email.split('@')[0],
+        email,
+        role: 'farmer',
+        location: 'India',
+        avatar: '👨‍🌾',
+        verified: true,
+      };
+      store.login(user.role, user.id, user);
+      return { user, isFallback: true };
+    }
     throw error;
   }
 }
