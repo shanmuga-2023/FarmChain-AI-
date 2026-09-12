@@ -12,6 +12,7 @@ import {
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db, googleProvider, isFirebaseReady } from './config.js';
 import { store } from '../data/store.js';
+import { postUser } from '../utils/api.js';
 
 // Pre-seeded demo user fallback accounts
 export const DEMO_CREDENTIALS = [
@@ -60,6 +61,9 @@ export async function registerWithEmail(email, password, displayName, role, loca
     if (db) {
       await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
     }
+
+    // Asynchronously sync to backend DB
+    postUser(userProfile).catch(() => {});
 
     store.login(role.toLowerCase(), firebaseUser.uid, userProfile);
     return { user: userProfile, firebaseUser };

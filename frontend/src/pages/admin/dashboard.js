@@ -11,6 +11,8 @@ import { blockchain } from '../../blockchain/core.js';
 import { FraudDetector } from '../../ai/fraud-detector.js';
 import { DemandForecaster } from '../../ai/demand-forecaster.js';
 import { PaymentSplitter } from '../../blockchain/contracts.js';
+import { getFirestoreUsers } from '../../firebase/firestore.js';
+import { fetchUsers } from '../../utils/api.js';
 
 export function renderAdminDashboard(container) {
   const user = store.get('currentUser');
@@ -248,4 +250,41 @@ export function renderAdminDashboard(container) {
       values: Object.values(dynamicRoleCounts),
     });
   }, 100);
+
+  // Sync latest users in background
+  (async () => {
+    let hasChanges = false;
+    const currentUsers = { ...(store.get('users') || {}) };
+
+    try {
+      const firestoreUsers = await getFirestoreUsers();
+      if (Array.isArray(firestoreUsers)) {
+        firestoreUsers.forEach(u => {
+          const id = u.id || u.uid;
+          if (id && (!currentUsers[id] || currentUsers[id].name !== u.name || currentUsers[id].email !== u.email)) {
+            currentUsers[id] = { ...currentUsers[id], ...u };
+            hasChanges = true;
+          }
+        });
+      }
+    } catch (e) {}
+
+    try {
+      const apiUsers = await fetchUsers();
+      if (Array.isArray(apiUsers)) {
+        apiUsers.forEach(u => {
+          const id = u.id || u.uid;
+          if (id && (!currentUsers[id] || currentUsers[id].name !== u.name || currentUsers[id].email !== u.email)) {
+            currentUsers[id] = { ...currentUsers[id], ...u };
+            hasChanges = true;
+          }
+        });
+      }
+    } catch (e) {}
+
+    if (hasChanges) {
+      store.set('users', currentUsers);
+      renderAdminDashboard(container);
+    }
+  })();
 }

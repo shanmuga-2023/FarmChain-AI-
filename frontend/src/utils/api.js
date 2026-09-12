@@ -148,6 +148,21 @@ export async function postCertificate(cert) {
 }
 
 // ==========================================
+// Users
+// ==========================================
+
+export async function fetchUsers() {
+  return await apiFetch('/users');
+}
+
+export async function postUser(user) {
+  return await apiFetch('/users', {
+    method: 'POST',
+    body: JSON.stringify(user),
+  });
+}
+
+// ==========================================
 // Platform Reset
 // ==========================================
 

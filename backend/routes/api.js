@@ -170,6 +170,36 @@ apiRouter.post('/certificates', (req, res) => {
 });
 
 // ==========================================
+// Users Sync
+// ==========================================
+apiRouter.get('/users', (req, res) => {
+  const users = db.get('users');
+  res.json(Array.isArray(users) ? users : Object.values(users || {}));
+});
+
+apiRouter.post('/users', (req, res) => {
+  const user = sanitizeBody(req.body);
+  if (!user.id && !user.email) {
+    return res.status(400).json({ error: 'User id or email is required' });
+  }
+  const existingUsers = db.get('users');
+  const userList = Array.isArray(existingUsers) ? existingUsers : Object.values(existingUsers || {});
+  const idx = userList.findIndex(u => (u.id && u.id === user.id) || (u.email && u.email === user.email));
+  if (idx >= 0) {
+    userList[idx] = { ...userList[idx], ...user };
+  } else {
+    userList.push(user);
+  }
+  db.set('users', userList);
+
+  if (req.app.get('io')) {
+    req.app.get('io').emit('user_registered', user);
+  }
+
+  res.status(201).json(user);
+});
+
+// ==========================================
 // Blockchain Blocks Sync
 // ==========================================
 apiRouter.get('/blocks', (req, res) => {

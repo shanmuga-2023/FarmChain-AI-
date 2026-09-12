@@ -7,6 +7,8 @@ import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
 import { getRoleConfig, showToast, timeAgo } from '../../utils/helpers.js';
 import { escapeHtml } from '../../utils/sanitize.js';
+import { getFirestoreUsers } from '../../firebase/firestore.js';
+import { fetchUsers } from '../../utils/api.js';
 
 export function renderAdminUsers(container) {
   const users = store.get('users') || {};
@@ -194,4 +196,45 @@ export function renderAdminUsers(container) {
       }
     });
   });
+
+  // Asynchronously fetch latest registered users from Firestore & Backend API
+  (async () => {
+    let hasChanges = false;
+    const currentUsers = { ...(store.get('users') || {}) };
+
+    try {
+      const firestoreUsers = await getFirestoreUsers();
+      if (Array.isArray(firestoreUsers)) {
+        firestoreUsers.forEach(u => {
+          const id = u.id || u.uid;
+          if (id && (!currentUsers[id] || currentUsers[id].name !== u.name || currentUsers[id].email !== u.email)) {
+            currentUsers[id] = { ...currentUsers[id], ...u };
+            hasChanges = true;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Firestore user sync warning:', e);
+    }
+
+    try {
+      const apiUsers = await fetchUsers();
+      if (Array.isArray(apiUsers)) {
+        apiUsers.forEach(u => {
+          const id = u.id || u.uid;
+          if (id && (!currentUsers[id] || currentUsers[id].name !== u.name || currentUsers[id].email !== u.email)) {
+            currentUsers[id] = { ...currentUsers[id], ...u };
+            hasChanges = true;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Backend user sync warning:', e);
+    }
+
+    if (hasChanges) {
+      store.set('users', currentUsers);
+      renderAdminUsers(container);
+    }
+  })();
 }

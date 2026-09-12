@@ -46,6 +46,7 @@ app.get('/', (req, res) => {
       mandiRates: '/api/mandi-rates',
       products: '/api/products',
       orders: '/api/orders',
+      users: '/api/users',
     },
     frontend: 'https://farm-chain-ai.vercel.app',
   });

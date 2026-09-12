@@ -102,3 +102,36 @@ export function subscribeToOrders(callback) {
     if (callback) callback(orders);
   });
 }
+
+// ==========================
+// 3. Users Collection
+// ==========================
+export async function getFirestoreUsers() {
+  if (!isFirebaseReady || !db) return [];
+
+  try {
+    const querySnapshot = await getDocs(collection(db, 'users'));
+    const users = [];
+    querySnapshot.forEach((doc) => {
+      users.push(doc.data());
+    });
+    return users;
+  } catch (error) {
+    console.warn('Firestore getFirestoreUsers error:', error);
+    return [];
+  }
+}
+
+export function subscribeToUsers(callback) {
+  if (!isFirebaseReady || !db) return () => {};
+
+  const q = query(collection(db, 'users'));
+  return onSnapshot(q, (snapshot) => {
+    const users = [];
+    snapshot.forEach((doc) => {
+      users.push(doc.data());
+    });
+    if (callback) callback(users);
+  });
+}
+
