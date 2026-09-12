@@ -18,8 +18,9 @@ export async function isServerOnline() {
     return _serverOnline;
   }
   try {
-    const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(2000) });
-    _serverOnline = res.ok;
+    const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
+    const contentType = res.headers.get('content-type') || '';
+    _serverOnline = res.ok && contentType.includes('application/json');
   } catch {
     _serverOnline = false;
   }
@@ -41,8 +42,8 @@ async function apiFetch(endpoint, options = {}) {
       signal: options.signal || AbortSignal.timeout(5000),
     });
 
-    if (!res.ok) {
-      console.warn(`API ${endpoint} returned ${res.status}`);
+    const contentType = res.headers.get('content-type') || '';
+    if (!res.ok || !contentType.includes('application/json')) {
       return null;
     }
 
