@@ -16,6 +16,14 @@ import { postUser } from '../utils/api.js';
 
 // Pre-seeded demo user fallback accounts
 export const DEMO_CREDENTIALS = [
+  // Primary credentials (matching README & documentation)
+  { role: 'farmer', name: 'Rajesh Kumar', email: 'farmer@farmchain.io', password: 'farmer123', location: 'Nashik, Maharashtra', avatar: '👨‍🌾' },
+  { role: 'intermediary', name: 'AgriTraders Pvt Ltd', email: 'trader@farmchain.io', password: 'trader123', location: 'Mumbai, Maharashtra', avatar: '🏢' },
+  { role: 'retailer', name: 'FreshMart Stores', email: 'retailer@farmchain.io', password: 'retail123', location: 'Bangalore, Karnataka', avatar: '🛒' },
+  { role: 'consumer', name: 'Priya Sharma', email: 'consumer@farmchain.io', password: 'consumer123', location: 'Bangalore, Karnataka', avatar: '👤' },
+  { role: 'admin', name: 'System Admin', email: 'admin@farmchain.io', password: 'admin123', location: 'Platform HQ', avatar: '🔧' },
+
+  // Secondary aliases
   { role: 'farmer', name: 'Rajesh Kumar', email: 'rajesh@farmchain.demo', password: 'farmer123', location: 'Nashik, Maharashtra', avatar: '👨‍🌾' },
   { role: 'farmer', name: 'Lakshmi Devi', email: 'lakshmi@farmchain.demo', password: 'farmer123', location: 'Thanjavur, Tamil Nadu', avatar: '👩‍🌾' },
   { role: 'intermediary', name: 'AgriTraders Pvt Ltd', email: 'agritraders@farmchain.demo', password: 'trader123', location: 'Mumbai, Maharashtra', avatar: '🏢' },
