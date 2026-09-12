@@ -230,7 +230,25 @@ export function renderAuthPage(container) {
           router.navigate(`/${targetRole}/dashboard`);
         }, 150);
       } catch (err) {
-        showToast(err.message || 'Authentication failed', 'error');
+        console.error('Auth error:', err);
+        if (err.code === 'auth/email-already-in-use') {
+          showToast('This email is already registered! Switching to Sign In...', 'warning');
+          isRegisterMode = false;
+          renderForm();
+          const emailInput = document.getElementById('auth-email');
+          const passInput = document.getElementById('auth-password');
+          if (emailInput) emailInput.value = email;
+          if (passInput) passInput.value = password;
+          return;
+        } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+          showToast('Incorrect password or email. Please check your credentials.', 'error');
+        } else if (err.code === 'auth/user-not-found') {
+          showToast('No account found with this email. Please register first.', 'warning');
+        } else if (err.code === 'auth/weak-password') {
+          showToast('Password should be at least 6 characters long.', 'warning');
+        } else {
+          showToast(err.message || 'Authentication failed', 'error');
+        }
       }
     });
 
