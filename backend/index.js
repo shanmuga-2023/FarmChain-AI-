@@ -35,6 +35,22 @@ io.on('connection', (socket) => {
   });
 });
 
+// Root status endpoint
+app.get('/', (req, res) => {
+  res.json({
+    name: '🌾 FarmChain AI 2.0 Backend Server',
+    status: 'online',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      mandiRates: '/api/mandi-rates',
+      products: '/api/products',
+      orders: '/api/orders',
+    },
+    frontend: 'https://farm-chain-ai.vercel.app',
+  });
+});
+
 // Mount API routes
 app.use('/api', apiRouter);
 

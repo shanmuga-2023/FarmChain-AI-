@@ -4,7 +4,7 @@
 // Falls back gracefully if server is offline
 // ============================================
 
-const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:4000/api' : 'https://farmchain-ai-.onrender.com/api');
+const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:4000/api' : 'https://farmchain-ai-zdp2.onrender.com/api');
 let _serverOnline = null; // null = unknown, true/false = checked
 
 /**
