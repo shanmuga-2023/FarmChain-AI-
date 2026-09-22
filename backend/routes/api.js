@@ -59,6 +59,28 @@ function sanitizeBody(body) {
 }
 
 // ==========================================
+// API Index
+// ==========================================
+apiRouter.get('/', (req, res) => {
+  res.json({
+    name: '🌾 FarmChain AI 2.0 REST API',
+    status: 'online',
+    version: '2.0.0-enterprise',
+    endpoints: {
+      health: 'GET /api/health',
+      mandiRates: 'GET /api/mandi-rates',
+      products: 'GET, POST /api/products',
+      productDetail: 'GET, PATCH, DELETE /api/products/:productId',
+      orders: 'GET, POST, PATCH /api/orders',
+      orderDetail: 'GET /api/orders/:orderId',
+      users: 'GET, POST /api/users',
+      sendOtp: 'POST /api/auth/send-otp',
+      verifyOtp: 'POST /api/auth/verify-otp',
+    },
+  });
+});
+
+// ==========================================
 // Health Check
 // ==========================================
 apiRouter.get('/health', (req, res) => {
