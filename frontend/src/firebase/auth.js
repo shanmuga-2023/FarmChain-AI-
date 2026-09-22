@@ -101,8 +101,14 @@ export async function loginWithEmail(email, password) {
   // Check demo credentials first for fast login
   const demoMatch = DEMO_CREDENTIALS.find(d => d.email.toLowerCase() === email.toLowerCase() && d.password === password);
   if (demoMatch) {
+    let demoUserId = `${demoMatch.role}-001`;
+    if (demoMatch.name === 'Lakshmi Devi') demoUserId = 'farmer-002';
+    else if (demoMatch.name === 'Arjun Singh') demoUserId = 'farmer-003';
+    else if (demoMatch.name === 'GreenPath Distributors') demoUserId = 'intermediary-002';
+    else if (demoMatch.name === "Nature's Basket") demoUserId = 'retailer-002';
+
     const demoUser = {
-      id: `demo-${demoMatch.role}-001`,
+      id: demoUserId,
       name: demoMatch.name,
       email: demoMatch.email,
       role: demoMatch.role,

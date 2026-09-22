@@ -233,9 +233,34 @@ const CERTIFICATES = [
 ];
 
 export async function seedData() {
-  // Check if already seeded
+  // Check if already seeded, but ensure consumer orders exist
   if (store.get('products').length > 0) {
-    console.log('Data already seeded, skipping...');
+    const existingOrders = store.get('orders') || [];
+    const hasConsumerOrders = existingOrders.some(o => o.buyerRole === 'consumer');
+    if (!hasConsumerOrders) {
+      console.log('Backfilling sample consumer & intermediary demo orders...');
+      const prods = store.get('products') || [];
+      const newOrders = [...existingOrders];
+      for (const orderData of demoOrders) {
+        if (newOrders.some(o => o.buyerId === orderData.buyerId && o.productName === orderData.productName)) continue;
+        const product = prods.find(p => p.name === orderData.productName);
+        if (product) {
+          const ord = {
+            ...orderData,
+            orderId: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+            productId: product.productId,
+            sellerId: product.farmerId,
+            sellerName: product.farmerName,
+            unit: product.unit,
+            pricePerUnit: product.pricePerUnit,
+            totalAmount: orderData.quantity * product.pricePerUnit,
+            createdAt: Date.now() - Math.random() * 7 * 86400000,
+          };
+          newOrders.push(ord);
+        }
+      }
+      store.set('orders', newOrders);
+    }
     return;
   }
 
@@ -319,7 +344,7 @@ export async function seedData() {
   }
   store.set('certificates', certs);
 
-  // Create some demo orders
+  // Create comprehensive demo orders for Farmer, Intermediary, Retailer, and Consumer
   const demoOrders = [
     {
       productName: 'Fresh Nashik Onions',
@@ -328,6 +353,14 @@ export async function seedData() {
       buyerRole: 'intermediary',
       quantity: 500,
       status: 'delivered',
+    },
+    {
+      productName: 'Organic Turmeric',
+      buyerId: 'intermediary-001',
+      buyerName: 'AgriTraders Pvt Ltd',
+      buyerRole: 'intermediary',
+      quantity: 50,
+      status: 'accepted',
     },
     {
       productName: 'Organic Basmati Rice',
@@ -344,6 +377,38 @@ export async function seedData() {
       buyerRole: 'intermediary',
       quantity: 100,
       status: 'accepted',
+    },
+    {
+      productName: 'Organic Basmati Rice',
+      buyerId: 'consumer-001',
+      buyerName: 'Priya Sharma',
+      buyerRole: 'consumer',
+      quantity: 10,
+      status: 'delivered',
+    },
+    {
+      productName: 'Fresh Tomatoes',
+      buyerId: 'consumer-001',
+      buyerName: 'Priya Sharma',
+      buyerRole: 'consumer',
+      quantity: 15,
+      status: 'delivered',
+    },
+    {
+      productName: 'Alphonso Mangoes',
+      buyerId: 'consumer-001',
+      buyerName: 'Priya Sharma',
+      buyerRole: 'consumer',
+      quantity: 5,
+      status: 'shipped',
+    },
+    {
+      productName: 'Organic Turmeric',
+      buyerId: 'consumer-001',
+      buyerName: 'Priya Sharma',
+      buyerRole: 'consumer',
+      quantity: 2,
+      status: 'pending',
     },
   ];
 
