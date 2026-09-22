@@ -10,8 +10,8 @@ import { FairPricePredictor } from '../../ai/price-predictor.js';
 import { Marketplace } from '../../blockchain/contracts.js';
 import { router } from '../../utils/router.js';
 import { escapeHtml, validateOrderQuantity } from '../../utils/sanitize.js';
-import { postOrder } from '../../utils/api.js';
-import { addFirestoreOrder } from '../../firebase/firestore.js';
+import { postOrder, updateProduct } from '../../utils/api.js';
+import { addFirestoreOrder, updateFirestoreProduct } from '../../firebase/firestore.js';
 import { notifyOrderPlaced } from '../../utils/notifications.js';
 
 export function renderConsumerMarketplace(container) {
@@ -232,9 +232,14 @@ export function renderConsumerMarketplace(container) {
         store.addItem('orders', order);
 
         // Decrement product quantity
+        const newQty = Math.max(0, product.quantity - qty);
         store.updateItem('products', p => p.productId === product.productId, {
-          quantity: product.quantity - qty,
+          quantity: newQty,
         });
+
+        // Sync product quantity to server & Firestore
+        updateProduct(product.productId, { quantity: newQty }).catch(e => console.warn('API sync failed:', e));
+        updateFirestoreProduct(product.productId, { quantity: newQty }).catch(e => console.warn('Firestore sync failed:', e));
 
         // Sync to server
         postOrder(order);
@@ -247,6 +252,7 @@ export function renderConsumerMarketplace(container) {
 
         closeModal();
         showToast('Order placed! Payment recorded on blockchain ⛓️', 'success');
+        renderConsumerMarketplace(container);
       });
     });
   });

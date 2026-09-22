@@ -1,6 +1,7 @@
 // ============================================
 // FarmChain AI — Farmer Products Management
 // Now with AI Visual Quality Oracle + Gasless Tx
+// Full CRUD: Create, Read, Update, Delete
 // ============================================
 
 import { store } from '../../data/store.js';
@@ -11,8 +12,8 @@ import { FairPricePredictor } from '../../ai/price-predictor.js';
 import { generateProductQR, createQRDisplay } from '../../utils/qr.js';
 import { router } from '../../utils/router.js';
 import { validateProductInput } from '../../utils/sanitize.js';
-import { postProduct } from '../../utils/api.js';
-import { addFirestoreProduct } from '../../firebase/firestore.js';
+import { postProduct, updateProduct, deleteProduct } from '../../utils/api.js';
+import { addFirestoreProduct, updateFirestoreProduct, deleteFirestoreProduct } from '../../firebase/firestore.js';
 import { startVoiceRecognition, isSpeechSupported } from '../../utils/voice.js';
 import { VisualOracle } from '../../ai/visual-oracle.js';
 import { GaslessProvider } from '../../web3/gasless.js';
@@ -95,6 +96,50 @@ export function renderFarmerProducts(container) {
       }
     });
   });
+
+  // Edit product buttons
+  container.querySelectorAll('.edit-product-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const productId = btn.dataset.productId;
+      const product = products.find(p => p.productId === productId);
+      if (product) {
+        showEditProductModal(container, product);
+      }
+    });
+  });
+
+  // Delete product buttons
+  container.querySelectorAll('.delete-product-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const productId = btn.dataset.productId;
+      const product = products.find(p => p.productId === productId);
+      if (!product) return;
+
+      if (!confirm(`Are you sure you want to delete "${product.name}"? This action cannot be undone.`)) return;
+
+      btn.disabled = true;
+      btn.textContent = '⏳';
+
+      try {
+        // Remove from store
+        store.removeItem('products', p => p.productId === productId);
+        // Remove from listings
+        store.removeItem('listings', l => l.productId === productId);
+
+        // Sync to backend API
+        deleteProduct(productId).catch(err => console.warn('Backend delete sync:', err));
+        // Sync to Firestore
+        deleteFirestoreProduct(productId).catch(err => console.warn('Firestore delete sync:', err));
+
+        showToast(`"${product.name}" deleted successfully 🗑️`, 'success');
+        renderFarmerProducts(container);
+      } catch (err) {
+        showToast('Failed to delete product: ' + err.message, 'error');
+        btn.disabled = false;
+        btn.textContent = '🗑️';
+      }
+    });
+  });
 }
 
 function renderProductCard(product) {
@@ -133,10 +178,141 @@ function renderProductCard(product) {
       </div>
       <div class="product-card-footer">
         <div class="product-card-meta">⛓️ On Blockchain ${product.imageIpfsHash ? '· 📸 IPFS' : ''}</div>
-        <button class="btn-icon qr-btn" data-product-id="${product.productId}" title="Generate QR">📱</button>
+        <div style="display: flex; gap: 4px; align-items: center;">
+          <button class="btn-icon edit-product-btn" data-product-id="${product.productId}" title="Edit Product" style="font-size: 0.85rem; padding: 4px 6px;">✏️</button>
+          <button class="btn-icon delete-product-btn" data-product-id="${product.productId}" title="Delete Product" style="font-size: 0.85rem; padding: 4px 6px; color: var(--accent-red);">🗑️</button>
+          <button class="btn-icon qr-btn" data-product-id="${product.productId}" title="Generate QR">📱</button>
+        </div>
       </div>
     </div>
   `;
+}
+
+function showEditProductModal(container, product) {
+  const user = store.get('currentUser');
+
+  createModal('Edit Product', `
+    <div class="form-group">
+      <label class="form-label">Product Name</label>
+      <input type="text" class="form-input" id="edit-product-name" value="${product.name}" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="edit-product-category">
+          ${['Grains', 'Vegetables', 'Fruits', 'Spices', 'Cash Crops'].map(c => `
+            <option value="${c}" ${product.category === c ? 'selected' : ''}>${c}</option>
+          `).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Organic?</label>
+        <select class="form-select" id="edit-product-organic">
+          <option value="false" ${!product.isOrganic ? 'selected' : ''}>No</option>
+          <option value="true" ${product.isOrganic ? 'selected' : ''}>Yes — Certified Organic</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Quantity</label>
+        <input type="number" class="form-input" id="edit-product-quantity" value="${product.quantity}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Unit</label>
+        <select class="form-select" id="edit-product-unit">
+          ${['kg', 'quintal', 'ton', 'dozen'].map(u => `
+            <option value="${u}" ${product.unit === u ? 'selected' : ''}>${u}</option>
+          `).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Price per Unit (₹)</label>
+        <input type="number" class="form-input" id="edit-product-price" value="${product.pricePerUnit}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Harvest Date</label>
+        <input type="date" class="form-input" id="edit-product-harvest" value="${product.harvestDate || ''}" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-select" id="edit-product-status">
+        <option value="available" ${product.status === 'available' ? 'selected' : ''}>Available</option>
+        <option value="sold" ${product.status === 'sold' ? 'selected' : ''}>Sold Out</option>
+        <option value="reserved" ${product.status === 'reserved' ? 'selected' : ''}>Reserved</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="edit-product-desc">${product.description || ''}</textarea>
+    </div>
+  `, `
+    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">Cancel</button>
+    <button class="btn btn-primary btn-sm" id="save-edit-product-btn">💾 Save Changes</button>
+  `);
+
+  document.getElementById('save-edit-product-btn')?.addEventListener('click', async () => {
+    const name = document.getElementById('edit-product-name')?.value;
+    const category = document.getElementById('edit-product-category')?.value;
+    const quantity = parseInt(document.getElementById('edit-product-quantity')?.value);
+    const unit = document.getElementById('edit-product-unit')?.value;
+    const price = parseInt(document.getElementById('edit-product-price')?.value);
+    const harvest = document.getElementById('edit-product-harvest')?.value;
+    const isOrganic = document.getElementById('edit-product-organic')?.value === 'true';
+    const description = document.getElementById('edit-product-desc')?.value;
+    const status = document.getElementById('edit-product-status')?.value;
+
+    // Validate
+    const validation = validateProductInput({ name, quantity, price });
+    if (!validation.valid) {
+      showToast(validation.errors[0], 'error');
+      return;
+    }
+
+    const saveBtn = document.getElementById('save-edit-product-btn');
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<span class="spinner" style="width: 14px; height: 14px;"></span> Saving...';
+    }
+
+    try {
+      const updates = {
+        name: name.trim(),
+        category,
+        quantity,
+        unit,
+        pricePerUnit: price,
+        harvestDate: harvest,
+        isOrganic,
+        description: description?.trim() || '',
+        status,
+        emoji: getCropEmoji(name),
+        updatedAt: Date.now(),
+      };
+
+      // Update in store
+      store.updateItem('products', p => p.productId === product.productId, updates);
+
+      // Sync to backend API
+      updateProduct(product.productId, updates).catch(err => console.warn('Backend update sync:', err));
+
+      // Sync to Firestore
+      updateFirestoreProduct(product.productId, updates).catch(err => console.warn('Firestore update sync:', err));
+
+      closeModal();
+      showToast(`"${name}" updated successfully ✏️`, 'success');
+      renderFarmerProducts(container);
+    } catch (err) {
+      showToast('Failed to update product: ' + err.message, 'error');
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '💾 Save Changes';
+      }
+    }
+  });
 }
 
 function showAddProductModal(container) {
@@ -485,10 +661,10 @@ function showAddProductModal(container) {
       store.addItem('products', productData);
 
       // Sync to server API
-      postProduct(productData);
+      postProduct(productData).catch(err => console.warn('Backend sync:', err));
 
       // Sync to Firestore
-      addFirestoreProduct(productData);
+      addFirestoreProduct(productData).catch(err => console.warn('Firestore sync:', err));
 
       // Create listing
       await Marketplace.createListing({

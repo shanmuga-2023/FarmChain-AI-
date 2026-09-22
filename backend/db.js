@@ -75,6 +75,23 @@ class JSONDatabase {
     }
   }
 
+  findItem(collection, predicate) {
+    if (Array.isArray(this.data[collection])) {
+      return this.data[collection].find(predicate) || null;
+    }
+    return null;
+  }
+
+  removeItem(collection, predicate) {
+    if (Array.isArray(this.data[collection])) {
+      const before = this.data[collection].length;
+      this.data[collection] = this.data[collection].filter(item => !predicate(item));
+      this.save();
+      return this.data[collection].length < before;
+    }
+    return false;
+  }
+
   reset() {
     this.data = { ...defaultDbStructure };
     this.save();

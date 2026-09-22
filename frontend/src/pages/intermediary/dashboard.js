@@ -9,8 +9,8 @@ import { formatCurrency, formatNumber, timeAgo, getStatusBadge, showToast, getCr
 import { Marketplace, PaymentSplitter, OwnershipTransfer } from '../../blockchain/contracts.js';
 import { blockchain } from '../../blockchain/core.js';
 import { validateOrderQuantity } from '../../utils/sanitize.js';
-import { postOrder } from '../../utils/api.js';
-import { addFirestoreOrder } from '../../firebase/firestore.js';
+import { postOrder, updateProduct } from '../../utils/api.js';
+import { addFirestoreOrder, updateFirestoreProduct } from '../../firebase/firestore.js';
 import { notifyOrderPlaced } from '../../utils/notifications.js';
 
 export function renderIntermediaryDashboard(container) {
@@ -235,9 +235,14 @@ export function renderIntermediaryDashboard(container) {
         store.addItem('orders', order);
 
         // Decrement product quantity
+        const newQuantity = Math.max(0, product.quantity - quantity);
         store.updateItem('products', p => p.productId === product.productId, {
-          quantity: product.quantity - quantity,
+          quantity: newQuantity,
         });
+
+        // Sync product quantity to server & Firestore
+        updateProduct(product.productId, { quantity: newQuantity }).catch(e => console.warn('API sync failed:', e));
+        updateFirestoreProduct(product.productId, { quantity: newQuantity }).catch(e => console.warn('Firestore sync failed:', e));
 
         // Sync to server
         postOrder(order);
@@ -258,6 +263,7 @@ export function renderIntermediaryDashboard(container) {
   // Charts — use real data from orders
   setTimeout(() => {
     const allOrders = (store.get('orders') || []).filter(o => o.buyerId === user.id);
+    const totalVolume = allOrders.reduce((s, o) => s + (o.totalAmount || 0), 0);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
     const monthlyVolume = months.map((_, i) => {
       return allOrders

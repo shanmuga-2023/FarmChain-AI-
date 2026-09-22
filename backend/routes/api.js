@@ -99,7 +99,76 @@ apiRouter.post('/products', (req, res) => {
     req.app.get('io').emit('product_added', newProduct);
   }
 
-  res.status(201).json(newProduct);
+  res.status(201).json({ success: true, data: newProduct });
+});
+
+apiRouter.get('/products/:productId', (req, res) => {
+  const { productId } = req.params;
+  const product = db.findItem('products', p => p.productId === productId);
+  if (!product) {
+    return res.status(404).json({ success: false, message: 'Product not found' });
+  }
+  res.json({ success: true, data: product });
+});
+
+apiRouter.patch('/products/:productId', (req, res) => {
+  const { productId } = req.params;
+  const product = db.findItem('products', p => p.productId === productId);
+  if (!product) {
+    return res.status(404).json({ success: false, message: 'Product not found' });
+  }
+
+  const updates = sanitizeBody(req.body);
+
+  // Validate updated fields if provided
+  if (updates.name !== undefined || updates.quantity !== undefined || updates.pricePerUnit !== undefined) {
+    const checkBody = {
+      name: updates.name !== undefined ? updates.name : product.name,
+      quantity: updates.quantity !== undefined ? updates.quantity : product.quantity,
+      pricePerUnit: updates.pricePerUnit !== undefined ? updates.pricePerUnit : product.pricePerUnit,
+    };
+    const errors = validateProduct(checkBody);
+    if (errors.length > 0) {
+      return res.status(400).json({ success: false, errors });
+    }
+  }
+
+  // Only allow updating specific fields
+  const allowedFields = ['name', 'category', 'quantity', 'unit', 'pricePerUnit', 'description', 'origin', 'harvestDate', 'isOrganic', 'status', 'emoji'];
+  const filteredUpdates = { updatedAt: Date.now() };
+  for (const key of allowedFields) {
+    if (updates[key] !== undefined) filteredUpdates[key] = updates[key];
+  }
+
+  db.updateItem('products', p => p.productId === productId, filteredUpdates);
+  const updatedProduct = db.findItem('products', p => p.productId === productId);
+
+  // Broadcast to WebSockets
+  if (req.app.get('io')) {
+    req.app.get('io').emit('product_updated', updatedProduct);
+  }
+
+  res.json({ success: true, data: updatedProduct });
+});
+
+apiRouter.delete('/products/:productId', (req, res) => {
+  const { productId } = req.params;
+  const product = db.findItem('products', p => p.productId === productId);
+  if (!product) {
+    return res.status(404).json({ success: false, message: 'Product not found' });
+  }
+
+  const removed = db.removeItem('products', p => p.productId === productId);
+  if (!removed) {
+    return res.status(500).json({ success: false, message: 'Failed to delete product' });
+  }
+
+  // Broadcast to WebSockets
+  if (req.app.get('io')) {
+    req.app.get('io').emit('product_deleted', { productId });
+  }
+
+  res.json({ success: true, message: 'Product deleted successfully', productId });
 });
 
 // ==========================================
@@ -249,7 +318,6 @@ apiRouter.post('/send-otp', async (req, res) => {
     success: true,
     phone: cleanPhone,
     expiresIn: 300,
-    otp, // Delivered via secure payload for browser notification simulation
     message: `OTP sent successfully to ${cleanPhone}`,
   });
 });

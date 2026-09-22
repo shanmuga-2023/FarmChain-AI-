@@ -247,7 +247,7 @@ npm run server
 
 The backend server provides:
 - Live Mandi Spot Rates Oracle: `GET http://localhost:4000/api/mandi-rates`
-- Product Registry API: `GET/POST http://localhost:4000/api/products`
+- Product Registry API: `GET/POST/PATCH/DELETE http://localhost:4000/api/products` (Full CRUD + `GET /api/products/:id`)
 - Order Settlement API: `GET/POST/PATCH http://localhost:4000/api/orders`
 - Health Check: `GET http://localhost:4000/api/health`
 

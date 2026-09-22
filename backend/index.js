@@ -12,7 +12,7 @@ const server = http.createServer(app);
 // Enable Cross-Origin Resource Sharing
 app.use(cors({
   origin: '*',
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 }));
 
 app.use(express.json());
@@ -45,6 +45,7 @@ app.get('/', (req, res) => {
       health: '/api/health',
       mandiRates: '/api/mandi-rates',
       products: '/api/products',
+      productDetail: '/api/products/:productId',
       orders: '/api/orders',
       users: '/api/users',
     },
@@ -57,8 +58,8 @@ app.use('/api', apiRouter);
 
 const PORT = process.env.PORT || 4000;
 
-server.listen(PORT, () => {
-  console.log(`\n🌾 FarmChain AI 2.0 Real-Time Server running on http://localhost:${PORT}`);
-  console.log(`🔗 REST API: http://localhost:${PORT}/api/health`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🌾 FarmChain AI 2.0 Real-Time Server running on http://0.0.0.0:${PORT}`);
+  console.log(`🔗 REST API: http://0.0.0.0:${PORT}/api/health`);
   console.log(`⚡ WebSocket sync enabled for multi-client concurrency\n`);
 });

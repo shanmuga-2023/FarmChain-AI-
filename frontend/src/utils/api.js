@@ -62,10 +62,30 @@ export async function fetchProducts() {
   return await apiFetch('/products');
 }
 
+export async function fetchProduct(productId) {
+  const result = await apiFetch(`/products/${productId}`);
+  return result?.data || result;
+}
+
 export async function postProduct(product) {
-  return await apiFetch('/products', {
+  const result = await apiFetch('/products', {
     method: 'POST',
     body: JSON.stringify(product),
+  });
+  return result?.data || result;
+}
+
+export async function updateProduct(productId, updates) {
+  const result = await apiFetch(`/products/${productId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(updates),
+  });
+  return result?.data || result;
+}
+
+export async function deleteProduct(productId) {
+  return await apiFetch(`/products/${productId}`, {
+    method: 'DELETE',
   });
 }
 

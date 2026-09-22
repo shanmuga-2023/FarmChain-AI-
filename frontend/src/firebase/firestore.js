@@ -11,7 +11,8 @@ import {
   where,
   orderBy,
   onSnapshot,
-  updateDoc
+  updateDoc,
+  deleteDoc
 } from 'firebase/firestore';
 import { db, isFirebaseReady } from './config.js';
 import { store } from '../data/store.js';
@@ -60,6 +61,28 @@ export function subscribeToProducts(callback) {
     store.set('products', products);
     if (callback) callback(products);
   });
+}
+
+export async function updateFirestoreProduct(productId, updates) {
+  if (!isFirebaseReady || !db) return;
+
+  try {
+    const productRef = doc(db, 'products', productId);
+    await updateDoc(productRef, { ...updates, updatedAt: Date.now() });
+  } catch (error) {
+    console.warn('Firestore updateProduct error:', error);
+  }
+}
+
+export async function deleteFirestoreProduct(productId) {
+  if (!isFirebaseReady || !db) return;
+
+  try {
+    const productRef = doc(db, 'products', productId);
+    await deleteDoc(productRef);
+  } catch (error) {
+    console.warn('Firestore deleteProduct error:', error);
+  }
 }
 
 // ==========================

@@ -61,6 +61,7 @@ const SIDEBAR_MENUS = {
       { label: 'Analytics', icon: '📊', path: '/admin/dashboard' },
     ]},
     { section: 'Platform', items: [
+      { label: 'Products', icon: '📦', path: '/admin/products' },
       { label: 'Users', icon: '👥', path: '/admin/users' },
       { label: 'Fraud Alerts', icon: '🚨', path: '/admin/fraud' },
     ]},

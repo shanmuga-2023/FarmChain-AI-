@@ -27,6 +27,7 @@ export function renderFarmerOrders(container) {
               <div class="topbar-title">Orders 📋</div>
               <div class="topbar-breadcrumb"><span>Farmer</span> <span>›</span> <span>Orders</span></div>
             </div>
+          </div>
           <div class="topbar-right">
             <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>Logout</span></button>
           </div>

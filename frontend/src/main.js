@@ -28,6 +28,7 @@ import { renderAdminExplorer } from './pages/admin/explorer.js';
 import { renderAdminFraud } from './pages/admin/fraud.js';
 import { renderAdminForecast } from './pages/admin/forecast.js';
 import { renderAdminUsers } from './pages/admin/users.js';
+import { renderAdminProducts } from './pages/admin/products.js';
 
 // App container
 const app = document.getElementById('app');
@@ -132,6 +133,7 @@ router.register('/consumer/orders', render(renderConsumerOrders));
 
 // Admin routes
 router.register('/admin/dashboard', render(renderAdminDashboard));
+router.register('/admin/products', render(renderAdminProducts));
 router.register('/admin/explorer', render(renderAdminExplorer));
 router.register('/admin/fraud', render(renderAdminFraud));
 router.register('/admin/forecast', render(renderAdminForecast));
