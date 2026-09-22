@@ -3,6 +3,7 @@
 // Scores transactions based on anomaly signals
 // + QR Clone Velocity Detection
 // + AI Visual Oracle quality gate
+// + Quality Mismatch & Repeat Offender Detection
 // ============================================
 
 export class FraudDetector {
@@ -111,6 +112,63 @@ export class FraudDetector {
       });
     }
 
+    // 9. Quality Mismatch — Re-verification score differs >20% from original
+    if (transaction.qualityMismatch && transaction.qualityMismatch > 20) {
+      riskScore += 40;
+      flags.push({
+        type: 'QUALITY_MISMATCH',
+        severity: 'high',
+        message: `🚨 Quality mismatch: Score dropped ${transaction.qualityMismatch}% at ${transaction.mismatchStage || 'checkpoint'} (${transaction.originalScore}% → ${transaction.reVerifyScore}%)`,
+      });
+    }
+
+    // 10. Repeat Quality Offender — Farmer with 2+ quality strikes
+    if (transaction.qualityStrikes && transaction.qualityStrikes >= 2) {
+      riskScore += 35;
+      flags.push({
+        type: 'REPEAT_QUALITY_OFFENDER',
+        severity: 'high',
+        message: `⛔ Repeat offender: ${transaction.qualityStrikes} quality strikes. Farmer reputation: ${transaction.farmerReputation || 'N/A'}%`,
+      });
+    } else if (transaction.qualityStrikes && transaction.qualityStrikes >= 1) {
+      riskScore += 15;
+      flags.push({
+        type: 'QUALITY_STRIKE_WARNING',
+        severity: 'medium',
+        message: `⚠️ Farmer has ${transaction.qualityStrikes} quality strike(s). Under monitoring.`,
+      });
+    }
+
+    // 11. Waste Product Attempt — Farmer tried to register product with score <20%
+    if (transaction.wasteProductAttempt) {
+      riskScore += 45;
+      flags.push({
+        type: 'WASTE_PRODUCT_ATTEMPT',
+        severity: 'high',
+        message: `🚨 Waste product registration attempt! AI score: ${transaction.wasteProductScore || '<20'}% — deliberately submitting waste/rotten produce`,
+      });
+    }
+
+    // 12. GPS Location Mismatch — Camera GPS doesn't match registered farm
+    if (transaction.gpsLocationMismatch) {
+      riskScore += 25;
+      flags.push({
+        type: 'GPS_LOCATION_MISMATCH',
+        severity: 'high',
+        message: `📍 Camera GPS (${transaction.capturedLocation || 'unknown'}) doesn't match registered farm (${transaction.registeredLocation || 'unknown'}) — ${transaction.gpsDistance || '?'} km away`,
+      });
+    }
+
+    // 13. No Live Camera Verification — File upload only (unverified)
+    if (transaction.noLiveVerification) {
+      riskScore += 8;
+      flags.push({
+        type: 'NO_LIVE_VERIFICATION',
+        severity: 'low',
+        message: '📁 Product registered via file upload — no live camera GPS/timestamp verification',
+      });
+    }
+
     // Cap risk score at 100
     riskScore = Math.min(riskScore, 100);
 
@@ -165,6 +223,36 @@ export class FraudDetector {
       { productName: '🚨 Cloned QR — Organic Rice Batch', quantity: 500, unit: 'kg', priceDeviation: 0, qrCloneVelocity: 12500, accountAge: 45 },
       // No AI verification demo
       { productName: 'Unverified Wheat Batch', quantity: 1000, unit: 'kg', priceDeviation: 15, noAiVerification: true, accountAge: 3 },
+      // NEW: Quality mismatch — farmer cheating intermediary
+      {
+        productName: '🚨 Quality Fraud — Rotten Tomatoes sold as Premium',
+        quantity: 800, unit: 'kg', priceDeviation: 0,
+        qualityMismatch: 43, mismatchStage: 'intermediary re-verification',
+        originalScore: 78, reVerifyScore: 35,
+        qualityStrikes: 2, farmerReputation: 25,
+      },
+      // NEW: Waste product attempt
+      {
+        productName: '🚨 Waste Product — Composted Potatoes',
+        quantity: 200, unit: 'kg', priceDeviation: -10,
+        wasteProductAttempt: true, wasteProductScore: 12,
+        qualityStrikes: 1, farmerReputation: 40,
+      },
+      // NEW: GPS mismatch — photo taken far from farm
+      {
+        productName: '📍 GPS Fraud — Rice (photo from warehouse, not farm)',
+        quantity: 500, unit: 'kg', priceDeviation: 5,
+        gpsLocationMismatch: true, capturedLocation: 'Mumbai Warehouse',
+        registeredLocation: 'Nashik Farm', gpsDistance: 180,
+        noLiveVerification: false,
+      },
+      // NEW: Repeat offender with multiple strikes
+      {
+        productName: '⛔ Suspended Farmer — Repeated Quality Fraud',
+        quantity: 300, unit: 'kg', priceDeviation: 0,
+        qualityStrikes: 3, farmerReputation: 15,
+        wasteProductAttempt: true, wasteProductScore: 18,
+      },
     ];
 
     return demoTransactions.map(tx => ({
@@ -175,4 +263,3 @@ export class FraudDetector {
     })).sort((a, b) => b.riskScore - a.riskScore);
   }
 }
-

@@ -12,6 +12,9 @@ import { validateOrderQuantity } from '../../utils/sanitize.js';
 import { postOrder, updateProduct } from '../../utils/api.js';
 import { addFirestoreOrder, updateFirestoreProduct } from '../../firebase/firestore.js';
 import { notifyOrderPlaced } from '../../utils/notifications.js';
+import { QualityGuard } from '../../ai/quality-guard.js';
+import { VisualOracle } from '../../ai/visual-oracle.js';
+import { LiveCamera } from '../../components/live-camera.js';
 
 export function renderIntermediaryDashboard(container) {
   const user = store.get('currentUser');
@@ -65,6 +68,25 @@ export function renderIntermediaryDashboard(container) {
               <div class="stat-card-value">${transfers.length}</div>
               <div class="stat-card-label">Ownership Transfers</div>
             </div>
+          </div>
+
+          <!-- Quality Re-Verification Panel -->
+          <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.06), rgba(168, 85, 247, 0.06)); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div>
+                <div style="font-weight: 700; font-size: 0.88rem; color: var(--accent-green);">🔬 Quality Re-Verification (Anti-Fraud)</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Re-scan received products to detect quality fraud. Mismatch >20% → auto-dispute + escrow hold.</div>
+              </div>
+              <span class="badge badge-success" style="font-size: 0.7rem;">🛡️ Protected</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              ${allProducts.filter(p => p.farmerId !== user.id).slice(0, 3).map(p => `
+                <button class="btn btn-secondary btn-sm reverify-btn" data-product-id="${p.productId}" data-farmer-id="${p.farmerId}" data-original-score="${p.aiQualityScore || 80}" data-product-name="${p.name}" style="font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                  🔬 Re-Verify: ${p.name.substring(0, 18)}${p.name.length > 18 ? '...' : ''} (${p.aiQualityScore || '?'}%)
+                </button>
+              `).join('')}
+            </div>
+            <div id="reverify-result" style="display: none; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.15); border-radius: 8px;"></div>
           </div>
 
           <!-- zk-SNARK Privacy Toggle -->
@@ -366,4 +388,85 @@ export function renderIntermediaryDashboard(container) {
       }
     });
   }
+
+  // Re-verification button handlers
+  container.querySelectorAll('.reverify-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const productId = btn.dataset.productId;
+      const farmerId = btn.dataset.farmerId;
+      const originalScore = parseInt(btn.dataset.originalScore) || 80;
+      const productName = btn.dataset.productName;
+      const resultDiv = container.querySelector('#reverify-result');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="width: 12px; height: 12px;"></span> Re-Scanning...';
+
+      // Simulate re-verification with AI
+      // In production, this would open LiveCamera and run VisualOracle
+      await new Promise(r => setTimeout(r, 1500));
+
+      // Generate demo re-verification score (sometimes shows mismatch for demo)
+      const isFraudDemo = productName.toLowerCase().includes('demo') || Math.random() < 0.35;
+      const reVerifyScore = isFraudDemo
+        ? Math.max(10, originalScore - 25 - Math.round(Math.random() * 20))
+        : Math.max(40, originalScore - Math.round(Math.random() * 15));
+
+      const scoreDiff = originalScore - reVerifyScore;
+      const isMismatch = scoreDiff > QualityGuard.MISMATCH_TOLERANCE;
+
+      // Process through QualityGuard
+      const dispute = QualityGuard.handleQualityDispute(
+        `ORD-reverify-${Date.now()}`,
+        farmerId,
+        originalScore,
+        reVerifyScore,
+        'intermediary'
+      );
+
+      resultDiv.style.display = 'block';
+
+      if (isMismatch) {
+        resultDiv.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 1.2rem;">🚨</span>
+            <div>
+              <div style="font-weight: 700; color: #ef4444; font-size: 0.85rem;">QUALITY MISMATCH DETECTED!</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Farmer Score: ${originalScore}% → Re-verification: ${reVerifyScore}% (−${scoreDiff}%)</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+              <div style="width: ${originalScore}%; height: 100%; background: #22c55e; border-radius: 4px;"></div>
+            </div>
+            <span style="font-size: 0.7rem; color: #22c55e;">${originalScore}%</span>
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <div style="flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;">
+              <div style="width: ${reVerifyScore}%; height: 100%; background: #ef4444; border-radius: 4px;"></div>
+            </div>
+            <span style="font-size: 0.7rem; color: #ef4444;">${reVerifyScore}%</span>
+          </div>
+          <div style="padding: 8px 10px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; font-size: 0.75rem;">
+            <strong style="color: #ef4444;">Auto-Dispute Filed:</strong>
+            <span style="color: var(--text-secondary);"> ${dispute.resolution?.message || 'Dispute raised against farmer.'}</span>
+          </div>
+        `;
+        showToast(`🚨 Quality Mismatch: ${productName} dropped ${scoreDiff}% — dispute filed!`, 'error');
+      } else {
+        resultDiv.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2rem;">✅</span>
+            <div>
+              <div style="font-weight: 700; color: #22c55e; font-size: 0.85rem;">Quality Verified — No Mismatch</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Original: ${originalScore}% → Re-check: ${reVerifyScore}% (diff: ${scoreDiff}%, tolerance: ±${QualityGuard.MISMATCH_TOLERANCE}%)</div>
+            </div>
+          </div>
+        `;
+        showToast(`✅ ${productName} quality verified — within tolerance`, 'success');
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = `🔬 Re-Verify: ${productName.substring(0, 18)}${productName.length > 18 ? '...' : ''} (${originalScore}%)`;
+    });
+  });
 }

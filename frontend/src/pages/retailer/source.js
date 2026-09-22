@@ -79,6 +79,8 @@ export function renderRetailerSource(container) {
                       </span>
                       ${farmer.rating ? `<span class="badge badge-info">★ ${farmer.rating}</span>` : ''}
                       ${farmer.verified ? '<span class="badge badge-success">✅ Verified</span>' : ''}
+                      ${p.aiQualityScore ? `<span class="badge ${p.aiQualityScore >= 80 ? 'badge-success' : p.aiQualityScore >= 50 ? 'badge-warning' : 'badge-danger'}" title="AI Quality Score">🔬 ${p.aiQualityGrade || ''} (${p.aiQualityScore}%)</span>` : ''}
+                      ${p.isLiveCapture ? '<span class="badge badge-success" style="font-size: 0.65rem;">📸 GPS ✓</span>' : ''}
                     </div>
                   </div>
                   <div class="product-card-footer">

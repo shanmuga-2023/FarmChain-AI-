@@ -16,6 +16,8 @@ const defaultState = {
   transfers: [],
   payments: [],
   notifications: [],
+  farmerReputations: {},
+  qualityDisputes: [],
 };
 
 class Store {

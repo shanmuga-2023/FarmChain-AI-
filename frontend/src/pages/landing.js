@@ -93,7 +93,7 @@ export function renderLanding(container) {
         <div class="container">
           <div class="logo" style="cursor: pointer;" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
             <div class="logo-icon">${ICONS.chain}</div>
-            <span>FarmChain <span class="text-gradient">AI</span></span>
+            <span>FarmChain  <span class="text-gradient">AI</span></span>
           </div>
           <ul class="nav-links">
             <li><a href="#how-it-works" class="smooth-scroll">${i18n.t('howItWorks')}</a></li>
@@ -416,7 +416,7 @@ export function renderLanding(container) {
             </div>
           </div>
           <div class="footer-bottom">
-            <p>FarmChain AI — Blockchain AgriTech Platform</p>
+            <p>FarmChain -AI — Blockchain AgriTech Platform</p>
             <p>Solidity Contracts · AI Oracle · Multilingual · QR Trace</p>
           </div>
         </div>
