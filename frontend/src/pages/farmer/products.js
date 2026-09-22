@@ -480,7 +480,7 @@ function showAddProductModal(container) {
     try {
       const result = await LiveCamera.open({
         mode: 'verified',
-        farmerLocation: user.location ? { lat: user.lat, lng: user.lng } : null,
+        farmerLocation: user.location || null,
       });
 
       // Set preview image
@@ -734,8 +734,7 @@ function showAddProductModal(container) {
         farmerName: user.name,
         quantity,
         unit,
-        pricePerUnit: price,
-        origin: user.location,
+        origin: captureProofData?.location?.address || user.location || 'Tamil Nadu, India',
         harvestDate: harvest,
         isOrganic,
         description: description?.trim() || '',
