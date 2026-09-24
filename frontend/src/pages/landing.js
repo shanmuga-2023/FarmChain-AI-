@@ -7,7 +7,7 @@ import { store } from '../data/store.js';
 import { router } from '../utils/router.js';
 import { blockchain } from '../blockchain/core.js';
 import { i18n } from '../i18n/index.js';
-import { formatCurrency } from '../utils/helpers.js';
+import { formatCurrency, formatNumber, localizeCropName, localizeLocation, localizeUnit } from '../utils/helpers.js';
 import { fetchMandiRates } from '../utils/api.js';
 
 // SVG Icon Library (inline, utilitarian, no emojis in buttons)
@@ -27,60 +27,60 @@ const ICONS = {
 };
 
 // Demo crop datasets for live AI pricing simulator
-const PRICING_DEMO_DATA = {
+const getPricingDemoData = () => ({
   mango: {
-    name: 'Alphonso Mangoes',
-    origin: 'Ratnagiri, Maharashtra',
+    cropKey: 'crops.mango',
+    originKey: 'locations.ratnagiri',
     mspFloor: 45.00,
     qualityBonus: 5.50,
     qualityGrade: 'A+ (96% Brix Index)',
     demandBonus: 6.20,
-    demandReason: 'High festival demand (+14%)',
+    demandReasonKey: 'landing.pricing.demandReasonMango',
     storageBonus: 1.80,
     total: 58.50,
     unit: 'kg',
     hash: '0x8f2a...4b19',
   },
   rice: {
-    name: 'Sona Masoori Rice',
-    origin: 'Kurnool, Andhra Pradesh',
+    cropKey: 'crops.rice',
+    originKey: 'locations.kurnool',
     mspFloor: 23.00,
     qualityBonus: 2.50,
     qualityGrade: 'Export Grade (0% broken)',
     demandBonus: 2.80,
-    demandReason: 'Steady buffer procurement',
+    demandReasonKey: 'landing.pricing.demandReasonRice',
     storageBonus: 1.20,
     total: 29.50,
     unit: 'kg',
     hash: '0x3c71...99e4',
   },
   onion: {
-    name: 'Nashik Red Onions',
-    origin: 'Nashik, Maharashtra',
+    cropKey: 'crops.onion',
+    originKey: 'locations.nashik',
     mspFloor: 18.00,
     qualityBonus: 1.80,
     qualityGrade: 'Standard 45-55mm uniform',
     demandBonus: 3.40,
-    demandReason: 'Mandi arrival tightness (+18%)',
+    demandReasonKey: 'landing.pricing.demandReasonOnion',
     storageBonus: 0.80,
     total: 24.00,
     unit: 'kg',
     hash: '0x1d92...87a2',
   },
   turmeric: {
-    name: 'Salem Turmeric',
-    origin: 'Salem, Tamil Nadu',
+    cropKey: 'crops.turmeric',
+    originKey: 'locations.salem',
     mspFloor: 95.00,
     qualityBonus: 12.00,
     qualityGrade: 'High Curcumin (5.2% verified)',
     demandBonus: 14.50,
-    demandReason: 'Pharma export quota active',
+    demandReasonKey: 'landing.pricing.demandReasonTurmeric',
     storageBonus: 3.50,
     total: 125.00,
     unit: 'kg',
     hash: '0xaa40...16fd',
   },
-};
+});
 
 // Hero Route SVG Illustration (Draws itself on load)
 function renderHeroCustodyRoute() {
@@ -88,11 +88,11 @@ function renderHeroCustodyRoute() {
     <div class="custody-display-card">
       <div class="custody-card-header">
         <div>
-          <div class="custody-crop-title">Alphonso Mangoes · Lot #RAT-924</div>
-          <div class="custody-crop-meta">Ratnagiri Orchards → Bandra Gourmet Mart</div>
+          <div class="custody-crop-title">${i18n.t('landing.custody.cropTitle')}</div>
+          <div class="custody-crop-meta">${i18n.t('landing.custody.cropMeta')}</div>
         </div>
         <div class="stamp-seal stamp-verified">
-          ${ICONS.check} Verified Ledger
+          ${ICONS.check} ${i18n.t('landing.custody.verifiedLedger')}
         </div>
       </div>
 
@@ -108,56 +108,56 @@ function renderHeroCustodyRoute() {
           <g>
             <circle cx="40" cy="45" r="14" fill="#FAF6ED" stroke="#4A7C59" stroke-width="2"/>
             <circle cx="40" cy="45" r="6" fill="#4A7C59"/>
-            <text x="40" y="78" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" font-weight="600" fill="#2B241A">Farm</text>
-            <text x="40" y="90" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="#8A7E6B">Sep 1</text>
+            <text x="40" y="78" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Inter', sans-serif" font-size="10" font-weight="600" fill="#2B241A">${i18n.t('landing.custody.farm')}</text>
+            <text x="40" y="90" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Inter', sans-serif" font-size="8.5" fill="#8A7E6B">${i18n.t('landing.custody.sep1')}</text>
           </g>
 
           <!-- Checkpoint 2: APMC Intermediary -->
           <g>
             <circle cx="166" cy="45" r="14" fill="#FAF6ED" stroke="#B8963E" stroke-width="2"/>
             <circle cx="166" cy="45" r="6" fill="#B8963E"/>
-            <text x="166" y="78" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" font-weight="600" fill="#2B241A">Mandi</text>
-            <text x="166" y="90" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="#8A7E6B">Sep 2</text>
+            <text x="166" y="78" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Inter', sans-serif" font-size="10" font-weight="600" fill="#2B241A">${i18n.t('landing.custody.mandi')}</text>
+            <text x="166" y="90" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Inter', sans-serif" font-size="8.5" fill="#8A7E6B">${i18n.t('landing.custody.sep2')}</text>
           </g>
 
           <!-- Checkpoint 3: Retailer -->
           <g>
             <circle cx="293" cy="45" r="14" fill="#FAF6ED" stroke="#8B5E3C" stroke-width="2"/>
             <circle cx="293" cy="45" r="6" fill="#8B5E3C"/>
-            <text x="293" y="78" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" font-weight="600" fill="#2B241A">Store</text>
-            <text x="293" y="90" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="#8A7E6B">Sep 4</text>
+            <text x="293" y="78" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Inter', sans-serif" font-size="10" font-weight="600" fill="#2B241A">${i18n.t('landing.custody.store')}</text>
+            <text x="293" y="90" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Inter', sans-serif" font-size="8.5" fill="#8A7E6B">${i18n.t('landing.custody.sep4')}</text>
           </g>
 
           <!-- Checkpoint 4: Consumer Table -->
           <g>
             <circle cx="420" cy="45" r="14" fill="#FAF6ED" stroke="#6B5B7B" stroke-width="2"/>
             <circle cx="420" cy="45" r="6" fill="#6B5B7B"/>
-            <text x="420" y="78" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" font-weight="600" fill="#2B241A">Consumer</text>
-            <text x="420" y="90" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="#8A7E6B">Sep 5</text>
+            <text x="420" y="78" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Inter', sans-serif" font-size="10" font-weight="600" fill="#2B241A">${i18n.t('landing.custody.consumer')}</text>
+            <text x="420" y="90" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Inter', sans-serif" font-size="8.5" fill="#8A7E6B">${i18n.t('landing.custody.sep5')}</text>
           </g>
         </svg>
       </div>
 
       <div class="custody-steps-grid">
         <div class="custody-step-box active">
-          <div class="custody-step-stage">Stage 01</div>
-          <div class="custody-step-actor">Harvest Logged</div>
-          <div class="custody-step-time">24°C · Soil pH 6.4</div>
+          <div class="custody-step-stage">${i18n.t('landing.custody.stage1')}</div>
+          <div class="custody-step-actor">${i18n.t('landing.custody.stage1Title')}</div>
+          <div class="custody-step-time">${i18n.t('landing.custody.stage1Desc')}</div>
         </div>
         <div class="custody-step-box active">
-          <div class="custody-step-stage">Stage 02</div>
-          <div class="custody-step-actor">APMC Oracle</div>
-          <div class="custody-step-time">Quality A+ Stamped</div>
+          <div class="custody-step-stage">${i18n.t('landing.custody.stage2')}</div>
+          <div class="custody-step-actor">${i18n.t('landing.custody.stage2Title')}</div>
+          <div class="custody-step-time">${i18n.t('landing.custody.stage2Desc')}</div>
         </div>
         <div class="custody-step-box active">
-          <div class="custody-step-stage">Stage 03</div>
-          <div class="custody-step-actor">Cold Logistics</div>
-          <div class="custody-step-time">GPS Batch #4410</div>
+          <div class="custody-step-stage">${i18n.t('landing.custody.stage3')}</div>
+          <div class="custody-step-actor">${i18n.t('landing.custody.stage3Title')}</div>
+          <div class="custody-step-time">${i18n.t('landing.custody.stage3Desc')}</div>
         </div>
         <div class="custody-step-box active">
-          <div class="custody-step-stage">Stage 04</div>
-          <div class="custody-step-actor">QR Stamped</div>
-          <div class="custody-step-time">Escrow Released</div>
+          <div class="custody-step-stage">${i18n.t('landing.custody.stage4')}</div>
+          <div class="custody-step-actor">${i18n.t('landing.custody.stage4Title')}</div>
+          <div class="custody-step-time">${i18n.t('landing.custody.stage4Desc')}</div>
         </div>
       </div>
     </div>
@@ -183,12 +183,12 @@ export function renderLanding(container) {
             <span>FarmChain AI</span>
           </div>
           <ul class="nav-links">
-            <li><a href="#how-it-works" class="smooth-scroll">How It Works</a></li>
-            <li><a href="#demos-section" class="smooth-scroll">Interactive Demos</a></li>
-            <li><a href="#mandi-section" class="smooth-scroll">Mandi Board</a></li>
-            <li><a href="#roles" class="smooth-scroll">Select Role</a></li>
+            <li><a href="#how-it-works" class="smooth-scroll">${i18n.t('landing.nav.howItWorks')}</a></li>
+            <li><a href="#demos-section" class="smooth-scroll">${i18n.t('landing.nav.demos')}</a></li>
+            <li><a href="#mandi-section" class="smooth-scroll">${i18n.t('landing.nav.mandi')}</a></li>
+            <li><a href="#roles" class="smooth-scroll">${i18n.t('landing.nav.roles')}</a></li>
             <li>${i18n.renderLanguageSelector()}</li>
-            <li><a href="#roles" class="nav-cta smooth-scroll">Enter Marketplace</a></li>
+            <li><a href="#roles" class="nav-cta smooth-scroll">${i18n.t('landing.nav.enter')}</a></li>
           </ul>
         </div>
       </nav>
@@ -199,20 +199,20 @@ export function renderLanding(container) {
           <div class="hero-content">
             <div class="hero-badge">
               <span class="hero-badge-dot"></span>
-              The Trusted Produce Ledger
+              ${i18n.t('landing.hero.badge')}
             </div>
             <h1>
-              Know exactly which farm your food came from.
+              ${i18n.t('landing.hero.title')}
             </h1>
             <p class="hero-subtitle">
-              Alphonso Mangoes from Ratnagiri, verified across four custody stages, delivered to your table with tamper-proof blockchain proof and AI fair pricing.
+              ${i18n.t('landing.hero.subtitle')}
             </p>
             <div class="hero-actions">
               <a href="#roles" class="btn btn-primary smooth-scroll">
-                Enter Marketplace
+                ${i18n.t('landing.hero.enterBtn')}
               </a>
               <a href="#demos-section" class="btn btn-secondary smooth-scroll">
-                Inspect Live Demos
+                ${i18n.t('landing.hero.inspectBtn')}
               </a>
             </div>
           </div>
@@ -227,20 +227,20 @@ export function renderLanding(container) {
         <div class="container">
           <div class="stats-grid">
             <div class="stat-item">
-              <div class="stat-value">${blockCount}</div>
-              <div class="stat-label">Blocks Recorded</div>
+              <div class="stat-value">${formatNumber(blockCount)}</div>
+              <div class="stat-label">${i18n.t('landing.stats.blocks')}</div>
             </div>
             <div class="stat-item">
-              <div class="stat-value">${txCount}</div>
-              <div class="stat-label">Transactions Mined</div>
+              <div class="stat-value">${formatNumber(txCount)}</div>
+              <div class="stat-label">${i18n.t('landing.stats.txs')}</div>
             </div>
             <div class="stat-item">
-              <div class="stat-value">${products.length || 18}</div>
-              <div class="stat-label">Produce Batches Traced</div>
+              <div class="stat-value">${formatNumber(products.length || 18)}</div>
+              <div class="stat-label">${i18n.t('landing.stats.batches')}</div>
             </div>
             <div class="stat-item">
-              <div class="stat-value">${userCount || 24}</div>
-              <div class="stat-label">Verified Stakeholders</div>
+              <div class="stat-value">${formatNumber(userCount || 24)}</div>
+              <div class="stat-label">${i18n.t('landing.stats.users')}</div>
             </div>
           </div>
         </div>
@@ -250,9 +250,9 @@ export function renderLanding(container) {
       <section class="demos-section" id="demos-section">
         <div class="container">
           <div class="section-header centered">
-            <span class="section-eyebrow">Interactive Engine</span>
-            <h2>Two Verified Technologies. Demonstrated in Real Time.</h2>
-            <p>Test the transparent AI pricing equation and unroll a complete farm-to-fork chain of custody.</p>
+            <span class="section-eyebrow">${i18n.t('landing.demos.eyebrow')}</span>
+            <h2>${i18n.t('landing.demos.title')}</h2>
+            <p>${i18n.t('landing.demos.subtitle')}</p>
           </div>
 
           <div class="demos-grid">
@@ -260,19 +260,19 @@ export function renderLanding(container) {
             <div class="demo-card" id="demo-pricing-card">
               <div class="demo-card-header">
                 <div>
-                  <h3>AI Fair Pricing Engine</h3>
-                  <div style="font-size: var(--text-xs); color: var(--loam-faded);">Transparent on-chain formula benchmark</div>
+                  <h3>${i18n.t('landing.demos.pricingTitle')}</h3>
+                  <div style="font-size: var(--text-xs); color: var(--loam-faded);">${i18n.t('landing.demos.pricingSub')}</div>
                 </div>
                 <div class="stamp-seal" id="pricing-stamp-status">
-                  ${ICONS.lock} Price Locked
+                  ${ICONS.lock} ${i18n.t('landing.demos.priceLocked')}
                 </div>
               </div>
 
               <div class="demo-selector-row">
-                <button class="demo-pill-btn active" data-crop="mango">Alphonso Mango</button>
-                <button class="demo-pill-btn" data-crop="rice">Sona Masoori</button>
-                <button class="demo-pill-btn" data-crop="onion">Nashik Onion</button>
-                <button class="demo-pill-btn" data-crop="turmeric">Salem Turmeric</button>
+                <button class="demo-pill-btn active" data-crop="mango">${i18n.t('crops.mango')}</button>
+                <button class="demo-pill-btn" data-crop="rice">${i18n.t('crops.rice')}</button>
+                <button class="demo-pill-btn" data-crop="onion">${i18n.t('crops.onion')}</button>
+                <button class="demo-pill-btn" data-crop="turmeric">${i18n.t('crops.turmeric')}</button>
               </div>
 
               <div class="pricing-equation" id="pricing-equation-box">
@@ -281,7 +281,7 @@ export function renderLanding(container) {
 
               <div style="display: flex; gap: 10px; align-items: center; margin-top: auto;">
                 <button class="btn btn-primary btn-sm" id="btn-lock-price">
-                  Lock Price on Smart Contract
+                  ${i18n.t('landing.demos.lockBtn')}
                 </button>
                 <span class="stamp-hash" id="demo-lock-hash">Tx: 0x8f2a...4b19</span>
               </div>
@@ -291,44 +291,44 @@ export function renderLanding(container) {
             <div class="demo-card" id="demo-trace-card">
               <div class="demo-card-header">
                 <div>
-                  <h3>QR Traceability Simulator</h3>
-                  <div style="font-size: var(--text-xs); color: var(--loam-faded);">Physical custody record unrolled from QR scan</div>
+                  <h3>${i18n.t('landing.demos.traceTitle')}</h3>
+                  <div style="font-size: var(--text-xs); color: var(--loam-faded);">${i18n.t('landing.demos.traceSub')}</div>
                 </div>
                 <div class="stamp-seal stamp-verified">
-                  ${ICONS.scan} Tamper-Proof
+                  ${ICONS.scan} ${i18n.t('landing.demos.tamperProof')}
                 </div>
               </div>
 
               <div style="background: var(--parchment-warm); padding: 14px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-hairline); display: flex; align-items: center; justify-content: space-between;">
                 <div>
-                  <div style="font-weight: 700; font-size: var(--text-sm); color: var(--loam);">Lot #RAT-8841 · 1,200 kg</div>
-                  <div style="font-size: var(--text-xs); color: var(--loam-faded); font-family: var(--font-mono);">Ratnagiri Alphonso · Organic Certified</div>
+                  <div style="font-weight: 700; font-size: var(--text-sm); color: var(--loam);">${i18n.t('landing.demos.sampleBatch')}</div>
+                  <div style="font-size: var(--text-xs); color: var(--loam-faded); font-family: var(--font-mono);">${i18n.t('landing.demos.sampleMeta')}</div>
                 </div>
                 <button class="btn btn-secondary btn-sm" id="btn-simulate-scan">
-                  Scan QR Stamp
+                  ${i18n.t('landing.demos.scanBtn')}
                 </button>
               </div>
 
               <div class="trace-timeline-list" id="trace-timeline-container">
                 <div class="trace-item">
                   <div>
-                    <div class="trace-item-role">Farmer · Ratnagiri Groves</div>
-                    <div class="trace-item-title">Harvested & Moisture Logged</div>
-                    <div class="trace-item-meta">Sep 1, 07:30 IST | 24°C, 65% Humidity | Sensor ID #SN-441</div>
+                    <div class="trace-item-role">${i18n.t('landing.demos.stage1Actor')}</div>
+                    <div class="trace-item-title">${i18n.t('landing.demos.stage1Title')}</div>
+                    <div class="trace-item-meta">${i18n.t('landing.demos.stage1Meta')}</div>
                   </div>
                 </div>
                 <div class="trace-item">
                   <div>
-                    <div class="trace-item-role">Intermediary · Pune APMC Hub</div>
-                    <div class="trace-item-title">Quality Oracle Verified Grade A+</div>
-                    <div class="trace-item-meta">Sep 2, 11:15 IST | Purity 96% | Escrow 60% locked</div>
+                    <div class="trace-item-role">${i18n.t('landing.demos.stage2Actor')}</div>
+                    <div class="trace-item-title">${i18n.t('landing.demos.stage2Title')}</div>
+                    <div class="trace-item-meta">${i18n.t('landing.demos.stage2Meta')}</div>
                   </div>
                 </div>
                 <div class="trace-item">
                   <div>
-                    <div class="trace-item-role">Retailer · Bandra Gourmet Mart</div>
-                    <div class="trace-item-title">Batch QR Code Stamped on Carton</div>
-                    <div class="trace-item-meta">Sep 4, 16:40 IST | Shelf Unit #B12 | Hash: 0x9e12...55ad</div>
+                    <div class="trace-item-role">${i18n.t('landing.demos.stage3Actor')}</div>
+                    <div class="trace-item-title">${i18n.t('landing.demos.stage3Title')}</div>
+                    <div class="trace-item-meta">${i18n.t('landing.demos.stage3Meta')}</div>
                   </div>
                 </div>
               </div>
@@ -341,16 +341,16 @@ export function renderLanding(container) {
       <section class="how-it-works" id="how-it-works">
         <div class="container">
           <div class="section-header centered">
-            <span class="section-eyebrow">Chain of Custody</span>
-            <h2>Four Handlers. One Indelible Ledger.</h2>
-            <p>Every transaction from harvest to checkout is immutably sealed on-chain.</p>
+            <span class="section-eyebrow">${i18n.t('landing.how.eyebrow')}</span>
+            <h2>${i18n.t('landing.how.title')}</h2>
+            <p>${i18n.t('landing.how.subtitle')}</p>
           </div>
 
           <div class="steps-container">
             <div class="step-row">
               <div class="step-content">
-                <h3>01. Harvest & Fair Price Lock</h3>
-                <p>The farmer logs the harvest weight and batch data. The AI Oracle calculates a transparent price floor based on MSP guidelines, moisture readings, and real-time APMC arrivals.</p>
+                <h3>${i18n.t('landing.how.step1Title')}</h3>
+                <p>${i18n.t('landing.how.step1Desc')}</p>
               </div>
               <div class="step-marker">
                 <div class="step-number">01</div>
@@ -368,15 +368,15 @@ export function renderLanding(container) {
                 <div class="step-number">02</div>
               </div>
               <div class="step-content">
-                <h3>02. Mandi Verification & Batch Merge</h3>
-                <p>Intermediaries aggregate individual farmer lots into standardized transport batches while preserving original grower attribution and farm soil metrics on the ledger.</p>
+                <h3>${i18n.t('landing.how.step2Title')}</h3>
+                <p>${i18n.t('landing.how.step2Desc')}</p>
               </div>
             </div>
 
             <div class="step-row">
               <div class="step-content">
-                <h3>03. Retail Receipt & QR Stamping</h3>
-                <p>Retailers verify shipment temperature logs at delivery. Each retail pack is stamped with an immutable QR code linked directly to the parent batch block hash.</p>
+                <h3>${i18n.t('landing.how.step3Title')}</h3>
+                <p>${i18n.t('landing.how.step3Desc')}</p>
               </div>
               <div class="step-marker">
                 <div class="step-number">03</div>
@@ -394,8 +394,8 @@ export function renderLanding(container) {
                 <div class="step-number">04</div>
               </div>
               <div class="step-content">
-                <h3>04. Consumer Scan & Instant Escrow</h3>
-                <p>Consumers scan the packaging QR code to reveal the entire journey. Checkout triggers the smart contract escrow to immediately release fair payouts to all handlers.</p>
+                <h3>${i18n.t('landing.how.step4Title')}</h3>
+                <p>${i18n.t('landing.how.step4Desc')}</p>
               </div>
             </div>
           </div>
@@ -409,65 +409,39 @@ export function renderLanding(container) {
             <div class="mandi-header-left">
               ${ICONS.signal}
               <div>
-                <h3>APMC & eNAM Live Market Board</h3>
-                <p>Real-time oracle spot rates benchmarked across government mandis</p>
+                <h3>${i18n.t('landing.mandi.title')}</h3>
+                <p>${i18n.t('landing.mandi.subtitle')}</p>
               </div>
             </div>
-            <span class="stamp-seal stamp-verified" id="oracle-status-badge">Connected Oracle</span>
+            <span class="stamp-seal stamp-verified" id="oracle-status-badge">${i18n.t('landing.mandi.oracleBadge')}</span>
           </div>
 
           <div class="mandi-ticker-wrap">
             <div class="mandi-ticker animate" id="mandi-cards-container">
               <div class="mandi-card">
-                <div class="mandi-card-crop">Rice — Punjab APMC</div>
-                <div class="mandi-card-price">₹2,450 <span>/ quintal</span></div>
-                <div class="mandi-card-trend up">↑ ₹24.50/kg · High demand</div>
+                <div class="mandi-card-crop">${i18n.t('crops.rice')} — Punjab APMC</div>
+                <div class="mandi-card-price">${formatCurrency(2450)} <span>/ ${i18n.t('units.quintal')}</span></div>
+                <div class="mandi-card-trend up">↑ ${formatCurrency(24.50)}/${i18n.t('units.kg')} · ${i18n.t('landing.mandi.highDemand')}</div>
               </div>
               <div class="mandi-card">
-                <div class="mandi-card-crop">Red Onion — Nashik</div>
-                <div class="mandi-card-price">₹2,100 <span>/ quintal</span></div>
-                <div class="mandi-card-trend steady">→ ₹21.00/kg · Steady arrival</div>
+                <div class="mandi-card-crop">${i18n.t('crops.onion')} — ${i18n.t('locations.nashik')}</div>
+                <div class="mandi-card-price">${formatCurrency(2100)} <span>/ ${i18n.t('units.quintal')}</span></div>
+                <div class="mandi-card-trend steady">→ ${formatCurrency(21.00)}/${i18n.t('units.kg')} · ${i18n.t('landing.mandi.steadyArrival')}</div>
               </div>
               <div class="mandi-card">
-                <div class="mandi-card-crop">Sharbati Wheat — Sehore</div>
-                <div class="mandi-card-price">₹2,380 <span>/ quintal</span></div>
-                <div class="mandi-card-trend up">↑ ₹23.80/kg · Consistent</div>
+                <div class="mandi-card-crop">${i18n.t('crops.wheat')} — Sehore</div>
+                <div class="mandi-card-price">${formatCurrency(2380)} <span>/ ${i18n.t('units.quintal')}</span></div>
+                <div class="mandi-card-trend up">↑ ${formatCurrency(23.80)}/${i18n.t('units.kg')} · ${i18n.t('landing.mandi.consistent')}</div>
               </div>
               <div class="mandi-card">
-                <div class="mandi-card-crop">Turmeric — Erode APMC</div>
-                <div class="mandi-card-price">₹10,800 <span>/ quintal</span></div>
-                <div class="mandi-card-trend up">↑ ₹108.00/kg · Export surge</div>
+                <div class="mandi-card-crop">${i18n.t('crops.turmeric')} — ${i18n.t('locations.erode')} APMC</div>
+                <div class="mandi-card-price">${formatCurrency(10800)} <span>/ ${i18n.t('units.quintal')}</span></div>
+                <div class="mandi-card-trend up">↑ ${formatCurrency(108.00)}/${i18n.t('units.kg')} · ${i18n.t('landing.mandi.exportSurge')}</div>
               </div>
               <div class="mandi-card">
-                <div class="mandi-card-crop">Alphonso — Ratnagiri</div>
-                <div class="mandi-card-price">₹4,500 <span>/ crate</span></div>
-                <div class="mandi-card-trend up">↑ ₹450/doz · Prime harvest</div>
-              </div>
-              <!-- Loop duplicates -->
-              <div class="mandi-card">
-                <div class="mandi-card-crop">Rice — Punjab APMC</div>
-                <div class="mandi-card-price">₹2,450 <span>/ quintal</span></div>
-                <div class="mandi-card-trend up">↑ ₹24.50/kg · High demand</div>
-              </div>
-              <div class="mandi-card">
-                <div class="mandi-card-crop">Red Onion — Nashik</div>
-                <div class="mandi-card-price">₹2,100 <span>/ quintal</span></div>
-                <div class="mandi-card-trend steady">→ ₹21.00/kg · Steady arrival</div>
-              </div>
-              <div class="mandi-card">
-                <div class="mandi-card-crop">Sharbati Wheat — Sehore</div>
-                <div class="mandi-card-price">₹2,380 <span>/ quintal</span></div>
-                <div class="mandi-card-trend up">↑ ₹23.80/kg · Consistent</div>
-              </div>
-              <div class="mandi-card">
-                <div class="mandi-card-crop">Turmeric — Erode APMC</div>
-                <div class="mandi-card-price">₹10,800 <span>/ quintal</span></div>
-                <div class="mandi-card-trend up">↑ ₹108.00/kg · Export surge</div>
-              </div>
-              <div class="mandi-card">
-                <div class="mandi-card-crop">Alphonso — Ratnagiri</div>
-                <div class="mandi-card-price">₹4,500 <span>/ crate</span></div>
-                <div class="mandi-card-trend up">↑ ₹450/doz · Prime harvest</div>
+                <div class="mandi-card-crop">${i18n.t('crops.mango')} — ${i18n.t('locations.ratnagiri')}</div>
+                <div class="mandi-card-price">${formatCurrency(4500)} <span>/ ${i18n.t('units.crate')}</span></div>
+                <div class="mandi-card-trend up">↑ ${formatCurrency(450)}/${i18n.t('units.dozen')} · ${i18n.t('landing.mandi.primeHarvest')}</div>
               </div>
             </div>
           </div>
@@ -478,9 +452,9 @@ export function renderLanding(container) {
       <section class="roles-section" id="roles">
         <div class="container">
           <div class="section-header centered">
-            <span class="section-eyebrow">Stakeholder Access</span>
-            <h2>Select Your Portal</h2>
-            <p>Enter the ecosystem through your designated role interface.</p>
+            <span class="section-eyebrow">${i18n.t('landing.roles.eyebrow')}</span>
+            <h2>${i18n.t('landing.roles.title')}</h2>
+            <p>${i18n.t('landing.roles.subtitle')}</p>
           </div>
 
           <div class="roles-grid-four">
@@ -488,66 +462,66 @@ export function renderLanding(container) {
             <div class="role-distinct-card role-farmer-theme" id="role-farmer">
               <div>
                 <div class="role-card-top">
-                  <span class="role-tag">Producer</span>
+                  <span class="role-tag">${i18n.t('landing.roles.farmerTag')}</span>
                   <div class="role-icon-box" style="background: var(--role-farmer-bg); color: var(--role-farmer);">
                     ${ICONS.wheat}
                   </div>
                 </div>
-                <h3>Farmer</h3>
-                <p>List harvests, verify quality tests with AI vision, and lock fair pricing backed by smart escrow.</p>
+                <h3>${i18n.t('roles.farmer')}</h3>
+                <p>${i18n.t('landing.roles.farmerDesc')}</p>
               </div>
-              <button class="btn">Enter as Farmer</button>
+              <button class="btn">${i18n.t('landing.roles.farmerBtn')}</button>
             </div>
 
             <!-- Role 2: Intermediary (Grain Gold) -->
             <div class="role-distinct-card role-intermediary-theme" id="role-intermediary">
               <div>
                 <div class="role-card-top">
-                  <span class="role-tag">Aggregator</span>
+                  <span class="role-tag">${i18n.t('landing.roles.intermediaryTag')}</span>
                   <div class="role-icon-box" style="background: var(--role-intermediary-bg); color: var(--role-intermediary);">
                     ${ICONS.store}
                   </div>
                 </div>
-                <h3>Intermediary</h3>
-                <p>Source lots from verified farms, merge into batches, and forward with uninterrupted custody.</p>
+                <h3>${i18n.t('roles.intermediary')}</h3>
+                <p>${i18n.t('landing.roles.intermediaryDesc')}</p>
               </div>
-              <button class="btn">Enter as Intermediary</button>
+              <button class="btn">${i18n.t('landing.roles.intermediaryBtn')}</button>
             </div>
 
             <!-- Role 3: Retailer (Market Clay) -->
             <div class="role-distinct-card role-retailer-theme" id="role-retailer">
               <div>
                 <div class="role-card-top">
-                  <span class="role-tag">Storefront</span>
+                  <span class="role-tag">${i18n.t('landing.roles.retailerTag')}</span>
                   <div class="role-icon-box" style="background: var(--role-retailer-bg); color: var(--role-retailer);">
                     ${ICONS.cart}
                   </div>
                 </div>
-                <h3>Retailer</h3>
-                <p>Receive shipments, inspect cold-chain proofs, stamp retail QR codes, and stock verified produce.</p>
+                <h3>${i18n.t('roles.retailer')}</h3>
+                <p>${i18n.t('landing.roles.retailerDesc')}</p>
               </div>
-              <button class="btn">Enter as Retailer</button>
+              <button class="btn">${i18n.t('landing.roles.retailerBtn')}</button>
             </div>
 
             <!-- Role 4: Consumer (Table Plum) -->
             <div class="role-distinct-card role-consumer-theme" id="role-consumer">
               <div>
                 <div class="role-card-top">
-                  <span class="role-tag">Consumer</span>
+                  <span class="role-tag">${i18n.t('landing.roles.consumerTag')}</span>
                   <div class="role-icon-box" style="background: var(--role-consumer-bg); color: var(--role-consumer);">
                     ${ICONS.user}
                   </div>
                 </div>
-                <h3>Consumer</h3>
-                <p>Scan packaging QR codes, inspect the physical origin story, and buy direct with guaranteed authenticity.</p>
+                <h3>${i18n.t('roles.consumer')}</h3>
+                <p>${i18n.t('landing.roles.consumerDesc')}</p>
               </div>
-              <button class="btn">Enter as Consumer</button>
+              <button class="btn">${i18n.t('landing.roles.consumerBtn')}</button>
             </div>
           </div>
 
           <div style="text-align: center; margin-top: 24px;">
             <a href="javascript:void(0)" id="role-admin" style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--loam-faded); text-decoration: underline;">
-              Platform Inspector & Oracle Admin Access
+              ${i18n.t('landing.roles.adminLink')}
             </a>
           </div>
         </div>
@@ -562,28 +536,28 @@ export function renderLanding(container) {
                 <div class="logo-icon">${ICONS.chain}</div>
                 <span>FarmChain AI</span>
               </div>
-              <p>Physical agricultural ledger powered by EVM smart contracts, APMC mandi oracles, and tamper-proof QR custody.</p>
+              <p>${i18n.t('landing.footer.brandDesc')}</p>
             </div>
             <div class="footer-col">
-              <h4>Ledger Features</h4>
+              <h4>${i18n.t('landing.footer.col1Title')}</h4>
               <ul>
-                <li><a href="#how-it-works" class="smooth-scroll">Chain of Custody</a></li>
-                <li><a href="#demos-section" class="smooth-scroll">AI Pricing Formula</a></li>
-                <li><a href="#mandi-section" class="smooth-scroll">APMC Mandi Board</a></li>
+                <li><a href="#how-it-works" class="smooth-scroll">${i18n.t('landing.nav.howItWorks')}</a></li>
+                <li><a href="#demos-section" class="smooth-scroll">${i18n.t('landing.demos.pricingTitle')}</a></li>
+                <li><a href="#mandi-section" class="smooth-scroll">${i18n.t('landing.nav.mandi')}</a></li>
               </ul>
             </div>
             <div class="footer-col">
-              <h4>Architecture</h4>
+              <h4>${i18n.t('landing.footer.col2Title')}</h4>
               <ul>
-                <li><a href="#demos-section" class="smooth-scroll">Escrow Contracts</a></li>
-                <li><a href="#demos-section" class="smooth-scroll">Clone Detection</a></li>
-                <li><a href="#roles" class="smooth-scroll">Role Portals</a></li>
+                <li><a href="#demos-section" class="smooth-scroll">${i18n.t('landing.footer.escrowContracts')}</a></li>
+                <li><a href="#demos-section" class="smooth-scroll">${i18n.t('landing.footer.cloneDetection')}</a></li>
+                <li><a href="#roles" class="smooth-scroll">${i18n.t('landing.nav.roles')}</a></li>
               </ul>
             </div>
           </div>
           <div class="footer-bottom">
-            <p>FarmChain AI — Transparent Soil-to-Plate Custody</p>
-            <p>Solid Proofs · Fair Pricing · QR Verification</p>
+            <p>${i18n.t('landing.footer.bottom1')}</p>
+            <p>${i18n.t('landing.footer.bottom2')}</p>
           </div>
         </div>
       </footer>
@@ -592,36 +566,42 @@ export function renderLanding(container) {
 
   // Function to render AI Pricing Equation
   function updatePricingDemo(key) {
-    const data = PRICING_DEMO_DATA[key];
+    const demoData = getPricingDemoData();
+    const data = demoData[key];
     if (!data) return;
 
     const box = container.querySelector('#pricing-equation-box');
     if (!box) return;
 
+    const cropName = i18n.t(data.cropKey);
+    const origin = i18n.t(data.originKey);
+    const demandReason = i18n.t(data.demandReasonKey);
+    const unit = localizeUnit(data.unit);
+
     box.innerHTML = `
       <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline;">
-        <span style="font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: var(--loam);">${data.name}</span>
-        <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--loam-faded);">${data.origin}</span>
+        <span style="font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: var(--loam);">${cropName}</span>
+        <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--loam-faded);">${origin}</span>
       </div>
       <div class="equation-row">
-        <span class="equation-label">MSP Government Floor</span>
-        <span class="equation-val">₹${data.mspFloor.toFixed(2)} / ${data.unit}</span>
+        <span class="equation-label">${i18n.t('landing.pricing.mspFloor')}</span>
+        <span class="equation-val">${formatCurrency(data.mspFloor)} / ${unit}</span>
       </div>
       <div class="equation-row">
-        <span class="equation-label">AI Quality Bonus (${data.qualityGrade})</span>
-        <span class="equation-val plus">+₹${data.qualityBonus.toFixed(2)}</span>
+        <span class="equation-label">${i18n.t('landing.pricing.qualityBonus')} (${data.qualityGrade})</span>
+        <span class="equation-val plus">+${formatCurrency(data.qualityBonus)}</span>
       </div>
       <div class="equation-row">
-        <span class="equation-label">Regional Demand Factor (${data.demandReason})</span>
-        <span class="equation-val plus">+₹${data.demandBonus.toFixed(2)}</span>
+        <span class="equation-label">${i18n.t('landing.pricing.demandFactor')} (${demandReason})</span>
+        <span class="equation-val plus">+${formatCurrency(data.demandBonus)}</span>
       </div>
       <div class="equation-row">
-        <span class="equation-label">Moisture & Storage Index</span>
-        <span class="equation-val plus">+₹${data.storageBonus.toFixed(2)}</span>
+        <span class="equation-label">${i18n.t('landing.pricing.storageIndex')}</span>
+        <span class="equation-val plus">+${formatCurrency(data.storageBonus)}</span>
       </div>
       <div class="equation-total-row">
-        <span class="equation-total-label">Locked Transparent Price</span>
-        <span class="equation-total-price">₹${data.total.toFixed(2)} <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--loam-faded);">/ ${data.unit}</span></span>
+        <span class="equation-total-label">${i18n.t('landing.pricing.lockedPrice')}</span>
+        <span class="equation-total-price">${formatCurrency(data.total)} <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--loam-faded);">/ ${unit}</span></span>
       </div>
     `;
 
@@ -647,15 +627,15 @@ export function renderLanding(container) {
   // Lock price button interaction
   const lockBtn = container.querySelector('#btn-lock-price');
   lockBtn?.addEventListener('click', () => {
-    lockBtn.innerHTML = `Stamped ✓`;
+    lockBtn.innerHTML = `${i18n.t('landing.demos.stamped')}`;
     lockBtn.classList.add('is-success');
     const stampStatus = container.querySelector('#pricing-stamp-status');
     if (stampStatus) {
       stampStatus.classList.add('stamp-verified');
-      stampStatus.innerHTML = `✓ Block Sealed`;
+      stampStatus.innerHTML = `${i18n.t('landing.demos.blockSealed')}`;
     }
     setTimeout(() => {
-      lockBtn.innerHTML = `Lock Price on Smart Contract`;
+      lockBtn.innerHTML = i18n.t('landing.demos.lockBtn');
       lockBtn.classList.remove('is-success');
     }, 2500);
   });
@@ -663,12 +643,12 @@ export function renderLanding(container) {
   // Simulate scan button interaction
   const scanBtn = container.querySelector('#btn-simulate-scan');
   scanBtn?.addEventListener('click', () => {
-    scanBtn.innerHTML = `Verifying...`;
+    scanBtn.innerHTML = i18n.t('landing.demos.verifying');
     scanBtn.classList.add('is-loading');
 
     setTimeout(() => {
       scanBtn.classList.remove('is-loading');
-      scanBtn.innerHTML = `✓ Authenticated`;
+      scanBtn.innerHTML = i18n.t('landing.demos.authenticated');
       scanBtn.classList.add('btn-primary');
       scanBtn.classList.remove('btn-secondary');
 
@@ -677,9 +657,9 @@ export function renderLanding(container) {
         timeline.insertAdjacentHTML('beforeend', `
           <div class="trace-item" style="border-left-color: var(--semantic-success); animation: fadeIn 0.4s var(--ease-out);">
             <div>
-              <div class="trace-item-role" style="color: var(--semantic-success);">Consumer Verification Stamp ✓</div>
-              <div class="trace-item-title">Produce Authenticated via Mobile Scan</div>
-              <div class="trace-item-meta">Just now | Clean Chain Proof | Zero Counterfeits Detected</div>
+              <div class="trace-item-role" style="color: var(--semantic-success);">${i18n.t('landing.demos.consumerStamp')}</div>
+              <div class="trace-item-title">${i18n.t('landing.demos.produceAuth')}</div>
+              <div class="trace-item-meta">${i18n.t('landing.demos.cleanProof')}</div>
             </div>
           </div>
         `);
@@ -699,37 +679,6 @@ export function renderLanding(container) {
         }
       }
     });
-  });
-
-  // Language switcher handler
-  container.querySelector('#lang-selector')?.addEventListener('change', (e) => {
-    i18n.setLanguage(e.target.value);
-    renderLanding(container);
-  });
-
-  // Fetch live Mandi rates from backend API
-  fetchMandiRates().then(rates => {
-    if (!rates) return;
-    const cardsContainer = container.querySelector('#mandi-cards-container');
-    if (!cardsContainer) return;
-
-    const cropEntries = Object.entries(rates);
-    if (cropEntries.length > 0) {
-      const cardsHtml = cropEntries.map(([cropName, data]) => {
-        const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→';
-        const trendClass = data.trend === 'up' ? 'up' : data.trend === 'down' ? 'down' : 'steady';
-
-        return `
-          <div class="mandi-card">
-            <div class="mandi-card-crop">${cropName} — ${data.mandi || 'APMC Market'}</div>
-            <div class="mandi-card-price">₹${data.pricePerQuintal || (data.pricePerKg * 100)} <span>/ quintal</span></div>
-            <div class="mandi-card-trend ${trendClass}">${trendIcon} ₹${data.pricePerKg}/kg · ${data.status || 'Live Spot'}</div>
-          </div>
-        `;
-      }).join('');
-      // Duplicate for seamless ticker loop
-      cardsContainer.innerHTML = cardsHtml + cardsHtml;
-    }
   });
 
   // Role selection handlers

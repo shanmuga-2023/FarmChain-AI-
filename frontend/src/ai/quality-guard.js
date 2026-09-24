@@ -5,6 +5,7 @@
 // ============================================
 
 import { store } from '../data/store.js';
+import { i18n } from '../i18n/index.js';
 
 /**
  * QualityGuard — Multi-layer anti-fraud protection system.
@@ -43,7 +44,8 @@ export class QualityGuard {
     if (rep.strikes >= this.MAX_STRIKES) {
       return {
         eligible: false,
-        reason: `🚫 Account suspended — ${rep.strikes} quality strikes (max ${this.MAX_STRIKES})`,
+        reason: i18n.t('ai.accountSuspendedStrikes', { strikes: rep.strikes, max: this.MAX_STRIKES }) ||
+          `🚫 Account suspended — ${rep.strikes} quality strikes (max ${this.MAX_STRIKES})`,
         reputation: rep,
         strikes: rep.strikes,
       };
@@ -52,7 +54,8 @@ export class QualityGuard {
     if (rep.reputationScore < 20) {
       return {
         eligible: false,
-        reason: '🚫 Reputation too low — quality improvement required before listing',
+        reason: i18n.t('ai.reputationTooLow') ||
+          '🚫 Reputation too low — quality improvement required before listing',
         reputation: rep,
         strikes: rep.strikes,
       };
@@ -61,8 +64,8 @@ export class QualityGuard {
     return {
       eligible: true,
       reason: rep.strikes > 0
-        ? `⚠️ ${rep.strikes} strike(s) — maintain quality to avoid suspension`
-        : '✅ Good standing — eligible to list products',
+        ? (i18n.t('ai.strikesWarning', { strikes: rep.strikes }) || `⚠️ ${rep.strikes} strike(s) — maintain quality to avoid suspension`)
+        : (i18n.t('ai.goodStanding') || '✅ Good standing — eligible to list products'),
       reputation: rep,
       strikes: rep.strikes,
     };
@@ -415,24 +418,24 @@ export class QualityGuard {
     return `
       <div style="background: rgba(0,0,0,0.25); border: 1px solid ${scoreColor}33; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary, #fff);">🛡️ Farmer Trust Score</div>
+          <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary, #fff);">${i18n.t('ai.farmerTrustScore') || '🛡️ Farmer Trust Score'}</div>
           <div style="font-size: 1.2rem; font-weight: 800; color: ${scoreColor};">${rep.reputationScore}%</div>
         </div>
         <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
           <div style="width: ${rep.reputationScore}%; height: 100%; background: ${scoreColor}; border-radius: 3px; transition: width 0.5s;"></div>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted, rgba(255,255,255,0.5));">
-          <span>Strikes: ${strikeIcons}</span>
-          <span>Pass Rate: ${rep.totalChecks > 0 ? Math.round((rep.passedChecks / rep.totalChecks) * 100) : 100}%</span>
-          <span>Checks: ${rep.totalChecks}</span>
+          <span>${i18n.t('ai.strikesLabel') || 'Strikes:'} ${strikeIcons}</span>
+          <span>${i18n.t('ai.passRateLabel') || 'Pass Rate:'} ${rep.totalChecks > 0 ? Math.round((rep.passedChecks / rep.totalChecks) * 100) : 100}%</span>
+          <span>${i18n.t('ai.checksLabel') || 'Checks:'} ${rep.totalChecks}</span>
         </div>
         ${rep.strikes >= this.MAX_STRIKES ? `
           <div style="margin-top: 8px; padding: 6px 10px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); border-radius: 8px; font-size: 0.75rem; color: #ef4444; font-weight: 600;">
-            ⛔ ACCOUNT SUSPENDED — Contact admin to resolve quality disputes
+            ${i18n.t('ai.accountSuspendedNotice') || '⛔ ACCOUNT SUSPENDED — Contact admin to resolve quality disputes'}
           </div>
         ` : rep.strikes > 0 ? `
           <div style="margin-top: 8px; padding: 6px 10px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; font-size: 0.75rem; color: #f59e0b;">
-            ⚠️ ${this.MAX_STRIKES - rep.strikes} strike(s) remaining before suspension
+            ${i18n.t('ai.strikesRemainingNotice', { count: this.MAX_STRIKES - rep.strikes }) || `⚠️ ${this.MAX_STRIKES - rep.strikes} strike(s) remaining before suspension`}
           </div>
         ` : ''}
       </div>

@@ -1,10 +1,12 @@
 // ============================================
 // FarmChain AI — Streamlined 2-Event Notification Engine
 // Handles: 1. ORDER_PLACED  2. ORDER_STATUS_CHANGED
+// Localized message rendering with parameter interpolation
 // ============================================
 
 import { store } from '../data/store.js';
-import { showToast, formatCurrency, timeAgo } from './helpers.js';
+import { showToast, formatCurrency } from './helpers.js';
+import { i18n } from '../i18n/index.js';
 
 const NOTIFICATION_STORAGE_KEY = 'farmchain_notifications';
 
@@ -83,6 +85,41 @@ export function clearUserNotifications(userId, role) {
   saveNotifications(remaining);
 }
 
+/**
+ * Dynamically localize notification title and message based on active language
+ */
+export function getLocalizedNotification(n) {
+  if (!n) return { title: '', message: '' };
+
+  const details = n.details || {};
+  if (n.type === 'ORDER_PLACED') {
+    const title = i18n.t('notifications.orderPlacedTitle') || '🛍️ New Order Received!';
+    const message = i18n.t('notifications.orderPlacedDesc', {
+      buyer: details.buyerName || 'Buyer',
+      qty: `${details.rawQuantity || details.quantity || ''} ${details.unit || 'kg'}`,
+      crop: details.productName || 'produce',
+    });
+    return { title, message };
+  }
+
+  if (n.type === 'ORDER_STATUS_CHANGED') {
+    const statusKey = (details.newStatus || '').toLowerCase();
+    const statusLabel = i18n.t(`status.${statusKey}`) || details.newStatus;
+    const title = i18n.t('notifications.orderStatusTitle', { status: statusLabel }) || `Order ${statusLabel}!`;
+    const message = i18n.t('notifications.orderStatusDesc', {
+      crop: details.productName || 'crop',
+      status: statusLabel,
+      seller: details.sellerName || 'Farmer',
+    });
+    return { title, message };
+  }
+
+  return {
+    title: n.title || '',
+    message: n.message || '',
+  };
+}
+
 // ==========================================
 // EVENT 1: ORDER_PLACED
 // Triggered when any buyer places an order
@@ -100,6 +137,8 @@ export function notifyOrderPlaced(order) {
       orderId: order.orderId,
       productName: order.productName,
       quantity: `${order.quantity} ${order.unit || 'kg'}`,
+      rawQuantity: order.quantity,
+      unit: order.unit || 'kg',
       totalAmount: totalStr,
       buyerName: order.buyerName,
       sellerName: order.sellerName,
@@ -116,8 +155,8 @@ export function notifyOrderPlaced(order) {
   all.unshift(newNotification);
   saveNotifications(all);
 
-  // Instant interactive audio/visual toast alert
-  showToast(`🔔 New Order: ${order.quantity} ${order.unit || 'kg'} ${order.productName} (${totalStr})`, 'success');
+  const localized = getLocalizedNotification(newNotification);
+  showToast(localized.message || `🔔 New Order: ${order.quantity} ${order.unit || 'kg'} ${order.productName} (${totalStr})`, 'success');
 }
 
 // ==========================================
@@ -127,7 +166,8 @@ export function notifyOrderPlaced(order) {
 export function notifyOrderStatusChanged(order, newStatus) {
   const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
   const statusEmoji = newStatus === 'accepted' ? '✅' : newStatus === 'shipped' ? '🚚' : newStatus === 'delivered' ? '🎉' : '📦';
-  const statusLabel = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+  const statusKey = (newStatus || '').toLowerCase();
+  const statusLabel = i18n.t(`status.${statusKey}`) || (newStatus.charAt(0).toUpperCase() + newStatus.slice(1));
 
   const newNotification = {
     id: notificationId,
@@ -153,5 +193,6 @@ export function notifyOrderStatusChanged(order, newStatus) {
   all.unshift(newNotification);
   saveNotifications(all);
 
-  showToast(`${statusEmoji} Order Update: ${order.productName} is now ${statusLabel}`, 'info');
+  const localized = getLocalizedNotification(newNotification);
+  showToast(`${statusEmoji} ${localized.message || `Order Update: ${order.productName} is now ${statusLabel}`}`, 'info');
 }

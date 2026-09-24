@@ -108,10 +108,9 @@ router.register('/farmer/dashboard', render(renderFarmerDashboard));
 router.register('/farmer/products', render(renderFarmerProducts));
 router.register('/farmer/orders', render(renderFarmerOrders));
 router.register('/farmer/pricing', render(renderFarmerDashboard)); // reuses dashboard for now
-router.register('/farmer/blockchain', render((container) => {
-  // Redirect to admin explorer with farmer context
-  renderAdminExplorer(container);
-}));
+router.register('/farmer/blockchain', () => {
+  router.navigate('/farmer/dashboard');
+});
 
 // Intermediary routes
 router.register('/intermediary/dashboard', render(renderIntermediaryDashboard));
@@ -223,6 +222,21 @@ router.beforeEach(() => {
     setTimeout(updateNotificationBellBadge, 100);
   });
   return true;
+});
+
+// React instantly to language change without full reload
+window.addEventListener('farmchain:lang_changed', () => {
+  const currentHash = window.location.hash.slice(1) || '/';
+  if (currentHash === '/' || !store.isLoggedIn()) {
+    renderLanding(app);
+  } else {
+    router._handleRoute();
+  }
+  import('./components/notification-center.js').then(({ updateNotificationBellBadge, renderNotificationCenter }) => {
+    updateNotificationBellBadge();
+    const drawer = document.getElementById('notification-center-drawer');
+    if (drawer) renderNotificationCenter();
+  });
 });
 
 // Start the app

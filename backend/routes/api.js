@@ -6,38 +6,38 @@ import { getLiveMandiRates } from '../services/mandiData.js';
 export const apiRouter = express.Router();
 
 // ==========================================
-// Input Validation Helpers
+// Input Validation Helpers (Returns Codes & Params)
 // ==========================================
 function validateProduct(body) {
   const errors = [];
   if (!body.name || typeof body.name !== 'string' || body.name.trim().length < 2) {
-    errors.push('Product name is required and must be at least 2 characters');
+    errors.push({ code: 'ERR_NAME_REQUIRED', field: 'name' });
   }
   if (body.quantity !== undefined && (typeof body.quantity !== 'number' || body.quantity <= 0)) {
-    errors.push('Quantity must be a positive number');
+    errors.push({ code: 'ERR_QTY_INVALID', field: 'quantity' });
   }
   if (body.pricePerUnit !== undefined && (typeof body.pricePerUnit !== 'number' || body.pricePerUnit <= 0)) {
-    errors.push('Price must be a positive number');
+    errors.push({ code: 'ERR_PRICE_INVALID', field: 'pricePerUnit' });
   }
   if (body.quantity > 100000) {
-    errors.push('Quantity cannot exceed 100,000');
+    errors.push({ code: 'ERR_QTY_EXCEEDED', field: 'quantity', max: 100000 });
   }
   if (body.pricePerUnit > 1000000) {
-    errors.push('Price cannot exceed 10,00,000');
+    errors.push({ code: 'ERR_PRICE_EXCEEDED', field: 'pricePerUnit', max: 1000000 });
   }
   return errors;
 }
 
 function validateOrder(body) {
   const errors = [];
-  if (!body.productId) errors.push('Product ID is required');
-  if (!body.buyerId) errors.push('Buyer ID is required');
-  if (!body.sellerId) errors.push('Seller ID is required');
+  if (!body.productId) errors.push({ code: 'ERR_PRODUCT_ID_REQUIRED', field: 'productId' });
+  if (!body.buyerId) errors.push({ code: 'ERR_BUYER_ID_REQUIRED', field: 'buyerId' });
+  if (!body.sellerId) errors.push({ code: 'ERR_SELLER_ID_REQUIRED', field: 'sellerId' });
   if (body.quantity !== undefined && (typeof body.quantity !== 'number' || body.quantity <= 0)) {
-    errors.push('Quantity must be a positive number');
+    errors.push({ code: 'ERR_QTY_INVALID', field: 'quantity' });
   }
   if (body.totalAmount !== undefined && (typeof body.totalAmount !== 'number' || body.totalAmount <= 0)) {
-    errors.push('Total amount must be a positive number');
+    errors.push({ code: 'ERR_TOTAL_INVALID', field: 'totalAmount' });
   }
   return errors;
 }
@@ -84,7 +84,7 @@ apiRouter.get('/', (req, res) => {
 // Health Check
 // ==========================================
 apiRouter.get('/health', (req, res) => {
-  res.json({ status: 'ok', time: new Date().toISOString(), version: '2.0.0-enterprise' });
+  res.json({ status: 'ok', code: 'STATUS_HEALTHY', time: new Date().toISOString(), version: '2.0.0-enterprise' });
 });
 
 // ==========================================
@@ -104,7 +104,7 @@ apiRouter.get('/products', (req, res) => {
 apiRouter.post('/products', (req, res) => {
   const errors = validateProduct(req.body);
   if (errors.length > 0) {
-    return res.status(400).json({ success: false, errors });
+    return res.status(400).json({ success: false, code: 'VALIDATION_FAILED', errors });
   }
 
   const sanitized = sanitizeBody(req.body);
@@ -116,28 +116,28 @@ apiRouter.post('/products', (req, res) => {
   };
   db.addItem('products', newProduct);
 
-  // Broadcast to WebSockets
+  // Broadcast to WebSockets with standard code
   if (req.app.get('io')) {
-    req.app.get('io').emit('product_added', newProduct);
+    req.app.get('io').emit('product_added', { code: 'PRODUCT_ADDED', data: newProduct });
   }
 
-  res.status(201).json({ success: true, data: newProduct });
+  res.status(201).json({ success: true, code: 'PRODUCT_CREATED', data: newProduct });
 });
 
 apiRouter.get('/products/:productId', (req, res) => {
   const { productId } = req.params;
   const product = db.findItem('products', p => p.productId === productId);
   if (!product) {
-    return res.status(404).json({ success: false, message: 'Product not found' });
+    return res.status(404).json({ success: false, code: 'PRODUCT_NOT_FOUND', params: { productId } });
   }
-  res.json({ success: true, data: product });
+  res.json({ success: true, code: 'PRODUCT_FOUND', data: product });
 });
 
 apiRouter.patch('/products/:productId', (req, res) => {
   const { productId } = req.params;
   const product = db.findItem('products', p => p.productId === productId);
   if (!product) {
-    return res.status(404).json({ success: false, message: 'Product not found' });
+    return res.status(404).json({ success: false, code: 'PRODUCT_NOT_FOUND', params: { productId } });
   }
 
   const updates = sanitizeBody(req.body);
@@ -151,7 +151,7 @@ apiRouter.patch('/products/:productId', (req, res) => {
     };
     const errors = validateProduct(checkBody);
     if (errors.length > 0) {
-      return res.status(400).json({ success: false, errors });
+      return res.status(400).json({ success: false, code: 'VALIDATION_FAILED', errors });
     }
   }
 
@@ -167,30 +167,30 @@ apiRouter.patch('/products/:productId', (req, res) => {
 
   // Broadcast to WebSockets
   if (req.app.get('io')) {
-    req.app.get('io').emit('product_updated', updatedProduct);
+    req.app.get('io').emit('product_updated', { code: 'PRODUCT_UPDATED', data: updatedProduct });
   }
 
-  res.json({ success: true, data: updatedProduct });
+  res.json({ success: true, code: 'PRODUCT_UPDATED', data: updatedProduct });
 });
 
 apiRouter.delete('/products/:productId', (req, res) => {
   const { productId } = req.params;
   const product = db.findItem('products', p => p.productId === productId);
   if (!product) {
-    return res.status(404).json({ success: false, message: 'Product not found' });
+    return res.status(404).json({ success: false, code: 'PRODUCT_NOT_FOUND', params: { productId } });
   }
 
   const removed = db.removeItem('products', p => p.productId === productId);
   if (!removed) {
-    return res.status(500).json({ success: false, message: 'Failed to delete product' });
+    return res.status(500).json({ success: false, code: 'PRODUCT_DELETE_FAILED', params: { productId } });
   }
 
   // Broadcast to WebSockets
   if (req.app.get('io')) {
-    req.app.get('io').emit('product_deleted', { productId });
+    req.app.get('io').emit('product_deleted', { code: 'PRODUCT_DELETED', productId });
   }
 
-  res.json({ success: true, message: 'Product deleted successfully', productId });
+  res.json({ success: true, code: 'PRODUCT_DELETED', productId });
 });
 
 // ==========================================
@@ -203,7 +203,7 @@ apiRouter.get('/orders', (req, res) => {
 apiRouter.post('/orders', (req, res) => {
   const errors = validateOrder(req.body);
   if (errors.length > 0) {
-    return res.status(400).json({ success: false, errors });
+    return res.status(400).json({ success: false, code: 'VALIDATION_FAILED', errors });
   }
 
   const sanitized = sanitizeBody(req.body);
@@ -216,17 +216,16 @@ apiRouter.post('/orders', (req, res) => {
   db.addItem('orders', newOrder);
 
   if (req.app.get('io')) {
-    req.app.get('io').emit('order_created', newOrder);
+    req.app.get('io').emit('order_created', { code: 'ORDER_PLACED', data: newOrder });
   }
 
-  res.status(201).json(newOrder);
+  res.status(201).json({ success: true, code: 'ORDER_PLACED', data: newOrder });
 });
 
 apiRouter.patch('/orders/:orderId', (req, res) => {
   const { orderId } = req.params;
   const updates = sanitizeBody(req.body);
 
-  // Only allow status and specific fields to be updated
   const allowedFields = ['status', 'shippedAt', 'deliveredAt', 'acceptedAt'];
   const filteredUpdates = {};
   for (const key of allowedFields) {
@@ -236,10 +235,10 @@ apiRouter.patch('/orders/:orderId', (req, res) => {
   db.updateItem('orders', o => o.orderId === orderId, filteredUpdates);
 
   if (req.app.get('io')) {
-    req.app.get('io').emit('order_updated', { orderId, updates: filteredUpdates });
+    req.app.get('io').emit('order_updated', { code: 'ORDER_STATUS_CHANGED', orderId, updates: filteredUpdates });
   }
 
-  res.json({ success: true, orderId, updates: filteredUpdates });
+  res.json({ success: true, code: 'ORDER_STATUS_CHANGED', orderId, updates: filteredUpdates });
 });
 
 // ==========================================
@@ -257,7 +256,7 @@ apiRouter.post('/certificates', (req, res) => {
     issuedAt: Date.now(),
   };
   db.addItem('certificates', newCert);
-  res.status(201).json(newCert);
+  res.status(201).json({ success: true, code: 'CERTIFICATE_ISSUED', data: newCert });
 });
 
 // ==========================================
@@ -271,7 +270,7 @@ apiRouter.get('/users', (req, res) => {
 apiRouter.post('/users', (req, res) => {
   const user = sanitizeBody(req.body);
   if (!user.id && !user.email) {
-    return res.status(400).json({ error: 'User id or email is required' });
+    return res.status(400).json({ success: false, code: 'ERR_USER_ID_OR_EMAIL_REQUIRED' });
   }
   const existingUsers = db.get('users');
   const userList = Array.isArray(existingUsers) ? existingUsers : Object.values(existingUsers || {});
@@ -284,10 +283,10 @@ apiRouter.post('/users', (req, res) => {
   db.set('users', userList);
 
   if (req.app.get('io')) {
-    req.app.get('io').emit('user_registered', user);
+    req.app.get('io').emit('user_registered', { code: 'USER_REGISTERED', data: user });
   }
 
-  res.status(201).json(user);
+  res.status(201).json({ success: true, code: 'USER_REGISTERED', data: user });
 });
 
 // ==========================================
@@ -302,10 +301,10 @@ apiRouter.post('/blocks', (req, res) => {
   db.addItem('blocks', block);
 
   if (req.app.get('io')) {
-    req.app.get('io').emit('block_mined', block);
+    req.app.get('io').emit('block_mined', { code: 'BLOCK_MINED', data: block });
   }
 
-  res.status(201).json({ success: true, blockIndex: block.index });
+  res.status(201).json({ success: true, code: 'BLOCK_MINED', blockIndex: block.index });
 });
 
 // ==========================================
@@ -316,7 +315,7 @@ const activeOtps = new Map();
 apiRouter.post('/send-otp', async (req, res) => {
   const { phone } = req.body;
   if (!phone || typeof phone !== 'string' || phone.trim().length < 10) {
-    return res.status(400).json({ success: false, error: 'Valid phone number is required' });
+    return res.status(400).json({ success: false, code: 'ERR_INVALID_PHONE' });
   }
 
   const cleanPhone = phone.trim().replace(/\s+/g, '');
@@ -325,55 +324,53 @@ apiRouter.post('/send-otp', async (req, res) => {
   activeOtps.set(cleanPhone, {
     otp,
     createdAt: Date.now(),
-    expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
+    expiresAt: Date.now() + 5 * 60 * 1000,
   });
 
   console.log(`\n📱 [SMS GATEWAY] Dispatching OTP to ${cleanPhone}`);
   console.log(`💬 Message: "Your FarmChain AI smart wallet verification code is ${otp}. Valid for 5 minutes."\n`);
 
-  // Broadcast to WebSockets for live device sync
   if (req.app.get('io')) {
-    req.app.get('io').emit('otp_dispatched', { phone: cleanPhone, timestamp: Date.now() });
+    req.app.get('io').emit('otp_dispatched', { code: 'OTP_SENT', phone: cleanPhone, timestamp: Date.now() });
   }
 
   res.json({
     success: true,
+    code: 'OTP_SENT',
     phone: cleanPhone,
     expiresIn: 300,
-    message: `OTP sent successfully to ${cleanPhone}`,
   });
 });
 
 apiRouter.post('/verify-otp', (req, res) => {
   const { phone, otp } = req.body;
   if (!phone || !otp) {
-    return res.status(400).json({ success: false, error: 'Phone and OTP are required' });
+    return res.status(400).json({ success: false, code: 'ERR_PHONE_AND_OTP_REQUIRED' });
   }
 
   const cleanPhone = phone.trim().replace(/\s+/g, '');
   const record = activeOtps.get(cleanPhone);
 
   if (!record) {
-    return res.status(400).json({ success: false, error: 'No OTP request found for this number. Please request a new OTP.' });
+    return res.status(400).json({ success: false, code: 'ERR_OTP_NOT_FOUND' });
   }
 
   if (Date.now() > record.expiresAt) {
     activeOtps.delete(cleanPhone);
-    return res.status(400).json({ success: false, error: 'OTP has expired. Please request a new one.' });
+    return res.status(400).json({ success: false, code: 'ERR_OTP_EXPIRED' });
   }
 
   if (record.otp !== otp.trim()) {
-    return res.status(400).json({ success: false, error: 'Invalid verification code. Please check and try again.' });
+    return res.status(400).json({ success: false, code: 'ERR_OTP_INVALID' });
   }
 
-  // Verified successfully - consume OTP
   activeOtps.delete(cleanPhone);
 
   res.json({
     success: true,
+    code: 'OTP_VERIFIED',
     phone: cleanPhone,
     verified: true,
-    message: 'Phone number verified successfully',
   });
 });
 
@@ -384,7 +381,7 @@ apiRouter.post('/reset', (req, res) => {
   db.reset();
   activeOtps.clear();
   if (req.app.get('io')) {
-    req.app.get('io').emit('platform_reset', {});
+    req.app.get('io').emit('platform_reset', { code: 'PLATFORM_RESET' });
   }
-  res.json({ success: true, message: 'Platform state reset successfully' });
+  res.json({ success: true, code: 'PLATFORM_RESET' });
 });

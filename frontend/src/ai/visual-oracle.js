@@ -5,6 +5,8 @@
 // Prevents GIGO (Garbage In, Garbage Out) attacks
 // ============================================
 
+import { i18n } from '../i18n/index.js';
+
 /**
  * AI Visual Oracle — Analyzes crop images in-browser using MobileNet V2
  * to produce an objective quality score before data goes on-chain.
@@ -322,12 +324,15 @@ export class VisualOracle {
     const avgVal = (average * 50).toFixed(1);
     const goodVal = (good * 100).toFixed(1);
 
+    const allowedText = i18n.t('ai.productAllowed') || 'PRODUCT ALLOWED ✅';
+    const blockedText = i18n.t('ai.productBlocked') || 'PRODUCT BLOCKED 🚫';
+
     return {
-      formula: `Quality Score = P(Poor)×0 + P(Average)×50 + P(Good)×100`,
+      formula: i18n.t('ai.formulaTitle') || `Quality Score = P(Poor)×0 + P(Average)×50 + P(Good)×100`,
       calculation: `= ${poorPart} + ${avgPart} + ${goodPart}`,
       breakdown: `= ${poorVal} + ${avgVal} + ${goodVal}`,
       result: `= ${score}%`,
-      threshold: `${score} ${score >= 40 ? '≥' : '<'} 40 → ${score >= 40 ? 'PRODUCT ALLOWED ✅' : 'PRODUCT BLOCKED 🚫'}`,
+      threshold: `${score} ${score >= 40 ? '≥' : '<'} 40 → ${score >= 40 ? allowedText : blockedText}`,
     };
   }
 

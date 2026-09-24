@@ -1,11 +1,12 @@
 // ============================================
 // FarmChain AI — Consumer Marketplace
 // Browse products, view pricing, place orders
+// Fully Localized (en, hi, ta, te)
 // ============================================
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, getCropEmoji, showToast, createModal, closeModal, getStatusBadge } from '../../utils/helpers.js';
+import { formatCurrency, getCropEmoji, showToast, createModal, closeModal, getStatusBadge, localizeCropName, localizeUnit, localizeCategory } from '../../utils/helpers.js';
 import { FairPricePredictor } from '../../ai/price-predictor.js';
 import { Marketplace } from '../../blockchain/contracts.js';
 import { router } from '../../utils/router.js';
@@ -13,6 +14,7 @@ import { escapeHtml, validateOrderQuantity } from '../../utils/sanitize.js';
 import { postOrder, updateProduct } from '../../utils/api.js';
 import { addFirestoreOrder, updateFirestoreProduct } from '../../firebase/firestore.js';
 import { notifyOrderPlaced } from '../../utils/notifications.js';
+import { i18n } from '../../i18n/index.js';
 
 export function renderConsumerMarketplace(container) {
   const user = store.get('currentUser');
@@ -29,28 +31,28 @@ export function renderConsumerMarketplace(container) {
         <div class="topbar">
           <div class="topbar-left">
             <div>
-              <div class="topbar-title">Marketplace 🛍️</div>
-              <div class="topbar-breadcrumb"><span>Consumer</span> <span>›</span> <span>Browse Products</span></div>
+              <div class="topbar-title">${i18n.t('consumer.marketplaceTitle') || 'Marketplace 🛍️'}</div>
+              <div class="topbar-breadcrumb"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('consumer.browseProducts') || 'Browse Products'}</span></div>
             </div>
           </div>
           <div class="topbar-right">
             <div class="topbar-search">
               <span class="topbar-search-icon">🔍</span>
-              <input type="text" placeholder="Search products..." id="search-input" />
+              <input type="text" placeholder="${i18n.t('common.searchProducts') || 'Search products...'}" id="search-input" />
             </div>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>Logout</span></button>
+            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
           </div>
         </div>
 
         <div class="page-content">
           <!-- Filters -->
           <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button class="tab active filter-tab" data-category="all">All</button>
-            <button class="tab filter-tab" data-category="Grains">🌾 Grains</button>
-            <button class="tab filter-tab" data-category="Vegetables">🥬 Vegetables</button>
-            <button class="tab filter-tab" data-category="Fruits">🍎 Fruits</button>
-            <button class="tab filter-tab" data-category="Spices">🌶️ Spices</button>
-            <button class="tab filter-tab" data-category="organic">🌿 Organic Only</button>
+            <button class="tab active filter-tab" data-category="all">${i18n.t('common.all') || 'All'}</button>
+            <button class="tab filter-tab" data-category="Grains">🌾 ${i18n.t('crops.grains') || 'Grains'}</button>
+            <button class="tab filter-tab" data-category="Vegetables">🥬 ${i18n.t('crops.vegetables') || 'Vegetables'}</button>
+            <button class="tab filter-tab" data-category="Fruits">🍎 ${i18n.t('crops.fruits') || 'Fruits'}</button>
+            <button class="tab filter-tab" data-category="Spices">🌶️ ${i18n.t('crops.spices') || 'Spices'}</button>
+            <button class="tab filter-tab" data-category="organic">🌿 ${i18n.t('common.organicOnly') || 'Organic Only'}</button>
           </div>
 
           <!-- Product Grid -->
@@ -58,36 +60,38 @@ export function renderConsumerMarketplace(container) {
             ${products.map(p => {
               const productCerts = certs.filter(c => c.productId === p.productId);
               const prediction = FairPricePredictor.predict(p.name.split(' ').pop(), p.quantity, p.pricePerUnit);
+              const locCrop = localizeCropName(p.name);
+              const locUnit = localizeUnit(p.unit);
 
               return `
                 <div class="product-card marketplace-item" data-category="${p.category}" data-organic="${p.isOrganic}" data-name="${p.name.toLowerCase()}">
                   <div class="product-card-image">
                     ${p.emoji || getCropEmoji(p.name)}
-                    ${p.isOrganic ? '<span class="product-card-badge badge-organic">🌿 Organic</span>' : ''}
-                    ${productCerts.length > 0 ? '<span class="product-card-badge badge-verified" style="top: 40px;">✅ Certified</span>' : ''}
+                    ${p.isOrganic ? `<span class="product-card-badge badge-organic">🌿 ${i18n.t('common.organic') || 'Organic'}</span>` : ''}
+                    ${productCerts.length > 0 ? `<span class="product-card-badge badge-verified" style="top: 40px;">✅ ${i18n.t('common.certified') || 'Certified'}</span>` : ''}
                   </div>
                   <div class="product-card-body">
-                    <div class="product-card-name">${p.name}</div>
-                    <div class="product-card-origin">📍 ${p.origin} · By ${p.farmerName}</div>
+                    <div class="product-card-name">${escapeHtml(locCrop)}</div>
+                    <div class="product-card-origin">📍 ${escapeHtml(p.origin)} · ${i18n.t('common.byAuthor', { author: escapeHtml(p.farmerName) }) || `By ${escapeHtml(p.farmerName)}`}</div>
                     <div style="display: flex; align-items: baseline; gap: 8px;">
                       <div class="product-card-price">${formatCurrency(p.pricePerUnit)}</div>
-                      <span class="product-card-unit">per ${p.unit}</span>
+                      <span class="product-card-unit">${i18n.t('common.perUnit', { unit: locUnit }) || `per ${locUnit}`}</span>
                     </div>
                     <div style="margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap;">
                       <span class="badge ${prediction.isFairlyPriced ? 'badge-success' : 'badge-warning'}">
-                        🤖 ${prediction.isFairlyPriced ? 'Fair Price' : 'Above Market'}
+                        🤖 ${prediction.isFairlyPriced ? (i18n.t('ai.fairPrice') || 'Fair Price') : (i18n.t('ai.aboveMarket') || 'Above Market')}
                       </span>
                       ${productCerts.map(c => `
                         <span class="badge badge-info">${c.certType === 'organic' ? '🌿' : '✅'} ${c.grade}</span>
                       `).join('')}
                     </div>
                     <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
-                      ${p.description ? p.description.slice(0, 100) + '...' : ''}
+                      ${p.description ? escapeHtml(p.description.slice(0, 100)) + '...' : ''}
                     </p>
                   </div>
                   <div class="product-card-footer">
-                    <button class="btn btn-secondary btn-sm trace-btn" data-product-id="${p.productId}">🔍 Trace</button>
-                    <button class="btn btn-primary btn-sm buy-btn" data-product='${JSON.stringify(p)}'>🛒 Buy</button>
+                    <button class="btn btn-secondary btn-sm trace-btn" data-product-id="${p.productId}">🔍 ${i18n.t('consumer.traceBtn') || 'Trace'}</button>
+                    <button class="btn btn-primary btn-sm buy-btn" data-product='${JSON.stringify(p)}'>🛒 ${i18n.t('consumer.buyBtn') || 'Buy'}</button>
                   </div>
                 </div>
               `;
@@ -138,46 +142,48 @@ export function renderConsumerMarketplace(container) {
     btn.addEventListener('click', () => {
       const product = JSON.parse(btn.dataset.product);
       const defaultQty = Math.min(5, product.quantity);
+      const locCrop = localizeCropName(product.name);
+      const locUnit = localizeUnit(product.unit);
 
-      createModal('Purchase Product', `
+      createModal(i18n.t('consumer.purchaseModalTitle') || 'Purchase Product', `
         <div style="text-align: center; margin-bottom: 16px;">
           <span style="font-size: 3rem;">${product.emoji || getCropEmoji(product.name)}</span>
-          <h3 style="margin-top: 8px;">${escapeHtml(product.name)}</h3>
-          <p style="color: var(--text-muted);">From ${escapeHtml(product.farmerName)} · ${escapeHtml(product.origin)}</p>
+          <h3 style="margin-top: 8px;">${escapeHtml(locCrop)}</h3>
+          <p style="color: var(--text-muted);">${i18n.t('consumer.purchaseFrom', { farmer: escapeHtml(product.farmerName), origin: escapeHtml(product.origin) }) || `From ${escapeHtml(product.farmerName)} · ${escapeHtml(product.origin)}`}</p>
         </div>
         <div class="form-group">
-          <label class="form-label">Quantity (${escapeHtml(product.unit)}) — Max: ${product.quantity}</label>
+          <label class="form-label">${i18n.t('consumer.quantityLabel', { unit: locUnit, max: product.quantity }) || `Quantity (${locUnit}) — Max: ${product.quantity}`}</label>
           <input type="number" class="form-input" id="buy-quantity" value="${defaultQty}" min="1" max="${product.quantity}" />
         </div>
         <div class="price-breakdown" style="margin-top: 16px;" id="price-breakdown-container">
           <div class="price-row">
-            <span class="price-row-label">🌾 Farmer receives (60%)</span>
+            <span class="price-row-label">${i18n.t('consumer.splitFarmer') || '🌾 Farmer receives (60%)'}</span>
             <span class="price-row-value price-farmer" style="color: var(--accent-green);">${formatCurrency(product.pricePerUnit * defaultQty * 0.6)}</span>
           </div>
           <div class="price-row">
-            <span class="price-row-label">🏪 Intermediary (20%)</span>
+            <span class="price-row-label">${i18n.t('consumer.splitIntermediary') || '🏪 Intermediary (20%)'}</span>
             <span class="price-row-value price-intermediary">${formatCurrency(product.pricePerUnit * defaultQty * 0.2)}</span>
           </div>
           <div class="price-row">
-            <span class="price-row-label">🛒 Retailer (15%)</span>
+            <span class="price-row-label">${i18n.t('consumer.splitRetailer') || '🛒 Retailer (15%)'}</span>
             <span class="price-row-value price-retailer">${formatCurrency(product.pricePerUnit * defaultQty * 0.15)}</span>
           </div>
           <div class="price-row">
-            <span class="price-row-label">⛓️ Platform fee (5%)</span>
+            <span class="price-row-label">${i18n.t('consumer.splitPlatform') || '⛓️ Platform fee (5%)'}</span>
             <span class="price-row-value price-platform">${formatCurrency(product.pricePerUnit * defaultQty * 0.05)}</span>
           </div>
           <div class="price-row total" id="buy-total-row">
-            <span class="price-row-label">Total</span>
+            <span class="price-row-label">${i18n.t('common.total') || 'Total'}</span>
             <span class="price-row-value">${formatCurrency(product.pricePerUnit * defaultQty)}</span>
           </div>
         </div>
         <div class="ai-insight-card" style="background: var(--accent-green-dim); border-color: rgba(34,197,94,0.2); margin-top: 16px;">
-          <div class="ai-insight-title">🤖 AI Transparency Score</div>
-          <div class="ai-insight-desc">This purchase is fully traceable on the blockchain. 60% of your payment goes directly to the farmer.</div>
+          <div class="ai-insight-title">${i18n.t('consumer.aiTransparencyTitle') || '🤖 AI Transparency Score'}</div>
+          <div class="ai-insight-desc">${i18n.t('consumer.aiTransparencyDesc') || 'This purchase is fully traceable on the blockchain. 60% of your payment goes directly to the farmer.'}</div>
         </div>
       `, `
-        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">Cancel</button>
-        <button class="btn btn-primary btn-sm" id="confirm-buy-btn">💳 Pay & Record on Blockchain</button>
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">${i18n.t('common.cancel') || 'Cancel'}</button>
+        <button class="btn btn-primary btn-sm" id="confirm-buy-btn">💳 ${i18n.t('consumer.confirmPayBtn') || 'Pay & Record on Blockchain'}</button>
       `);
 
       // Dynamic price breakdown update on quantity change
@@ -220,7 +226,7 @@ export function renderConsumerMarketplace(container) {
 
         const result = await Marketplace.placeOrder(orderData);
 
-        // Use blockchain-returned orderId (fixes ID mismatch)
+        // Use blockchain-returned orderId
         const order = {
           ...orderData,
           orderId: result.transaction.orderId,
@@ -251,7 +257,7 @@ export function renderConsumerMarketplace(container) {
         notifyOrderPlaced(order);
 
         closeModal();
-        showToast('Order placed! Payment recorded on blockchain ⛓️', 'success');
+        showToast(i18n.t('consumer.orderSuccessToast') || 'Order placed! Payment recorded on blockchain ⛓️', 'success');
         renderConsumerMarketplace(container);
       });
     });

@@ -3,6 +3,7 @@
 
 import { web3Service } from '../web3/provider.js';
 import { truncateHash, showToast } from '../utils/helpers.js';
+import { i18n } from '../i18n/index.js';
 
 export function renderWalletConnectButton(containerId) {
   const container = document.getElementById(containerId);
@@ -22,7 +23,7 @@ export function renderWalletConnectButton(containerId) {
     } else {
       container.innerHTML = `
         <button class="btn btn-secondary btn-sm" id="connect-metamask-btn" style="display: flex; align-items: center; gap: 6px; padding: 5px 12px; font-size: 0.8rem; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.08);">
-          <span>🦊</span> Connect MetaMask
+          <span>🦊</span> ${i18n.t('wallet.connectMetaMask')}
         </button>
       `;
 
@@ -30,10 +31,10 @@ export function renderWalletConnectButton(containerId) {
         try {
           await web3Service.connect();
           await web3Service.switchToSepolia();
-          showToast('MetaMask connected to Sepolia Testnet! 🦊', 'success');
+          showToast(`MetaMask ${i18n.t('wallet.connectedSepolia')} 🦊`, 'success');
           updateUI();
         } catch (error) {
-          showToast(error.message || 'Failed to connect MetaMask', 'error');
+          showToast(error.message || i18n.t('wallet.connectFailed'), 'error');
         }
       });
     }

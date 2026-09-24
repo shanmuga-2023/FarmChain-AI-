@@ -4,6 +4,8 @@
 // Prevents photocopy / clone attacks on QR labels
 // ============================================
 
+import { i18n } from '../i18n/index.js';
+
 /**
  * Geo-Velocity Fraud Engine
  *
@@ -69,7 +71,7 @@ export class GeoVelocityChecker {
     if (history.length === 0) {
       return {
         verdict: 'FIRST_SCAN',
-        message: 'First scan recorded — spatial-temporal tracking initiated',
+        message: i18n.t('ai.geoFirstScan') || 'First scan recorded — spatial-temporal tracking initiated',
         velocity: 0,
         distance: 0,
         timeDelta: 0,
@@ -259,18 +261,21 @@ export class GeoVelocityChecker {
   static _getVerdictMessage(verdict, velocity, distance) {
     switch (verdict) {
       case 'CLONE_DETECTED':
-        return `🚨 CYBERSECURITY ALERT: QR Clone Detected! Velocity ${velocity.toLocaleString()} km/h across ${distance.toLocaleString()} km — physically impossible. Produce is likely counterfeit.`;
+        return i18n.t('ai.geoCloneAlert', { velocity: velocity.toLocaleString(), distance: distance.toLocaleString() }) ||
+          `🚨 CYBERSECURITY ALERT: QR Clone Detected! Velocity ${velocity.toLocaleString()} km/h across ${distance.toLocaleString()} km — physically impossible. Produce is likely counterfeit.`;
       case 'SUSPICIOUS':
-        return `⚠️ Suspicious scan pattern detected. Velocity ${velocity.toLocaleString()} km/h suggests possible air transport or QR sharing.`;
+        return i18n.t('ai.geoSuspicious', { velocity: velocity.toLocaleString() }) ||
+          `⚠️ Suspicious scan pattern detected. Velocity ${velocity.toLocaleString()} km/h suggests possible air transport or QR sharing.`;
       default:
-        return `✅ Spatial-Temporal Verified. Scan velocity ${velocity.toLocaleString()} km/h within normal range.`;
+        return i18n.t('ai.geoSafe', { velocity: velocity.toLocaleString() }) ||
+          `✅ Spatial-Temporal Verified. Scan velocity ${velocity.toLocaleString()} km/h within normal range.`;
     }
   }
 
   static _formatTimeDelta(ms) {
-    if (ms < 60000) return `${Math.round(ms / 1000)} seconds`;
-    if (ms < 3600000) return `${Math.round(ms / 60000)} minutes`;
-    return `${(ms / 3600000).toFixed(1)} hours`;
+    if (ms < 60000) return i18n.t('time.seconds', { count: Math.round(ms / 1000) }) || `${Math.round(ms / 1000)} seconds`;
+    if (ms < 3600000) return i18n.t('time.minutes', { count: Math.round(ms / 60000) }) || `${Math.round(ms / 60000)} minutes`;
+    return i18n.t('time.hours', { count: (ms / 3600000).toFixed(1) }) || `${(ms / 3600000).toFixed(1)} hours`;
   }
 
   static _isHistorySuspicious(history) {

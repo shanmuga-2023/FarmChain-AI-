@@ -6,6 +6,8 @@
 // + Quality Mismatch & Repeat Offender Detection
 // ============================================
 
+import { i18n } from '../i18n/index.js';
+
 export class FraudDetector {
   static analyzeTransaction(transaction) {
     let riskScore = 0;
@@ -17,14 +19,16 @@ export class FraudDetector {
       flags.push({
         type: 'PRICE_ANOMALY',
         severity: 'high',
-        message: `Price deviates ${Math.abs(transaction.priceDeviation).toFixed(0)}% from market average`,
+        message: i18n.t('ai.flagPriceAnomaly', { percent: Math.abs(transaction.priceDeviation).toFixed(0) }) ||
+          `Price deviates ${Math.abs(transaction.priceDeviation).toFixed(0)}% from market average`,
       });
     } else if (transaction.priceDeviation && Math.abs(transaction.priceDeviation) > 20) {
       riskScore += 15;
       flags.push({
         type: 'PRICE_WARNING',
         severity: 'medium',
-        message: `Price deviates ${Math.abs(transaction.priceDeviation).toFixed(0)}% from market average`,
+        message: i18n.t('ai.flagPriceWarning', { percent: Math.abs(transaction.priceDeviation).toFixed(0) }) ||
+          `Price deviates ${Math.abs(transaction.priceDeviation).toFixed(0)}% from market average`,
       });
     }
 
@@ -34,14 +38,16 @@ export class FraudDetector {
       flags.push({
         type: 'VOLUME_ANOMALY',
         severity: 'high',
-        message: `Unusually large order: ${transaction.quantity} ${transaction.unit || 'kg'}`,
+        message: i18n.t('ai.flagVolumeAnomaly', { qty: transaction.quantity, unit: transaction.unit || 'kg' }) ||
+          `Unusually large order: ${transaction.quantity} ${transaction.unit || 'kg'}`,
       });
     } else if (transaction.quantity > 2000) {
       riskScore += 10;
       flags.push({
         type: 'VOLUME_WARNING',
         severity: 'low',
-        message: `Large order volume: ${transaction.quantity} ${transaction.unit || 'kg'}`,
+        message: i18n.t('ai.flagVolumeWarning', { qty: transaction.quantity, unit: transaction.unit || 'kg' }) ||
+          `Large order volume: ${transaction.quantity} ${transaction.unit || 'kg'}`,
       });
     }
 
@@ -51,7 +57,8 @@ export class FraudDetector {
       flags.push({
         type: 'RAPID_TRANSFER',
         severity: 'high',
-        message: `${transaction.transferCount} ownership transfers in rapid succession`,
+        message: i18n.t('ai.flagRapidTransfer', { count: transaction.transferCount }) ||
+          `${transaction.transferCount} ownership transfers in rapid succession`,
       });
     }
 
@@ -61,7 +68,8 @@ export class FraudDetector {
       flags.push({
         type: 'NEW_ACCOUNT',
         severity: 'medium',
-        message: `Account is only ${transaction.accountAge} day(s) old`,
+        message: i18n.t('ai.flagNewAccount', { days: transaction.accountAge }) ||
+          `Account is only ${transaction.accountAge} day(s) old`,
       });
     }
 
@@ -71,7 +79,7 @@ export class FraudDetector {
       flags.push({
         type: 'LOCATION_MISMATCH',
         severity: 'medium',
-        message: 'Product origin doesn\'t match seller location',
+        message: i18n.t('ai.flagLocationMismatch') || 'Product origin doesn\'t match seller location',
       });
     }
 
@@ -81,14 +89,16 @@ export class FraudDetector {
       flags.push({
         type: 'QR_CLONE_VELOCITY',
         severity: 'high',
-        message: `🚨 QR scanned at ${transaction.qrCloneVelocity.toLocaleString()} km/h — physically impossible velocity detected`,
+        message: i18n.t('ai.flagQrCloneVelocity', { velocity: transaction.qrCloneVelocity.toLocaleString() }) ||
+          `🚨 QR scanned at ${transaction.qrCloneVelocity.toLocaleString()} km/h — physically impossible velocity detected`,
       });
     } else if (transaction.qrCloneVelocity && transaction.qrCloneVelocity > 120) {
       riskScore += 20;
       flags.push({
         type: 'QR_VELOCITY_WARNING',
         severity: 'medium',
-        message: `QR scan velocity ${transaction.qrCloneVelocity.toLocaleString()} km/h — possible QR sharing or rapid transport`,
+        message: i18n.t('ai.flagQrVelocityWarning', { velocity: transaction.qrCloneVelocity.toLocaleString() }) ||
+          `QR scan velocity ${transaction.qrCloneVelocity.toLocaleString()} km/h — possible QR sharing or rapid transport`,
       });
     }
 
@@ -98,7 +108,7 @@ export class FraudDetector {
       flags.push({
         type: 'NO_AI_VERIFICATION',
         severity: 'low',
-        message: 'Product registered without AI Visual Oracle quality verification (GIGO risk)',
+        message: i18n.t('ai.flagNoAi') || 'Product registered without AI Visual Oracle quality verification (GIGO risk)',
       });
     }
 
@@ -108,7 +118,8 @@ export class FraudDetector {
       flags.push({
         type: 'LOW_AI_QUALITY',
         severity: 'high',
-        message: `AI Visual Oracle scored ${transaction.aiQualityScore}% — below quality gate threshold`,
+        message: i18n.t('ai.flagLowAi', { score: transaction.aiQualityScore }) ||
+          `AI Visual Oracle scored ${transaction.aiQualityScore}% — below quality gate threshold`,
       });
     }
 
@@ -118,7 +129,8 @@ export class FraudDetector {
       flags.push({
         type: 'QUALITY_MISMATCH',
         severity: 'high',
-        message: `🚨 Quality mismatch: Score dropped ${transaction.qualityMismatch}% at ${transaction.mismatchStage || 'checkpoint'} (${transaction.originalScore}% → ${transaction.reVerifyScore}%)`,
+        message: i18n.t('ai.flagQualityMismatch', { mismatch: transaction.qualityMismatch, stage: transaction.mismatchStage || 'checkpoint', original: transaction.originalScore, reverify: transaction.reVerifyScore }) ||
+          `🚨 Quality mismatch: Score dropped ${transaction.qualityMismatch}% at ${transaction.mismatchStage || 'checkpoint'} (${transaction.originalScore}% → ${transaction.reVerifyScore}%)`,
       });
     }
 
@@ -128,14 +140,16 @@ export class FraudDetector {
       flags.push({
         type: 'REPEAT_QUALITY_OFFENDER',
         severity: 'high',
-        message: `⛔ Repeat offender: ${transaction.qualityStrikes} quality strikes. Farmer reputation: ${transaction.farmerReputation || 'N/A'}%`,
+        message: i18n.t('ai.flagRepeatOffender', { strikes: transaction.qualityStrikes, reputation: transaction.farmerReputation || 'N/A' }) ||
+          `⛔ Repeat offender: ${transaction.qualityStrikes} quality strikes. Farmer reputation: ${transaction.farmerReputation || 'N/A'}%`,
       });
     } else if (transaction.qualityStrikes && transaction.qualityStrikes >= 1) {
       riskScore += 15;
       flags.push({
         type: 'QUALITY_STRIKE_WARNING',
         severity: 'medium',
-        message: `⚠️ Farmer has ${transaction.qualityStrikes} quality strike(s). Under monitoring.`,
+        message: i18n.t('ai.flagQualityStrikeWarning', { strikes: transaction.qualityStrikes }) ||
+          `⚠️ Farmer has ${transaction.qualityStrikes} quality strike(s). Under monitoring.`,
       });
     }
 
@@ -145,7 +159,8 @@ export class FraudDetector {
       flags.push({
         type: 'WASTE_PRODUCT_ATTEMPT',
         severity: 'high',
-        message: `🚨 Waste product registration attempt! AI score: ${transaction.wasteProductScore || '<20'}% — deliberately submitting waste/rotten produce`,
+        message: i18n.t('ai.flagWasteAttempt', { score: transaction.wasteProductScore || '<20' }) ||
+          `🚨 Waste product registration attempt! AI score: ${transaction.wasteProductScore || '<20'}% — deliberately submitting waste/rotten produce`,
       });
     }
 
@@ -155,7 +170,8 @@ export class FraudDetector {
       flags.push({
         type: 'GPS_LOCATION_MISMATCH',
         severity: 'high',
-        message: `📍 Camera GPS (${transaction.capturedLocation || 'unknown'}) doesn't match registered farm (${transaction.registeredLocation || 'unknown'}) — ${transaction.gpsDistance || '?'} km away`,
+        message: i18n.t('ai.flagGpsMismatch', { captured: transaction.capturedLocation || 'unknown', registered: transaction.registeredLocation || 'unknown', dist: transaction.gpsDistance || '?' }) ||
+          `📍 Camera GPS (${transaction.capturedLocation || 'unknown'}) doesn't match registered farm (${transaction.registeredLocation || 'unknown'}) — ${transaction.gpsDistance || '?'} km away`,
       });
     }
 
@@ -165,7 +181,7 @@ export class FraudDetector {
       flags.push({
         type: 'NO_LIVE_VERIFICATION',
         severity: 'low',
-        message: '📁 Product registered via file upload — no live camera GPS/timestamp verification',
+        message: i18n.t('ai.flagNoLive') || '📁 Product registered via file upload — no live camera GPS/timestamp verification',
       });
     }
 
@@ -185,12 +201,12 @@ export class FraudDetector {
       flags,
       isApproved: riskScore < 70,
       recommendation: riskScore >= 70
-        ? '🚨 Block transaction — manual review required'
+        ? (i18n.t('ai.recBlock') || '🚨 Block transaction — manual review required')
         : riskScore >= 40
-          ? '⚠️ Flag for review — proceed with caution'
+          ? (i18n.t('ai.recFlag') || '⚠️ Flag for review — proceed with caution')
           : riskScore >= 20
-            ? 'ℹ️ Minor flags — monitor activity'
-            : '✅ Transaction appears legitimate',
+            ? (i18n.t('ai.recMinor') || 'ℹ️ Minor flags — monitor activity')
+            : (i18n.t('ai.recLegit') || '✅ Transaction appears legitimate'),
     };
   }
 

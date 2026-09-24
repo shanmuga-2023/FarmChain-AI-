@@ -24,13 +24,16 @@ export function renderAuthPage(container) {
         </div>
 
         <div style="width: 100%; max-width: 480px; position: relative; z-index: 10;">
-          <!-- Top Header / Back -->
+          <!-- Top Header / Back & Language Selector -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
             <div class="logo" style="cursor: pointer;" onclick="window.location.hash='/'">
               <div class="logo-icon">⛓️</div>
               <span style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;">FarmChain <span class="text-gradient">AI</span></span>
             </div>
-            <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/'">← Back Home</button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              ${i18n.renderLanguageSelector('auth-header-lang-select', 'padding: 5px 12px; font-size: 0.8rem; background: rgba(30, 41, 59, 0.9); color: #fff; border-radius: 20px; border: 1px solid rgba(255,255,255,0.25);')}
+              <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/'">${i18n.t('auth.backHome')}</button>
+            </div>
           </div>
 
           <!-- Auth Card -->
@@ -39,13 +42,13 @@ export function renderAuthPage(container) {
             <div style="text-align: center; margin-bottom: 24px;">
               <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 9999px; margin-bottom: 12px;">
                 <span style="font-size: 0.8rem;">🔒</span>
-                <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #86EFAC;">Decentralized Agri-Marketplace</span>
+                <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #86EFAC;">${i18n.t('auth.marketBadge')}</span>
               </div>
               <h1 style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; line-height: 1.15; margin: 0 0 8px 0; color: #FFFFFF; letter-spacing: -0.02em;">
-                ${isRegisterMode ? 'Create Your Account' : 'Welcome <span style="background: linear-gradient(135deg, #FDE047 0%, #4ADE80 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Back</span>'}
+                ${isRegisterMode ? i18n.t('auth.createAccount') : `${i18n.t('auth.welcome')} <span style="background: linear-gradient(135deg, #FDE047 0%, #4ADE80 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${i18n.t('auth.back')}</span>`}
               </h1>
               <p style="font-size: 0.92rem; color: #E2E8F0; font-weight: 400; line-height: 1.45; margin: 0 auto; max-width: 360px;">
-                ${isRegisterMode ? 'Register as a verified stakeholder on the decentralized marketplace' : 'Log in to access your role-specific dashboard'}
+                ${isRegisterMode ? i18n.t('auth.registerSubtitle') : i18n.t('auth.loginSubtitle')}
               </p>
               <!-- Elegant visual accent connecting header to role selector -->
               <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px;">
@@ -58,59 +61,59 @@ export function renderAuthPage(container) {
             <!-- Role Selector Tabs -->
             <div style="margin-bottom: 22px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <label class="form-label" style="font-size: 0.78rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #E2E8F0; margin: 0;">SELECT STAKEHOLDER ROLE</label>
-                <span style="font-size: 0.7rem; color: #94A3B8; font-weight: 500;">Role Dashboard Switcher</span>
+                <label class="form-label" style="font-size: 0.78rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #E2E8F0; margin: 0;">${i18n.t('auth.selectRole')}</label>
+                <span style="font-size: 0.7rem; color: #94A3B8; font-weight: 500;">${i18n.t('auth.roleSwitcher')}</span>
               </div>
               <div style="display: grid; grid-template-columns: repeat(4, 1fr) 52px; gap: 4px; background: rgba(0, 0, 0, 0.4); padding: 4px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.12);" id="role-tabs">
-                <button type="button" class="tab role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">🌾 Farmer</button>
-                <button type="button" class="tab role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">🏪 Trader</button>
-                <button type="button" class="tab role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">🛒 Retailer</button>
-                <button type="button" class="tab role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">👤 Buyer</button>
-                <button type="button" class="tab role-tab ${initialRole === 'admin' ? 'active' : ''}" data-role="admin" title="Admin Portal" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #94A3B8;">🔧</button>
+                <button type="button" class="tab role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">🌾 ${i18n.t('roles.farmer')}</button>
+                <button type="button" class="tab role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">🏪 ${i18n.t('roles.intermediary')}</button>
+                <button type="button" class="tab role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">🛒 ${i18n.t('roles.retailer')}</button>
+                <button type="button" class="tab role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">👤 ${i18n.t('roles.consumer')}</button>
+                <button type="button" class="tab role-tab ${initialRole === 'admin' ? 'active' : ''}" data-role="admin" title="${i18n.t('roles.admin')}" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #94A3B8;">🔧</button>
               </div>
             </div>
 
             <form id="auth-form" style="display: flex; flex-direction: column; gap: 14px;">
               ${isRegisterMode ? `
                 <div class="form-group">
-                  <label class="form-label" style="color: #E2E8F0; font-weight: 600;">Full Name / Organization</label>
-                  <input type="text" class="form-input" id="auth-name" placeholder="e.g. Ramesh Patel or FreshCo Ltd" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
+                  <label class="form-label" style="color: #E2E8F0; font-weight: 600;">${i18n.t('auth.fullNameLabel')}</label>
+                  <input type="text" class="form-input" id="auth-name" placeholder="${i18n.t('auth.fullNamePlaceholder')}" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
                 </div>
                 <div class="form-group">
-                  <label class="form-label" style="color: #E2E8F0; font-weight: 600;">Location (District, State)</label>
-                  <input type="text" class="form-input" id="auth-location" placeholder="e.g. Nashik, Maharashtra" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
+                  <label class="form-label" style="color: #E2E8F0; font-weight: 600;">${i18n.t('auth.locationLabel')}</label>
+                  <input type="text" class="form-input" id="auth-location" placeholder="${i18n.t('auth.locationPlaceholder')}" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
                 </div>
               ` : ''}
 
               <div class="form-group">
-                <label class="form-label" style="color: #E2E8F0; font-weight: 600;">Email Address</label>
-                <input type="email" class="form-input" id="auth-email" placeholder="name@farmchain.demo" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
+                <label class="form-label" style="color: #E2E8F0; font-weight: 600;">${i18n.t('auth.emailLabel')}</label>
+                <input type="email" class="form-input" id="auth-email" placeholder="${i18n.t('auth.emailPlaceholder')}" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
               </div>
 
               <div class="form-group">
-                <label class="form-label" style="color: #E2E8F0; font-weight: 600;">Password</label>
+                <label class="form-label" style="color: #E2E8F0; font-weight: 600;">${i18n.t('auth.passwordLabel')}</label>
                 <input type="password" class="form-input" id="auth-password" placeholder="••••••••" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
               </div>
 
               <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px; justify-content: center; font-weight: 700; font-size: 0.95rem; padding: 12px;" id="submit-auth-btn">
-                ${isRegisterMode ? '🚀 Complete Registration' : '🔑 Sign In'}
+                ${isRegisterMode ? `🚀 ${i18n.t('auth.completeRegBtn')}` : `🔑 ${i18n.t('auth.signInBtn')}`}
               </button>
             </form>
 
             <!-- Phone OTP Login (Account Abstraction) -->
             <div style="display: flex; align-items: center; margin: 20px 0 16px 0; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.8px;">
               <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);"></div>
-              <span style="padding: 0 12px; color: #E2E8F0;">OR LOGIN WITHOUT WALLET</span>
+              <span style="padding: 0 12px; color: #E2E8F0;">${i18n.t('auth.orLoginWithoutWallet')}</span>
               <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);"></div>
             </div>
 
             <div style="background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(168, 85, 247, 0.45); border-radius: var(--radius-md); padding: 18px;">
               <div style="font-size: 0.9rem; font-weight: 700; color: #E9D5FF; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
-                <span style="display: flex; align-items: center; gap: 8px;">📱 Phone OTP Login</span>
+                <span style="display: flex; align-items: center; gap: 8px;">📱 ${i18n.t('auth.phoneOtpTitle')}</span>
                 <span class="badge" style="background: rgba(168, 85, 247, 0.3); color: #FAF5FF; border: 1px solid rgba(168, 85, 247, 0.6); font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 4px;">ERC-4337</span>
               </div>
               <p style="font-size: 0.78rem; color: #CBD5E1; margin-bottom: 14px; line-height: 1.45;">
-                Receive an OTP on your mobile notification bar. No MetaMask, no seed phrase — your smart wallet is auto-created.
+                ${i18n.t('auth.phoneOtpDesc')}
               </p>
               
               <!-- Phone Input Step -->
@@ -120,14 +123,14 @@ export function renderAuthPage(container) {
                     🇮🇳 +91
                   </div>
                   <input type="tel" class="form-input" id="otp-phone" placeholder="98765 43210" maxlength="10" style="flex: 1; font-size: 0.95rem; font-family: var(--font-mono); letter-spacing: 1.2px; background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.22); color: #FFFFFF;" />
-                  <button type="button" class="btn btn-primary btn-sm" id="send-otp-btn" style="white-space: nowrap; padding: 8px 16px; font-weight: 700;">📱 Send OTP</button>
+                  <button type="button" class="btn btn-primary btn-sm" id="send-otp-btn" style="white-space: nowrap; padding: 8px 16px; font-weight: 700;">📱 ${i18n.t('auth.sendOtpBtn')}</button>
                 </div>
               </div>
 
               <!-- 6-Digit OTP Verification Step -->
               <div id="otp-verify-section" style="display: none; margin-top: 14px;">
                 <div style="font-size: 0.78rem; color: #E2E8F0; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                  <span>📲 Look at the notification on top of your screen & enter 6-digit code:</span>
+                  <span>📲 ${i18n.t('auth.otpPrompt')}</span>
                 </div>
 
                 <div class="otp-digits-container" id="otp-digits-group">
@@ -141,10 +144,10 @@ export function renderAuthPage(container) {
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                   <button type="button" id="resend-otp-btn" style="background: none; border: none; font-size: 0.75rem; color: #C084FC; cursor: pointer; text-decoration: underline; padding: 0; font-weight: 600;">
-                    Resend code
+                    ${i18n.t('auth.resendCode')}
                   </button>
                   <button type="button" class="btn btn-primary btn-sm" id="verify-otp-btn" style="padding: 6px 16px; font-weight: 700;">
-                    ✅ Verify & Enter
+                    ✅ ${i18n.t('auth.verifyAndEnter')}
                   </button>
                 </div>
               </div>
@@ -154,7 +157,7 @@ export function renderAuthPage(container) {
 
             <div style="display: flex; align-items: center; margin: 20px 0 16px 0; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.8px;">
               <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);"></div>
-              <span style="padding: 0 12px; color: #E2E8F0;">OR QUICK DEMO LOGIN</span>
+              <span style="padding: 0 12px; color: #E2E8F0;">${i18n.t('auth.orQuickDemo')}</span>
               <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);"></div>
             </div>
 
@@ -163,15 +166,15 @@ export function renderAuthPage(container) {
               ${DEMO_CREDENTIALS.map(demo => `
                 <button class="btn btn-secondary btn-sm demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}" style="font-size: 0.76rem; padding: 8px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.18); color: #F8FAFC; text-align: left; display: flex; align-items: center; justify-content: space-between;">
                   <span>${demo.avatar} ${demo.name.split(' ')[0]}</span>
-                  <span style="color: #94A3B8; font-size: 0.7rem; font-weight: 600; text-transform: capitalize;">${demo.role}</span>
+                  <span style="color: #94A3B8; font-size: 0.7rem; font-weight: 600; text-transform: capitalize;">${i18n.t(`roles.${demo.role}`) || demo.role}</span>
                 </button>
               `).join('')}
             </div>
 
             <div style="text-align: center; margin-top: 22px; font-size: 0.86rem; color: #CBD5E1;">
-              ${isRegisterMode ? 'Already have an account?' : "Don't have an account yet?"}
+              ${isRegisterMode ? i18n.t('auth.alreadyHaveAccount') : i18n.t('auth.dontHaveAccount')}
               <a href="javascript:void(0)" id="toggle-auth-mode" style="color: #4ADE80; font-weight: 700; margin-left: 6px; text-decoration: underline;">
-                ${isRegisterMode ? 'Sign In' : 'Register Now'}
+                ${isRegisterMode ? i18n.t('auth.signInBtn') : i18n.t('auth.registerNow')}
               </a>
             </div>
           </div>
@@ -233,11 +236,11 @@ export function renderAuthPage(container) {
 
           const walletAddr = web3Service.address || '';
           authResult = await registerWithEmail(email, password, name, selectedRole, location, walletAddr);
-          showToast(`Account registered as ${selectedRole}! Welcome ${name} 🎉`, 'success');
+          showToast(i18n.t('auth.toasts.registered', { role: i18n.t(`roles.${selectedRole}`), name }), 'success');
         } else {
           authResult = await loginWithEmail(email, password);
           const activeRole = authResult?.user?.role || selectedRole;
-          showToast(`Logged in successfully as ${activeRole}! 🌾`, 'success');
+          showToast(i18n.t('auth.toasts.loggedIn', { role: i18n.t(`roles.${activeRole}`) }), 'success');
         }
 
         const targetRole = (authResult?.user?.role || selectedRole).toLowerCase();
@@ -247,7 +250,7 @@ export function renderAuthPage(container) {
       } catch (err) {
         console.error('Auth error:', err);
         if (err.code === 'auth/email-already-in-use') {
-          showToast('This email is already registered! Switching to Sign In...', 'warning');
+          showToast(i18n.t('auth.toasts.emailInUse'), 'warning');
           isRegisterMode = false;
           renderForm();
           const emailInput = document.getElementById('auth-email');
@@ -256,13 +259,13 @@ export function renderAuthPage(container) {
           if (passInput) passInput.value = password;
           return;
         } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-          showToast('Incorrect password or email. Please check your credentials.', 'error');
+          showToast(i18n.t('auth.toasts.invalidCreds'), 'error');
         } else if (err.code === 'auth/user-not-found') {
-          showToast('No account found with this email. Please register first.', 'warning');
+          showToast(i18n.t('auth.toasts.userNotFound'), 'warning');
         } else if (err.code === 'auth/weak-password') {
-          showToast('Password should be at least 6 characters long.', 'warning');
+          showToast(i18n.t('auth.toasts.weakPassword'), 'warning');
         } else {
-          showToast(err.message || 'Authentication failed', 'error');
+          showToast(err.message || i18n.t('errors.authFailed'), 'error');
         }
       }
     });
@@ -280,19 +283,19 @@ export function renderAuthPage(container) {
       resendBtn.disabled = true;
       resendBtn.style.color = 'var(--text-muted)';
       resendBtn.style.textDecoration = 'none';
-      resendBtn.textContent = `Resend in ${seconds}s`;
+      resendBtn.textContent = i18n.t('auth.resendIn', { s: seconds });
 
       clearInterval(resendTimer);
       resendTimer = setInterval(() => {
         seconds--;
         if (seconds > 0) {
-          resendBtn.textContent = `Resend in ${seconds}s`;
+          resendBtn.textContent = i18n.t('auth.resendIn', { s: seconds });
         } else {
           clearInterval(resendTimer);
           resendBtn.disabled = false;
           resendBtn.style.color = 'var(--accent-purple)';
           resendBtn.style.textDecoration = 'underline';
-          resendBtn.textContent = 'Resend code';
+          resendBtn.textContent = i18n.t('auth.resendCode');
         }
       }, 1000);
     }
@@ -301,7 +304,7 @@ export function renderAuthPage(container) {
       const phoneInput = document.getElementById('otp-phone');
       const rawPhone = phoneInput?.value.trim();
       if (!rawPhone || rawPhone.length < 10) {
-        showToast('Please enter a valid 10-digit mobile number', 'warning');
+        showToast(i18n.t('auth.toasts.invalidPhone'), 'warning');
         phoneInput?.focus();
         return;
       }
@@ -309,7 +312,7 @@ export function renderAuthPage(container) {
       const sendBtn = container.querySelector('#send-otp-btn');
       if (sendBtn) {
         sendBtn.disabled = true;
-        sendBtn.textContent = '⏳ Sending...';
+        sendBtn.textContent = `⏳ ${i18n.t('auth.toasts.sendingOtp')}`;
       }
 
       try {
@@ -324,7 +327,7 @@ export function renderAuthPage(container) {
         }
 
         if (sendBtn) {
-          sendBtn.textContent = '✅ Sent';
+          sendBtn.textContent = `✅ ${i18n.t('auth.toasts.otpSent')}`;
           sendBtn.style.background = 'var(--accent-green)';
           sendBtn.style.borderColor = 'var(--accent-green)';
         }
@@ -338,15 +341,15 @@ export function renderAuthPage(container) {
         }, 100);
 
         if (loginRes.method === 'firebase') {
-          showToast(`📲 SMS sent to ${rawPhone}! Check your mobile messages for the 6-digit code.`, 'success');
+          showToast(i18n.t('auth.toasts.smsSent', { phone: rawPhone }), 'success');
         } else {
-          showToast(`📲 Demo OTP dispatched! Check the notification banner at the top.`, 'info');
+          showToast(i18n.t('auth.toasts.demoOtpDispatched'), 'info');
         }
       } catch (err) {
-        showToast('Failed to send OTP: ' + err.message, 'error');
+        showToast(i18n.t('auth.toasts.otpSendFailed', { error: err.message }), 'error');
         if (sendBtn) {
           sendBtn.disabled = false;
-          sendBtn.textContent = '📱 Send OTP';
+          sendBtn.textContent = `📱 ${i18n.t('auth.sendOtpBtn')}`;
         }
       }
     }
@@ -415,14 +418,14 @@ export function renderAuthPage(container) {
       digitInputs.forEach(inp => { otp += inp.value.trim(); });
 
       if (!otp || otp.length !== 6) {
-        showToast('Please enter the complete 6-digit verification code', 'warning');
+        showToast(i18n.t('auth.toasts.enterFullOtp'), 'warning');
         return;
       }
 
       const verifyBtn = container.querySelector('#verify-otp-btn');
       if (verifyBtn) {
         verifyBtn.disabled = true;
-        verifyBtn.textContent = '⏳ Verifying...';
+        verifyBtn.textContent = `⏳ ${i18n.t('common.loading')}`;
       }
 
       try {
@@ -435,20 +438,20 @@ export function renderAuthPage(container) {
           successSection.style.display = 'block';
           successSection.innerHTML = `
             <div style="font-size: 1.6rem; margin-bottom: 4px;">🎉</div>
-            <div style="font-weight: 800; font-size: 0.9rem; color: var(--accent-green);">Smart Contract Wallet Deployed!</div>
+            <div style="font-weight: 800; font-size: 0.9rem; color: var(--accent-green);">${i18n.t('auth.smartWalletDeployed')}</div>
             <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
-              Authenticated via Phone OTP — <strong>Zero seed phrase required.</strong>
+              ${i18n.t('auth.zeroSeedPhrase')}
             </div>
             <div style="font-size: 0.68rem; color: var(--accent-cyan); margin-top: 6px; font-family: monospace; word-break: break-all;">
-              Wallet: ${result.account.address}
+              ${i18n.t('auth.walletLabel')}: ${result.account.address}
             </div>
             <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">
-              Type: ${result.account.type} · Gas: 100% Sponsored by Paymaster
+              ${i18n.t('auth.sponsoredGas', { type: result.account.type })}
             </div>
           `;
         }
 
-        showToast('🎉 Smart account verified! Logging you in...', 'success');
+        showToast(i18n.t('auth.toasts.smartAccountVerified'), 'success');
 
         setTimeout(() => {
           store.login(selectedRole, `phone-${rawPhone}`, {
@@ -465,10 +468,10 @@ export function renderAuthPage(container) {
         }, 1500);
 
       } catch (err) {
-        showToast(err.message || 'OTP verification failed', 'error');
+        showToast(err.message || i18n.t('errors.otpFailed'), 'error');
         if (verifyBtn) {
           verifyBtn.disabled = false;
-          verifyBtn.textContent = '✅ Verify & Enter';
+          verifyBtn.textContent = `✅ ${i18n.t('auth.verifyAndEnter')}`;
         }
       }
     });
@@ -476,4 +479,3 @@ export function renderAuthPage(container) {
 
   renderForm();
 }
-

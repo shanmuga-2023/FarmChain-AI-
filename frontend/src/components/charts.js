@@ -6,10 +6,10 @@
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
-// Apply dark theme defaults
+// Apply dark theme defaults with full Indic font fallbacks
 Chart.defaults.color = '#94a3b8';
 Chart.defaults.borderColor = 'rgba(148, 163, 184, 0.08)';
-Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.family = "'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Inter', sans-serif";
 
 const chartInstances = new Map();
 

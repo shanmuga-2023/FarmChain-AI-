@@ -4,6 +4,9 @@
 // Anti-fraud proof-of-capture for crop images
 // ============================================
 
+import { i18n } from '../i18n/index.js';
+import { formatDate, formatDateTime } from '../utils/helpers.js';
+
 /**
  * LiveCamera — Opens device camera with real-time GPS + timestamp overlay.
  * Burns location & date watermark into captured image pixels.
@@ -308,6 +311,9 @@ export class LiveCamera {
   /**
    * Stamp an image canvas with GPS location and date/time watermark
    */
+  /**
+   * Stamp an image canvas with GPS location and date/time watermark
+   */
   static stampImage(canvas, gpsData, timestamp) {
     const ctx = canvas.getContext('2d');
     const w = canvas.width;
@@ -323,39 +329,36 @@ export class LiveCamera {
     ctx.fillRect(0, h - barHeight, w, 3);
 
     const fontSize = Math.max(12, Math.min(16, w * 0.028));
-    ctx.font = `bold ${fontSize}px "Inter", "Segoe UI", Arial, sans-serif`;
+    const fontStack = '"Noto Sans Devanagari", "Noto Sans Tamil", "Noto Sans Telugu", "Inter", "Segoe UI", Arial, sans-serif';
+    ctx.font = `bold ${fontSize}px ${fontStack}`;
     ctx.fillStyle = '#ffffff';
     ctx.textBaseline = 'middle';
 
     const date = new Date(timestamp);
-    const dateStr = date.toLocaleDateString('en-IN', {
-      day: '2-digit', month: 'short', year: 'numeric',
-    });
-    const timeStr = date.toLocaleTimeString('en-IN', {
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true,
-    });
+    const dateStr = formatDate(date);
+    const timeStr = formatDateTime(date);
 
     const coordStr = `${gpsData.lat.toFixed(4)}°N, ${gpsData.lng.toFixed(4)}°E`;
     const locationLine = `📍 ${coordStr}  •  ${gpsData.address || ''}`;
-    const dateLine = `📅 ${dateStr}, ${timeStr}  •  ${gpsData.source || 'Location Verified'} (±${gpsData.accuracy}m)`;
+    const dateLine = `📅 ${timeStr}  •  ${gpsData.source || i18n.t('camera.locationVerified')} (±${gpsData.accuracy}m)`;
 
     const padding = 12;
     const lineY1 = h - barHeight + barHeight * 0.35;
     const lineY2 = h - barHeight + barHeight * 0.7;
 
     ctx.fillText(locationLine, padding, lineY1);
-    ctx.font = `${fontSize - 1}px "Inter", "Segoe UI", Arial, sans-serif`;
+    ctx.font = `${fontSize - 1}px ${fontStack}`;
     ctx.fillStyle = '#a3e635';
     ctx.fillText(dateLine, padding, lineY2);
 
     // FarmChain AI badge on the right
-    ctx.font = `bold ${fontSize - 2}px "Inter", "Segoe UI", Arial, sans-serif`;
+    ctx.font = `bold ${fontSize - 2}px ${fontStack}`;
     ctx.fillStyle = 'rgba(168, 85, 247, 0.95)';
     ctx.textAlign = 'right';
-    ctx.fillText('⛓️ FarmChain AI Verified', w - padding, lineY1);
+    ctx.fillText(`⛓️ FarmChain AI ${i18n.t('camera.verifiedBadge')}`, w - padding, lineY1);
     ctx.fillStyle = gpsData.isFallback ? '#f59e0b' : '#22c55e';
-    ctx.font = `bold ${fontSize - 3}px "Inter", "Segoe UI", Arial, sans-serif`;
-    ctx.fillText(gpsData.isFallback ? '⚠️ Regional Estimate' : '✅ Exact Location Verified', w - padding, lineY2);
+    ctx.font = `bold ${fontSize - 3}px ${fontStack}`;
+    ctx.fillText(gpsData.isFallback ? `⚠️ ${i18n.t('camera.regionalEstimate')}` : `✅ ${i18n.t('camera.exactVerified')}`, w - padding, lineY2);
     ctx.textAlign = 'left';
 
     return canvas;
@@ -396,8 +399,8 @@ export class LiveCamera {
       valid: distance <= 50,
       distance: Math.round(distance * 10) / 10,
       message: distance <= 50
-        ? `✅ Location verified (${distance.toFixed(1)} km from farm)`
-        : `⚠️ ${distance.toFixed(1)} km from registered farm location`,
+        ? `✅ ${i18n.t('camera.distVerified', { dist: distance.toFixed(1) })}`
+        : `⚠️ ${i18n.t('camera.distWarning', { dist: distance.toFixed(1) })}`,
     };
   }
 
@@ -419,10 +422,10 @@ export class LiveCamera {
         <!-- Header -->
         <div style="padding: 14px 18px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(34, 197, 94, 0.1)); border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <div style="font-weight: 800; font-size: 0.95rem; color: #fff;">📸 Live Crop Verification Camera</div>
-            <div style="font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-top: 2px;">Exact GPS + Date/Time stamped for blockchain proof</div>
+            <div style="font-weight: 800; font-size: 0.95rem; color: #fff;">📸 ${i18n.t('camera.modalTitle')}</div>
+            <div style="font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-top: 2px;">${i18n.t('camera.modalSub')}</div>
           </div>
-          <button id="camera-close-btn" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">✕ Close</button>
+          <button id="camera-close-btn" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">✕ ${i18n.t('common.close')}</button>
         </div>
 
         <!-- Camera View -->
@@ -433,17 +436,17 @@ export class LiveCamera {
           <!-- GPS + Date Overlay -->
           <div id="camera-overlay-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 14px; background: linear-gradient(transparent, rgba(0,0,0,0.85)); pointer-events: none;">
             <div id="camera-gps-display" style="font-size: 0.78rem; color: #a3e635; font-weight: 700; font-family: 'JetBrains Mono', monospace; text-shadow: 0 1px 3px rgba(0,0,0,0.9);">
-              📍 Acquiring exact location...
+              📍 ${i18n.t('camera.acquiringLocation')}
             </div>
             <div id="camera-date-display" style="font-size: 0.72rem; color: rgba(255,255,255,0.85); margin-top: 2px; font-family: 'JetBrains Mono', monospace; text-shadow: 0 1px 3px rgba(0,0,0,0.9);">
-              📅 ${new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}, ${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+              📅 ${formatDateTime(new Date())}
             </div>
           </div>
 
           <!-- Loading state -->
           <div id="camera-loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
             <div style="width: 40px; height: 40px; border: 3px solid rgba(168,85,247,0.2); border-top-color: #a855f7; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px;"></div>
-            <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem;">Starting camera...</div>
+            <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem;">${i18n.t('camera.startingCamera')}</div>
           </div>
 
           <!-- Captured preview (hidden until capture) -->
@@ -456,25 +459,25 @@ export class LiveCamera {
           <div id="camera-gps-status" style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); border-radius: 10px;">
             <span style="font-size: 1.1rem;">🛰️</span>
             <div style="flex: 1; min-width: 0;">
-              <div id="gps-status-text" style="font-size: 0.78rem; font-weight: 700; color: #22c55e;">Detecting exact coordinates...</div>
-              <div id="gps-address-text" style="font-size: 0.72rem; color: rgba(255,255,255,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Please wait...</div>
+              <div id="gps-status-text" style="font-size: 0.78rem; font-weight: 700; color: #22c55e;">${i18n.t('camera.detectingCoords')}</div>
+              <div id="gps-address-text" style="font-size: 0.72rem; color: rgba(255,255,255,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${i18n.t('common.pleaseWait')}</div>
             </div>
             <div style="display: flex; gap: 4px; align-items: center;">
               <div id="gps-accuracy-badge" style="font-size: 0.65rem; padding: 2px 8px; background: rgba(34,197,94,0.15); border-radius: 20px; color: #22c55e; font-weight: 600;">--</div>
               <button id="gps-refresh-btn" title="Refresh GPS" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; padding: 3px 7px; font-size: 0.72rem; cursor: pointer;">🔄</button>
-              <button id="gps-edit-btn" title="Refine Location" style="background: rgba(168,85,247,0.2); border: 1px solid rgba(168,85,247,0.4); color: #c084fc; border-radius: 6px; padding: 3px 8px; font-size: 0.72rem; cursor: pointer; font-weight: 600;">✏️ Edit</button>
+              <button id="gps-edit-btn" title="${i18n.t('common.edit')}" style="background: rgba(168,85,247,0.2); border: 1px solid rgba(168,85,247,0.4); color: #c084fc; border-radius: 6px; padding: 3px 8px; font-size: 0.72rem; cursor: pointer; font-weight: 600;">✏️ ${i18n.t('common.edit')}</button>
             </div>
           </div>
 
           <!-- Inline Manual Location Refinement Box (Toggleable) -->
           <div id="location-edit-box" style="display: none; padding: 10px; background: rgba(0,0,0,0.3); border: 1px dashed rgba(168,85,247,0.35); border-radius: 8px; flex-direction: column; gap: 8px;">
             <div style="font-size: 0.72rem; color: rgba(255,255,255,0.6); display: flex; justify-content: space-between;">
-              <span>📍 Enter Farm / Village Name to Pinpoint Location:</span>
+              <span>📍 ${i18n.t('camera.refinePrompt')}</span>
               <span id="close-edit-box" style="cursor: pointer; color: #ef4444; font-weight: bold;">✕</span>
             </div>
             <div style="display: flex; gap: 6px;">
-              <input type="text" id="manual-location-input" placeholder="e.g. Thuraiyur, Trichy or Nashik" style="flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 10px; color: #fff; font-size: 0.78rem; outline: none;" />
-              <button id="search-location-btn" style="background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; color: #fff; border-radius: 6px; padding: 6px 12px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Set</button>
+              <input type="text" id="manual-location-input" placeholder="${i18n.t('camera.searchPlaceholder')}" style="flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 10px; color: #fff; font-size: 0.78rem; outline: none;" />
+              <button id="search-location-btn" style="background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; color: #fff; border-radius: 6px; padding: 6px 12px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">${i18n.t('common.set')}</button>
             </div>
             <div id="quick-preset-container" style="display: flex; gap: 6px; flex-wrap: wrap;">
               <button class="preset-loc-btn" data-loc="Thuraiyur, Tiruchirappalli, Tamil Nadu" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 2px 8px; font-size: 0.68rem; color: #cbd5e1; cursor: pointer;">📍 Thuraiyur, Trichy</button>
@@ -486,13 +489,13 @@ export class LiveCamera {
           <!-- Action Buttons -->
           <div style="display: flex; gap: 8px;">
             <button id="camera-capture-btn" disabled style="flex: 1; padding: 12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; border: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; opacity: 0.5;">
-              📸 Capture & Verify
+              📸 ${i18n.t('camera.captureVerify')}
             </button>
             <button id="camera-retake-btn" style="display: none; flex: 1; padding: 12px; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">
-              🔄 Retake
+              🔄 ${i18n.t('camera.retake')}
             </button>
             <button id="camera-use-btn" style="display: none; flex: 1; padding: 12px; background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; border: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: none; align-items: center; justify-content: center; gap: 6px;">
-              ✅ Use This Photo
+              ✅ ${i18n.t('camera.usePhoto')}
             </button>
           </div>
         </div>
@@ -528,15 +531,14 @@ export class LiveCamera {
 
     // Update date/time every second
     const dateInterval = setInterval(() => {
-      const now = new Date();
-      dateDisplay.textContent = `📅 ${now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}, ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}`;
+      dateDisplay.textContent = `📅 ${formatDateTime(new Date())}`;
     }, 1000);
 
     // Apply location to UI
     const applyLocationToUI = (loc) => {
       locationData = loc;
       gpsDisplay.textContent = `📍 ${loc.lat.toFixed(4)}°N, ${loc.lng.toFixed(4)}°E • ${loc.address}`;
-      gpsStatusText.textContent = loc.isFallback ? '⚠️ Regional Estimate' : `✅ ${loc.source || 'Location Verified'}`;
+      gpsStatusText.textContent = loc.isFallback ? `⚠️ ${i18n.t('camera.regionalEstimate')}` : `✅ ${loc.source || i18n.t('camera.locationVerified')}`;
       gpsStatusText.style.color = loc.isFallback ? '#f59e0b' : '#22c55e';
       gpsAddressText.textContent = `${loc.address} (${loc.lat.toFixed(4)}°N, ${loc.lng.toFixed(4)}°E)`;
       gpsAccuracyBadge.textContent = `±${loc.accuracy}m`;
@@ -558,18 +560,18 @@ export class LiveCamera {
       } catch (err) {
         console.warn('Camera access failed:', err);
         loading.innerHTML = `
-          <div style="color: #ef4444; font-size: 0.85rem; font-weight: 600;">⚠️ Camera access denied</div>
-          <div style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-top: 6px;">Using demo photo mode</div>
+          <div style="color: #ef4444; font-size: 0.85rem; font-weight: 600;">⚠️ ${i18n.t('camera.accessDenied')}</div>
+          <div style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-top: 6px;">${i18n.t('camera.demoMode')}</div>
         `;
         captureBtn.disabled = false;
         captureBtn.style.opacity = '1';
-        captureBtn.textContent = '📸 Capture Sample';
+        captureBtn.textContent = `📸 ${i18n.t('camera.captureSample')}`;
       }
     };
 
     // Get location
     const fetchLocation = async (force = false) => {
-      gpsStatusText.textContent = 'Acquiring exact location...';
+      gpsStatusText.textContent = i18n.t('camera.acquiringLocation');
       const loc = await this.getLocation(force);
       applyLocationToUI(loc);
     };
@@ -597,17 +599,17 @@ export class LiveCamera {
     const handleManualLocation = async (query) => {
       if (!query || !query.trim()) return;
       searchLocationBtn.disabled = true;
-      searchLocationBtn.textContent = 'Searching...';
+      searchLocationBtn.textContent = i18n.t('common.loading');
       try {
         const customLoc = await this.geocodeLocation(query);
         applyLocationToUI(customLoc);
         locationEditBox.style.display = 'none';
         manualLocationInput.value = '';
       } catch (err) {
-        alert(err.message || 'Location could not be geocoded. Please check spelling.');
+        alert(err.message || i18n.t('camera.geocodeError'));
       } finally {
         searchLocationBtn.disabled = false;
-        searchLocationBtn.textContent = 'Set';
+        searchLocationBtn.textContent = i18n.t('common.set');
       }
     };
 
@@ -655,13 +657,13 @@ export class LiveCamera {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 1280, 960);
 
-        ctx.font = 'bold 36px "Inter", Arial';
+        ctx.font = 'bold 36px "Noto Sans Devanagari", "Noto Sans Tamil", "Noto Sans Telugu", "Inter", Arial';
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
-        ctx.fillText('🌾 Live Farm Harvest Capture', 640, 440);
-        ctx.font = '22px "Inter", Arial';
+        ctx.fillText(`🌾 ${i18n.t('camera.demoHarvestTitle')}`, 640, 440);
+        ctx.font = '22px "Noto Sans Devanagari", "Noto Sans Tamil", "Noto Sans Telugu", "Inter", Arial';
         ctx.fillStyle = 'rgba(255,255,255,0.7)';
-        ctx.fillText('Verified Hardware Sensor Feed', 640, 490);
+        ctx.fillText(i18n.t('camera.demoSensorSubtitle'), 640, 490);
         ctx.textAlign = 'left';
       }
 
@@ -687,7 +689,8 @@ export class LiveCamera {
           location: locationData,
           timestamp,
           proofHash,
-          isLiveCapture: !!this._stream,
+          isLiveCapture: true,
+          hasHardwareStream: !!this._stream,
           gpsVerified: !locationData.isFallback,
         },
       };
@@ -747,17 +750,17 @@ export class LiveCamera {
     return `
       <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.72rem;">
         <div style="color: ${proofData.gpsVerified ? '#22c55e' : '#f59e0b'}; font-weight: 600;">
-          ${proofData.gpsVerified ? '✅' : '⚠️'} Location: ${proofData.location.lat.toFixed(4)}°N, ${proofData.location.lng.toFixed(4)}°E
+          ${proofData.gpsVerified ? '✅' : '⚠️'} ${i18n.t('camera.location')}: ${proofData.location.lat.toFixed(4)}°N, ${proofData.location.lng.toFixed(4)}°E
           ${proofData.location.address ? `• ${proofData.location.address}` : ''}
         </div>
         <div style="color: rgba(255,255,255,0.7);">
-          📅 ${date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}, ${date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+          📅 ${formatDateTime(date)}
         </div>
         <div style="color: rgba(168,85,247,0.9); font-family: monospace; word-break: break-all;">
-          🔗 Proof Hash: ${proofData.proofHash}
+          🔗 ${i18n.t('camera.proofHash')}: ${proofData.proofHash}
         </div>
         <div style="color: ${proofData.isLiveCapture ? '#22c55e' : '#f59e0b'};">
-          ${proofData.isLiveCapture ? '📸 Live Camera Capture' : '📁 Verified Capture Mode'}
+          ${proofData.isLiveCapture ? `📸 ${i18n.t('camera.liveCapture')}` : `📁 ${i18n.t('camera.verifiedMode')}`}
         </div>
       </div>
     `;

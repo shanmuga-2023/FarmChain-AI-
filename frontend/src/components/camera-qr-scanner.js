@@ -3,30 +3,31 @@
 
 import { createModal, closeModal, showToast } from '../utils/helpers.js';
 import { router } from '../utils/router.js';
+import { i18n } from '../i18n/index.js';
 
 export function openCameraScanner() {
   let scannerInstance = null;
 
-  const modal = createModal('📸 Live Produce QR Scanner', `
+  const modal = createModal(`📸 ${i18n.t('scanner.modalTitle')}`, `
     <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;">
       <p style="font-size: 0.85rem; color: var(--text-secondary);">
-        Point your mobile or webcam at the physical QR code label on the crop packaging to verify its blockchain provenance.
+        ${i18n.t('scanner.instructions')}
       </p>
 
       <div id="qr-reader" style="width: 100%; max-width: 360px; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--accent-green);"></div>
 
-      <div id="qr-scan-status" style="font-size: 0.82rem; color: var(--text-muted);">Initializing scanner...</div>
+      <div id="qr-scan-status" style="font-size: 0.82rem; color: var(--text-muted);">${i18n.t('scanner.initializing')}</div>
 
       <div style="width: 100%; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
-        <label class="form-label" style="text-align: left; display: block; margin-bottom: 6px;">Or enter Product Batch ID manually:</label>
+        <label class="form-label" style="text-align: left; display: block; margin-bottom: 6px;">${i18n.t('scanner.manualLabel')}</label>
         <div style="display: flex; gap: 8px;">
           <input type="text" class="form-input" id="manual-batch-input" placeholder="e.g. PROD-170300..." style="flex: 1;" />
-          <button class="btn btn-primary btn-sm" id="manual-verify-btn">Inspect</button>
+          <button class="btn btn-primary btn-sm" id="manual-verify-btn">${i18n.t('scanner.inspectBtn')}</button>
         </div>
       </div>
     </div>
   `, `
-    <button class="btn btn-secondary btn-sm" id="close-camera-modal">Close</button>
+    <button class="btn btn-secondary btn-sm" id="close-camera-modal">${i18n.t('common.close')}</button>
   `);
 
   // Initialize html5-qrcode scanner
@@ -47,7 +48,7 @@ export function openCameraScanner() {
         },
         // Success callback — QR code decoded
         (decodedText) => {
-          if (statusEl) statusEl.textContent = `✅ QR Detected: ${decodedText.slice(0, 40)}...`;
+          if (statusEl) statusEl.textContent = `✅ ${i18n.t('scanner.qrDetected')}: ${decodedText.slice(0, 40)}...`;
 
           // Parse QR data
           let productId = null;
@@ -65,21 +66,21 @@ export function openCameraScanner() {
 
           if (productId) {
             cleanup();
-            showToast('QR code scanned! Tracing product...', 'success');
+            showToast(i18n.t('scanner.scanSuccess'), 'success');
             router.navigate(`/consumer/trace?id=${productId}`);
           } else {
-            if (statusEl) statusEl.textContent = '⚠️ QR code detected but not a valid FarmChain product.';
+            if (statusEl) statusEl.textContent = `⚠️ ${i18n.t('scanner.invalidProduct')}`;
           }
         },
         // Error callback — ignored (fires on every non-QR frame)
         () => {}
       );
 
-      if (statusEl) statusEl.textContent = '🔍 Scanning... Point camera at QR code';
+      if (statusEl) statusEl.textContent = `🔍 ${i18n.t('scanner.scanningPrompt')}`;
     } catch (err) {
       console.warn('QR Scanner init error:', err);
       if (statusEl) {
-        statusEl.textContent = 'Camera not available or permission denied. Use manual entry below.';
+        statusEl.textContent = i18n.t('scanner.cameraError');
       }
     }
   }
@@ -93,7 +94,7 @@ export function openCameraScanner() {
       cleanup();
       router.navigate(`/consumer/trace?id=${val}`);
     } else {
-      showToast('Please enter a valid product ID', 'warning');
+      showToast(i18n.t('scanner.enterValidId'), 'warning');
     }
   });
 

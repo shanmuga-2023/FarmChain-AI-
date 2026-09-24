@@ -1,13 +1,15 @@
 // ============================================
 // FarmChain AI — Admin Fraud Alerts Page
 // + Sybil QR Attack Simulation
+// Fully Localized (en, hi, ta, te)
 // ============================================
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
 import { FraudDetector } from '../../ai/fraud-detector.js';
 import { GeoVelocityChecker } from '../../ai/geo-velocity.js';
-import { formatNumber, timeAgo, showToast } from '../../utils/helpers.js';
+import { formatNumber, timeAgo, showToast, localizeCropName } from '../../utils/helpers.js';
+import { i18n } from '../../i18n/index.js';
 
 export function renderAdminFraud(container) {
   const sidebarContainer = document.createElement('div');
@@ -22,11 +24,12 @@ export function renderAdminFraud(container) {
         <div class="topbar">
           <div class="topbar-left">
             <div>
-              <div class="topbar-title">Fraud Detection 🚨</div>
-              <div class="topbar-breadcrumb"><span>Admin</span> <span>›</span> <span>Fraud Alerts</span></div>
+              <div class="topbar-title">${i18n.t('admin.fraudTitle') || 'Fraud Detection 🚨'}</div>
+              <div class="topbar-breadcrumb"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.fraudAlerts') || 'Fraud Alerts'}</span></div>
             </div>
+          </div>
           <div class="topbar-right">
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>Logout</span></button>
+            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
           </div>
         </div>
 
@@ -35,34 +38,34 @@ export function renderAdminFraud(container) {
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-red-dim); color: var(--accent-red);">🚨</div>
               <div class="stat-card-value">${alerts.filter(a => a.riskLevel === 'critical').length}</div>
-              <div class="stat-card-label">Critical Alerts</div>
+              <div class="stat-card-label">${i18n.t('admin.criticalAlerts') || 'Critical Alerts'}</div>
             </div>
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">⚠️</div>
               <div class="stat-card-value">${alerts.filter(a => a.riskLevel === 'high').length}</div>
-              <div class="stat-card-label">High Risk</div>
+              <div class="stat-card-label">${i18n.t('admin.highRisk') || 'High Risk'}</div>
             </div>
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">ℹ️</div>
               <div class="stat-card-value">${alerts.filter(a => a.riskLevel === 'medium').length}</div>
-              <div class="stat-card-label">Medium Risk</div>
+              <div class="stat-card-label">${i18n.t('admin.mediumRisk') || 'Medium Risk'}</div>
             </div>
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">✅</div>
               <div class="stat-card-value">${alerts.filter(a => a.riskLevel === 'low').length}</div>
-              <div class="stat-card-label">Low Risk</div>
+              <div class="stat-card-label">${i18n.t('admin.lowRisk') || 'Low Risk'}</div>
             </div>
           </div>
 
           <div class="card">
             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-              <div class="card-title">🤖 AI-Detected Anomalies</div>
+              <div class="card-title">${i18n.t('admin.aiAnomaliesTitle') || '🤖 AI-Detected Anomalies'}</div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 <button class="btn btn-primary btn-sm" id="trigger-sybil-demo" style="background: var(--accent-amber); border-color: var(--accent-amber); display: flex; align-items: center; gap: 6px; font-size: 0.75rem;">
-                  🧪 Simulate Sybil QR Attack (Cloned Labels)
+                  ${i18n.t('admin.simulateSybilBtn') || '🧪 Simulate Sybil QR Attack (Cloned Labels)'}
                 </button>
                 <button class="btn btn-primary btn-sm" id="trigger-live-fraud-demo" style="background: var(--accent-red); border-color: var(--accent-red); display: flex; align-items: center; gap: 6px; font-size: 0.75rem;">
-                  🧪 Trigger Live Fraud Spike (+140% Markup)
+                  ${i18n.t('admin.triggerLiveFraudBtn') || '🧪 Trigger Live Fraud Spike (+140% Markup)'}
                 </button>
               </div>
             </div>
@@ -76,10 +79,10 @@ export function renderAdminFraud(container) {
                   <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
                     <div>
                       <div class="ai-insight-title">
-                        ${alert.riskLevel === 'critical' ? '🚨' : '⚠️'} ${alert.transaction.productName}
+                        ${alert.riskLevel === 'critical' ? '🚨' : '⚠️'} ${localizeCropName(alert.transaction.productName)}
                       </div>
                       <div style="font-size: 0.8rem; color: var(--text-muted);">
-                        Qty: ${formatNumber(alert.transaction.quantity)} ${alert.transaction.unit || 'kg'} · Origin: ${alert.transaction.origin || 'Nashik'}
+                        ${i18n.t('common.quantity') || 'Qty'}: ${formatNumber(alert.transaction.quantity)} ${alert.transaction.unit || 'kg'} · ${i18n.t('common.origin') || 'Origin'}: ${alert.transaction.origin || 'Nashik'}
                       </div>
                     </div>
                     <div style="text-align: right;">
@@ -107,14 +110,12 @@ export function renderAdminFraud(container) {
     </div>
   `;
 
-  // ==========================================
   // Sybil QR Attack Simulation
-  // ==========================================
   container.querySelector('#trigger-sybil-demo')?.addEventListener('click', () => {
     const products = store.get('products') || [];
     const targetProduct = products[0];
     const batchId = targetProduct?.productId || `SYBIL-DEMO-${Date.now()}`;
-    const batchName = targetProduct?.name || 'Organic Rice Batch';
+    const batchName = targetProduct?.name ? localizeCropName(targetProduct.name) : 'Organic Rice Batch';
 
     const attackResult = GeoVelocityChecker.simulateSybilAttack(batchId);
 
@@ -126,25 +127,25 @@ export function renderAdminFraud(container) {
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
             <div>
               <div style="font-weight: 800; font-size: 1rem; color: var(--accent-red); display: flex; align-items: center; gap: 8px;">
-                🚨 SYBIL QR ATTACK DETECTED
-                <span class="badge badge-danger" style="animation: pulse-glow 1.5s infinite;">LIVE</span>
+                ${i18n.t('admin.sybilDetectedTitle') || '🚨 SYBIL QR ATTACK DETECTED'}
+                <span class="badge badge-danger" style="animation: pulse-glow 1.5s infinite;">${i18n.t('admin.live') || 'LIVE'}</span>
               </div>
               <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
-                Batch: ${batchName} (${batchId.slice(0, 20)}...)
+                ${i18n.t('admin.batchLabel') || 'Batch'}: ${batchName} (${batchId.slice(0, 20)}...)
               </div>
             </div>
             <div style="text-align: right;">
               <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--accent-red);">
                 ${attackResult.maxVelocity.toLocaleString()} km/h
               </div>
-              <div style="font-size: 0.7rem; color: var(--text-muted);">Max Velocity</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">${i18n.t('admin.maxVelocity') || 'Max Velocity'}</div>
             </div>
           </div>
 
           <!-- City Scan Map Visualization -->
           <div style="padding: 12px; background: rgba(0,0,0,0.3); border-radius: var(--radius-md); margin-bottom: 12px;">
             <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase;">
-              📍 Simultaneous Scan Locations (All within 2 minutes)
+              ${i18n.t('admin.simultaneousLocations') || '📍 Simultaneous Scan Locations (All within 2 minutes)'}
             </div>
             <div style="display: flex; flex-wrap: wrap; gap: 8px;">
               ${attackResult.attackCities.map((city, i) => `
@@ -162,10 +163,9 @@ export function renderAdminFraud(container) {
           <div style="padding: 10px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid var(--accent-red); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 1.5rem;">🔒</span>
             <div>
-              <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-red);">SMART CONTRACT ACTION: Escrow Funds FROZEN</div>
+              <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-red);">${i18n.t('admin.escrowFrozenTitle') || 'SMART CONTRACT ACTION: Escrow Funds FROZEN'}</div>
               <div style="font-size: 0.75rem; color: var(--text-secondary);">
-                MarketplaceEscrow.sol has automatically frozen all escrow funds for batch ${batchId.slice(0, 16)}... pending manual review. 
-                ${attackResult.attackCities.length} simultaneous scans across ${attackResult.attackCities.map(c => c.city).join(', ')}.
+                ${i18n.t('admin.escrowFrozenNotice', { count: attackResult.attackCities.length, id: batchId.slice(0, 16) }) || `MarketplaceEscrow.sol has automatically frozen all escrow funds for batch ${batchId.slice(0, 16)}... pending manual review.`}
               </div>
             </div>
           </div>
@@ -173,15 +173,13 @@ export function renderAdminFraud(container) {
       `;
     }
 
-    showToast(`🚨 Sybil Attack Simulated: ${attackResult.attackCities.length} cloned scans detected across India. Escrow FROZEN.`, 'error');
+    showToast(i18n.t('admin.sybilSimulatedToast') || `🚨 Sybil Attack Simulated: ${attackResult.attackCities.length} cloned scans detected across India. Escrow FROZEN.`, 'error');
   });
 
-  // ==========================================
-  // Live Fraud Demo Button (existing)
-  // ==========================================
+  // Live Fraud Demo Button
   container.querySelector('#trigger-live-fraud-demo')?.addEventListener('click', () => {
     const anomalousTx = {
-      productName: '🚨 Predatory Aggregator Rice Batch',
+      productName: i18n.t('admin.predatoryBatchName') || '🚨 Predatory Aggregator Rice Batch',
       quantity: 15000,
       unit: 'kg',
       priceDeviation: 142,
@@ -205,15 +203,15 @@ export function renderAdminFraud(container) {
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
             <div>
               <div class="ai-insight-title" style="color: var(--accent-red);">
-                🚨 LIVE ANOMALY DETECTED: ${newAlert.transaction.productName}
+                ${i18n.t('admin.liveAnomalyDetected') || '🚨 LIVE ANOMALY DETECTED:'} ${newAlert.transaction.productName}
               </div>
               <div style="font-size: 0.8rem; color: var(--text-muted);">
-                Qty: ${formatNumber(newAlert.transaction.quantity)} ${newAlert.transaction.unit} · Flagged just now
+                ${i18n.t('common.quantity') || 'Qty'}: ${formatNumber(newAlert.transaction.quantity)} ${newAlert.transaction.unit} ${i18n.t('admin.flaggedJustNow') || '· Flagged just now'}
               </div>
             </div>
             <div style="text-align: right;">
               <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--accent-red);">${newAlert.riskScore}%</div>
-              <span class="badge badge-danger">CRITICAL SPIKE</span>
+              <span class="badge badge-danger">${i18n.t('admin.criticalSpike') || 'CRITICAL SPIKE'}</span>
             </div>
           </div>
           <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -230,8 +228,7 @@ export function renderAdminFraud(container) {
         </div>
       `;
       containerEl.insertAdjacentHTML('afterbegin', alertHtml);
-      showToast('🚨 Live Anomaly Flagged! +142% Price Markup & Rapid Transfers Detected', 'error');
+      showToast(i18n.t('admin.liveAnomalyToast') || '🚨 Live Anomaly Flagged! +142% Price Markup & Rapid Transfers Detected', 'error');
     }
   });
 }
-

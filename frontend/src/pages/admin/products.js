@@ -1,20 +1,21 @@
 // ============================================
 // FarmChain AI — Admin Product Management
 // View, edit, and delete all products across roles
+// Fully Localized (en, hi, ta, te)
 // ============================================
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, getCropEmoji, showToast, createModal, closeModal, getStatusBadge, timeAgo } from '../../utils/helpers.js';
+import { formatCurrency, getCropEmoji, showToast, createModal, closeModal, getStatusBadge, timeAgo, localizeCropName, localizeUnit, localizeCategory } from '../../utils/helpers.js';
 import { escapeHtml, validateProductInput } from '../../utils/sanitize.js';
 import { updateProduct, deleteProduct } from '../../utils/api.js';
 import { updateFirestoreProduct, deleteFirestoreProduct } from '../../firebase/firestore.js';
+import { i18n } from '../../i18n/index.js';
 
 export function renderAdminProducts(container) {
   const products = store.get('products') || [];
   const orders = store.get('orders') || [];
 
-  // Category counts
   const categoryCounts = {};
   products.forEach(p => {
     categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
@@ -31,16 +32,16 @@ export function renderAdminProducts(container) {
         <div class="topbar">
           <div class="topbar-left">
             <div>
-              <div class="topbar-title">Product Management 📦</div>
-              <div class="topbar-breadcrumb"><span>Admin</span> <span>›</span> <span>Products</span></div>
+              <div class="topbar-title">${i18n.t('admin.productsTitle') || 'Product Management 📦'}</div>
+              <div class="topbar-breadcrumb"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.navProducts') || 'Products'}</span></div>
             </div>
           </div>
           <div class="topbar-right">
             <div class="topbar-search">
               <span class="topbar-search-icon">🔍</span>
-              <input type="text" placeholder="Search products..." id="admin-product-search" />
+              <input type="text" placeholder="${i18n.t('common.searchProducts') || 'Search products...'}" id="admin-product-search" />
             </div>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>Logout</span></button>
+            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
           </div>
         </div>
 
@@ -50,62 +51,65 @@ export function renderAdminProducts(container) {
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">📦</div>
               <div class="stat-card-value">${products.length}</div>
-              <div class="stat-card-label">Total Products</div>
+              <div class="stat-card-label">${i18n.t('admin.statProducts') || 'Total Products'}</div>
             </div>
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">💰</div>
               <div class="stat-card-value">${formatCurrency(totalValue)}</div>
-              <div class="stat-card-label">Total Inventory Value</div>
+              <div class="stat-card-label">${i18n.t('admin.statInventoryValue') || 'Total Inventory Value'}</div>
             </div>
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">📊</div>
               <div class="stat-card-value">${Object.keys(categoryCounts).length}</div>
-              <div class="stat-card-label">Categories</div>
+              <div class="stat-card-label">${i18n.t('admin.statCategories') || 'Categories'}</div>
             </div>
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">🌿</div>
               <div class="stat-card-value">${products.filter(p => p.isOrganic).length}</div>
-              <div class="stat-card-label">Organic Products</div>
+              <div class="stat-card-label">${i18n.t('admin.statOrganicProducts') || 'Organic Products'}</div>
             </div>
           </div>
 
           <!-- Category Filter Tabs -->
           <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button class="tab active product-filter-tab" data-category="all">All</button>
+            <button class="tab active product-filter-tab" data-category="all">${i18n.t('common.all') || 'All'}</button>
             ${Object.keys(categoryCounts).map(cat => `
-              <button class="tab product-filter-tab" data-category="${cat}">${getCropEmoji(cat)} ${cat} (${categoryCounts[cat]})</button>
+              <button class="tab product-filter-tab" data-category="${cat}">${getCropEmoji(cat)} ${localizeCategory(cat)} (${categoryCounts[cat]})</button>
             `).join('')}
           </div>
 
           <!-- Products Table -->
           <div class="card">
             <div class="card-header">
-              <div class="card-title">All Platform Products</div>
+              <div class="card-title">${i18n.t('admin.allPlatformProducts') || 'All Platform Products'}</div>
             </div>
             ${products.length > 0 ? `
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Product</th>
-                    <th>Farmer</th>
-                    <th>Category</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Status</th>
-                    <th>Added</th>
-                    <th>Actions</th>
+                    <th>${i18n.t('common.product') || 'Product'}</th>
+                    <th>${i18n.t('farmer.role') || 'Farmer'}</th>
+                    <th>${i18n.t('admin.categoryCol') || 'Category'}</th>
+                    <th>${i18n.t('common.quantity') || 'Qty'}</th>
+                    <th>${i18n.t('common.price') || 'Price'}</th>
+                    <th>${i18n.t('common.status') || 'Status'}</th>
+                    <th>${i18n.t('admin.addedCol') || 'Added'}</th>
+                    <th>${i18n.t('common.actions') || 'Actions'}</th>
                   </tr>
                 </thead>
                 <tbody id="admin-products-tbody">
                   ${products.map(p => {
                     const badge = getStatusBadge(p.status || 'available');
+                    const locCrop = localizeCropName(p.name);
+                    const locUnit = localizeUnit(p.unit);
+                    const locCat = localizeCategory(p.category);
                     return `
                       <tr class="admin-product-row" data-category="${p.category}" data-name="${escapeHtml((p.name || '').toLowerCase())}">
                         <td>
                           <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-size: 1.3rem;">${p.emoji || getCropEmoji(p.name)}</span>
                             <div>
-                              <div style="font-weight: 600;">${escapeHtml(p.name)}</div>
+                              <div style="font-weight: 600;">${escapeHtml(locCrop)}</div>
                               <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">${escapeHtml((p.productId || '').slice(0, 16))}</div>
                             </div>
                           </div>
@@ -114,14 +118,14 @@ export function renderAdminProducts(container) {
                           <div style="font-weight: 500;">${escapeHtml(p.farmerName || 'N/A')}</div>
                           <div style="font-size: 0.72rem; color: var(--text-muted);">📍 ${escapeHtml(p.origin || 'N/A')}</div>
                         </td>
-                        <td><span class="badge badge-info">${escapeHtml(p.category || 'N/A')}</span></td>
-                        <td style="font-weight: 600;">${p.quantity || 0} ${escapeHtml(p.unit || 'kg')}</td>
+                        <td><span class="badge badge-info">${escapeHtml(locCat || 'N/A')}</span></td>
+                        <td style="font-weight: 600;">${p.quantity || 0} ${escapeHtml(locUnit)}</td>
                         <td style="color: var(--accent-green); font-weight: 600;">${formatCurrency(p.pricePerUnit || 0)}</td>
                         <td><span class="badge ${badge.class}">${badge.icon} ${badge.label}</span></td>
                         <td style="font-size: 0.8rem; color: var(--text-muted);">${p.createdAt ? timeAgo(p.createdAt) : 'N/A'}</td>
                         <td>
                           <div style="display: flex; gap: 4px;">
-                            <button class="btn btn-secondary btn-sm admin-edit-btn" data-product-id="${p.productId}" style="font-size: 0.7rem; padding: 4px 8px;">✏️ Edit</button>
+                            <button class="btn btn-secondary btn-sm admin-edit-btn" data-product-id="${p.productId}" style="font-size: 0.7rem; padding: 4px 8px;">✏️ ${i18n.t('common.edit') || 'Edit'}</button>
                             <button class="btn btn-secondary btn-sm admin-delete-btn" data-product-id="${p.productId}" style="font-size: 0.7rem; padding: 4px 8px; color: var(--accent-red); border-color: rgba(239,68,68,0.3);">🗑️</button>
                           </div>
                         </td>
@@ -133,8 +137,8 @@ export function renderAdminProducts(container) {
             ` : `
               <div class="empty-state">
                 <div class="empty-state-icon">📦</div>
-                <h3>No products on platform</h3>
-                <p>Products will appear here when farmers register them.</p>
+                <h3>${i18n.t('admin.noProductsOnPlatform') || 'No products on platform'}</h3>
+                <p>${i18n.t('admin.noProductsDesc') || 'Products will appear here when farmers register them.'}</p>
               </div>
             `}
           </div>
@@ -188,7 +192,7 @@ export function renderAdminProducts(container) {
         store.removeItem('listings', l => l.productId === productId);
         deleteProduct(productId).catch(err => console.warn('Backend delete sync:', err));
         deleteFirestoreProduct(productId).catch(err => console.warn('Firestore delete sync:', err));
-        showToast(`Product "${product.name}" deleted by admin 🗑️`, 'success');
+        showToast(i18n.t('admin.productDeletedToast', { name: product.name }) || `Product "${product.name}" deleted by admin 🗑️`, 'success');
         renderAdminProducts(container);
       } catch (err) {
         showToast('Delete failed: ' + err.message, 'error');
@@ -199,51 +203,51 @@ export function renderAdminProducts(container) {
 }
 
 function showAdminEditModal(container, product) {
-  createModal('Admin: Edit Product', `
+  createModal(i18n.t('admin.editProductModalTitle') || 'Admin: Edit Product', `
     <div style="background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 16px;">
-      <div style="font-size: 0.8rem; color: var(--accent-red); font-weight: 600;">⚠️ Admin Edit Mode</div>
-      <div style="font-size: 0.75rem; color: var(--text-muted);">Editing: ${escapeHtml(product.name)} by ${escapeHtml(product.farmerName)}</div>
+      <div style="font-size: 0.8rem; color: var(--accent-red); font-weight: 600;">${i18n.t('admin.editModeNotice') || '⚠️ Admin Edit Mode'}</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted);">${i18n.t('admin.editingItem', { name: escapeHtml(product.name), farmer: escapeHtml(product.farmerName) }) || `Editing: ${escapeHtml(product.name)} by ${escapeHtml(product.farmerName)}`}</div>
     </div>
     <div class="form-group">
-      <label class="form-label">Product Name</label>
+      <label class="form-label">${i18n.t('farmer.wizardCropName') || 'Product Name'}</label>
       <input type="text" class="form-input" id="admin-edit-name" value="${escapeHtml(product.name)}" />
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Category</label>
+        <label class="form-label">${i18n.t('admin.categoryCol') || 'Category'}</label>
         <select class="form-select" id="admin-edit-category">
           ${['Grains', 'Vegetables', 'Fruits', 'Spices', 'Cash Crops'].map(c => `
-            <option value="${c}" ${product.category === c ? 'selected' : ''}>${c}</option>
+            <option value="${c}" ${product.category === c ? 'selected' : ''}>${localizeCategory(c)}</option>
           `).join('')}
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Status</label>
+        <label class="form-label">${i18n.t('common.status') || 'Status'}</label>
         <select class="form-select" id="admin-edit-status">
-          <option value="available" ${product.status === 'available' ? 'selected' : ''}>Available</option>
-          <option value="sold" ${product.status === 'sold' ? 'selected' : ''}>Sold Out</option>
-          <option value="reserved" ${product.status === 'reserved' ? 'selected' : ''}>Reserved</option>
-          <option value="suspended" ${product.status === 'suspended' ? 'selected' : ''}>Suspended</option>
+          <option value="available" ${product.status === 'available' ? 'selected' : ''}>${i18n.t('status.available') || 'Available'}</option>
+          <option value="sold" ${product.status === 'sold' ? 'selected' : ''}>${i18n.t('status.soldOut') || 'Sold Out'}</option>
+          <option value="reserved" ${product.status === 'reserved' ? 'selected' : ''}>${i18n.t('status.reserved') || 'Reserved'}</option>
+          <option value="suspended" ${product.status === 'suspended' ? 'selected' : ''}>${i18n.t('status.suspended') || 'Suspended'}</option>
         </select>
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Quantity</label>
+        <label class="form-label">${i18n.t('common.quantity') || 'Quantity'}</label>
         <input type="number" class="form-input" id="admin-edit-quantity" value="${product.quantity}" />
       </div>
       <div class="form-group">
-        <label class="form-label">Price per Unit (₹)</label>
+        <label class="form-label">${i18n.t('common.pricePerUnit') || 'Price per Unit (₹)'}</label>
         <input type="number" class="form-input" id="admin-edit-price" value="${product.pricePerUnit}" />
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Description</label>
+      <label class="form-label">${i18n.t('farmer.wizardDescription') || 'Description'}</label>
       <textarea class="form-textarea" id="admin-edit-desc">${escapeHtml(product.description || '')}</textarea>
     </div>
   `, `
-    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">Cancel</button>
-    <button class="btn btn-primary btn-sm" id="admin-save-edit-btn">💾 Save Changes (Admin)</button>
+    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">${i18n.t('common.cancel') || 'Cancel'}</button>
+    <button class="btn btn-primary btn-sm" id="admin-save-edit-btn">💾 ${i18n.t('admin.saveChangesBtn') || 'Save Changes (Admin)'}</button>
   `);
 
   document.getElementById('admin-save-edit-btn')?.addEventListener('click', async () => {
@@ -263,7 +267,7 @@ function showAdminEditModal(container, product) {
     const saveBtn = document.getElementById('admin-save-edit-btn');
     if (saveBtn) {
       saveBtn.disabled = true;
-      saveBtn.innerHTML = '<span class="spinner" style="width: 14px; height: 14px;"></span> Saving...';
+      saveBtn.innerHTML = `<span class="spinner" style="width: 14px; height: 14px;"></span> ${i18n.t('admin.saving') || 'Saving...'}`;
     }
 
     try {
@@ -283,13 +287,13 @@ function showAdminEditModal(container, product) {
       updateFirestoreProduct(product.productId, updates).catch(err => console.warn('Firestore update sync:', err));
 
       closeModal();
-      showToast(`"${name}" updated by admin ✏️`, 'success');
+      showToast(i18n.t('admin.productUpdatedToast', { name }) || `"${name}" updated by admin ✏️`, 'success');
       renderAdminProducts(container);
     } catch (err) {
       showToast('Update failed: ' + err.message, 'error');
       if (saveBtn) {
         saveBtn.disabled = false;
-        saveBtn.innerHTML = '💾 Save Changes (Admin)';
+        saveBtn.innerHTML = `💾 ${i18n.t('admin.saveChangesBtn') || 'Save Changes (Admin)'}`;
       }
     }
   });

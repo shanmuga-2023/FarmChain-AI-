@@ -155,9 +155,9 @@
   --radius-full: 9999px;
 
   /* Typography */
-  --font-heading: 'Playfair Display', Georgia, serif;
-  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-heading: 'Playfair Display', 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', Georgia, serif;
+  --font-body: 'IBM Plex Sans', 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Courier New', monospace;
   --font-primary: var(--font-body);
   --font-display: var(--font-heading);
 
