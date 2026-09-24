@@ -9,21 +9,41 @@ let _serverOnline = null; // null = unknown, true/false = checked
 
 /**
  * Check if the Express server is reachable.
- * Caches result for 30 seconds.
+ * Caches result for 60 seconds to avoid repeated network probes.
  */
 let _lastCheck = 0;
 export async function isServerOnline() {
   const now = Date.now();
-  if (_serverOnline !== null && now - _lastCheck < 30000) {
+  if (_serverOnline !== null && now - _lastCheck < 60000) {
     return _serverOnline;
   }
+
+  // Gracefully skip if explicitly set to pure Firebase mode
+  if (import.meta.env.VITE_USE_BACKEND === 'false') {
+    _serverOnline = false;
+    _lastCheck = now;
+    return false;
+  }
+
   try {
-    const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
-    const contentType = res.headers.get('content-type') || '';
-    _serverOnline = res.ok && contentType.includes('application/json');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(`${API_BASE}/health`, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    }).catch(() => null);
+    clearTimeout(timeoutId);
+
+    if (!res || !res.ok) {
+      _serverOnline = false;
+    } else {
+      const contentType = res.headers.get('content-type') || '';
+      _serverOnline = contentType.includes('application/json');
+    }
   } catch {
     _serverOnline = false;
   }
+
   _lastCheck = now;
   return _serverOnline;
 }
@@ -40,16 +60,17 @@ async function apiFetch(endpoint, options = {}) {
       headers: { 'Content-Type': 'application/json' },
       ...options,
       signal: options.signal || AbortSignal.timeout(5000),
-    });
+    }).catch(() => null);
+
+    if (!res || !res.ok) return null;
 
     const contentType = res.headers.get('content-type') || '';
-    if (!res.ok || !contentType.includes('application/json')) {
+    if (!contentType.includes('application/json')) {
       return null;
     }
 
     return await res.json();
-  } catch (err) {
-    console.warn(`API ${endpoint} failed:`, err.message);
+  } catch {
     return null;
   }
 }

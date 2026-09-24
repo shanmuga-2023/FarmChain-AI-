@@ -59,7 +59,68 @@ export function renderRetailerDashboard(container) {
             </div>
           </div>
 
-          <div class="charts-grid">
+          <!-- Retailer Hero Moment: Packaging QR Stamping Station -->
+          <div class="card ledger-card" style="margin-bottom: 24px; border-left: 4px solid var(--role-retailer);">
+            <div class="card-header" style="border-bottom: 1px solid var(--border-rule);">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="stamp-seal" style="border-color: var(--role-retailer); color: var(--role-retailer); background: var(--role-retailer-bg);">
+                    Retail Authentication Station
+                  </span>
+                  <span class="stamp-seal stamp-verified">
+                    Packaging QR Impression Engine ✓
+                  </span>
+                </div>
+                <div class="card-title" style="margin-top: 8px; font-size: 1.15rem;">
+                  Produce Pack QR Seal Generator & On-Shelf Stamping
+                </div>
+              </div>
+              <div class="stamp-round" style="border-color: var(--role-retailer); color: var(--role-retailer);">
+                STORE<br/>SEAL
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; padding: 6px 0;">
+              <div>
+                <p style="font-size: var(--text-sm); color: var(--loam-light); margin-bottom: 14px;">
+                  Generate verifiable cryptographic stamps for carton units. Each print embeds temperature integrity, mandi batch root hash, and farmer payout guarantees.
+                </p>
+
+                <div style="background: var(--parchment-card-alt); border: 1px solid var(--border-rule); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 14px;">
+                  <div style="display: flex; justify-content: space-between; font-size: var(--text-xs); margin-bottom: 6px;">
+                    <span style="color: var(--loam-faded);">Active Batch:</span>
+                    <strong style="color: var(--loam); font-family: var(--font-mono);">#BATCH-PUN-9920</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: var(--text-xs); margin-bottom: 6px;">
+                    <span style="color: var(--loam-faded);">Produce:</span>
+                    <span style="color: var(--loam);">Alphonso Mangoes (Ratnagiri Orchards)</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: var(--text-xs); margin-bottom: 6px;">
+                    <span style="color: var(--loam-faded);">Units to Stamp:</span>
+                    <span style="color: var(--role-retailer); font-family: var(--font-mono); font-weight: 700;">100 Retail Boxes (1kg each)</span>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary" id="btn-retailer-stamp-qr" style="background: var(--role-retailer); border-color: var(--role-retailer);">
+                  Press Packaging Stamp Tool
+                </button>
+              </div>
+
+              <!-- Stamping visual display -->
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--parchment-warm); border: 1.5px dashed var(--border-rule); border-radius: var(--radius-sm); padding: 20px; min-height: 200px; text-align: center;" id="retailer-stamp-target">
+                <div id="stamp-impression-icon" style="font-size: 3rem; margin-bottom: 8px; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                  🏷️
+                </div>
+                <div id="stamp-impression-status" style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--loam);">
+                  Ready for Stamping
+                </div>
+                <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--loam-faded); margin-top: 4px;" id="stamp-impression-meta">
+                  Press button to apply physical ink impression & blockchain hash
+                </div>
+              </div>
+            </div>
+          </div>
+
             <div class="chart-card">
               <div class="chart-card-header">
                 <div class="chart-card-title">📊 Sales Analytics</div>
@@ -108,6 +169,55 @@ export function renderRetailerDashboard(container) {
       </main>
     </div>
   `;
+
+  // Retailer Stamping Station Handler
+  const stampToolBtn = container.querySelector('#btn-retailer-stamp-qr');
+  stampToolBtn?.addEventListener('click', async () => {
+    const icon = container.querySelector('#stamp-impression-icon');
+    const status = container.querySelector('#stamp-impression-status');
+    const meta = container.querySelector('#stamp-impression-meta');
+    const target = container.querySelector('#retailer-stamp-target');
+
+    if (icon) icon.style.transform = 'translateY(14px) scale(0.9)';
+    stampToolBtn.textContent = 'Pressing Ink Stamp...';
+
+    setTimeout(async () => {
+      if (icon) icon.style.transform = 'translateY(0) scale(1)';
+      stampToolBtn.textContent = 'Ink Seal Applied ✓';
+      stampToolBtn.classList.add('is-success');
+
+      // Generate actual QR code on canvas
+      const canvas = await generateProductQR({
+        productId: 'BATCH-PUN-9920',
+        name: 'Ratnagiri Alphonso Mangoes',
+        batchId: 'BATCH-PUN-9920',
+        origin: 'Ratnagiri Orchards',
+      });
+
+      if (target) {
+        target.innerHTML = `
+          <div style="border: 2px solid var(--role-retailer); padding: 12px; background: #FAF6ED; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); animation: scaleIn 0.3s ease-out;">
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--role-retailer); font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">
+              AUTHENTICATED INK SEAL · LOT #PUN-9920
+            </div>
+            <div style="display: flex; justify-content: center; margin: 8px 0;">
+              ${createQRDisplay(canvas, 'Lot PUN-9920').outerHTML}
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--loam-faded);">
+              TxHash: 0x9b44...71cf · Shelf ID #B12
+            </div>
+          </div>
+        `;
+      }
+
+      showToast('100 Retail Pack QR Stamps generated with indelible cryptographic seal!', 'success');
+
+      setTimeout(() => {
+        stampToolBtn.textContent = 'Press Packaging Stamp Tool';
+        stampToolBtn.classList.remove('is-success');
+      }, 3500);
+    }, 450);
+  });
 
   // QR generation
   container.querySelectorAll('.gen-qr-btn').forEach(btn => {

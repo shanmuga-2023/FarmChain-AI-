@@ -106,11 +106,82 @@ export function renderFarmerDashboard(container) {
             </div>
           </div>
 
+          <!-- Farmer Hero Moment: Stamped AI Price Suggestion with Visible Reasoning -->
+          <div class="card ledger-card" style="margin-bottom: 24px; border-left: 4px solid var(--role-farmer);">
+            <div class="card-header" style="border-bottom: 1px solid var(--border-rule);">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="stamp-seal" style="border-color: var(--role-farmer); color: var(--role-farmer); background: var(--role-farmer-bg);">
+                    AI Price Engine · Formula Proof
+                  </span>
+                  <span class="stamp-seal stamp-verified">
+                    MSP Floor Protected ✓
+                  </span>
+                </div>
+                <div class="card-title" style="margin-top: 8px; font-size: 1.15rem;">
+                  Active Harvest Valuation & Transparent Reasoning
+                </div>
+              </div>
+              <div class="stamp-round" title="Verified by AI Oracle">
+                AI<br/>ORACLE
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; padding: 6px 0;">
+              <div>
+                <p style="font-size: var(--text-sm); color: var(--loam-light); margin-bottom: 14px;">
+                  Every rupee of the suggested price is benchmarked against real-time APMC arrivals, moisture readings, and government MSP floors. No middleman deductions.
+                </p>
+
+                <div class="pricing-equation" style="background: var(--parchment-card-alt); border: 1px solid var(--border-rule); border-radius: var(--radius-sm); padding: 14px 16px;">
+                  <div class="equation-row">
+                    <span class="equation-label">MSP Government Floor</span>
+                    <span class="equation-val">₹23.00 / kg</span>
+                  </div>
+                  <div class="equation-row">
+                    <span class="equation-label">AI Quality Grade A+ (+5% Purity Bonus)</span>
+                    <span class="equation-val plus">+₹1.15 / kg</span>
+                  </div>
+                  <div class="equation-row">
+                    <span class="equation-label">Regional Mandi Demand Index (+12% Festival Arrival)</span>
+                    <span class="equation-val plus">+₹2.76 / kg</span>
+                  </div>
+                  <div class="equation-row">
+                    <span class="equation-label">Cold-Chain Moisture Factor (+7% Dry Index)</span>
+                    <span class="equation-val plus">+₹1.61 / kg</span>
+                  </div>
+                  <div class="equation-total-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-rule);">
+                    <span class="equation-total-label" style="font-size: var(--text-sm); font-weight: 700;">Recommended Locked Price:</span>
+                    <span class="equation-total-price" style="color: var(--role-farmer); font-size: 1.45rem;">₹28.52 <span style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--loam-faded);">/ kg</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: var(--parchment-warm); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-rule);">
+                <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--loam-faded); text-transform: uppercase; margin-bottom: 6px;">
+                  Smart Contract Verification Proof
+                </div>
+                <div style="font-size: 0.88rem; font-weight: 600; color: var(--loam); margin-bottom: 8px;">
+                  Solidity Escrow Rule: 60% Producer Guarantee
+                </div>
+                <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--loam-light); line-height: 1.6; margin-bottom: 14px;">
+                  • Block Index: #2847<br/>
+                  • Oracle Feed: AgMarkNet Live<br/>
+                  • Contract Hash: <span style="color: var(--role-farmer);">0x7b88...c14e</span><br/>
+                  • Status: <strong style="color: var(--role-farmer);">LOCKED ON-CHAIN</strong>
+                </div>
+                <button class="btn btn-primary btn-sm" id="farmer-stamp-btn" style="background: var(--role-farmer); border-color: var(--role-farmer);">
+                  Stamp & Lock Fair Price
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- AI Insights + Recent Transactions -->
           <div class="charts-grid equal">
             <div class="card">
               <div class="card-header">
-                <div class="card-title">🤖 AI Price Insights</div>
+                <div class="card-title">Listed Harvest Valuations</div>
               </div>
               <div style="display: flex; flex-direction: column; gap: 12px;" id="ai-insights-container">
                 ${products.slice(0, 3).map(p => {
@@ -169,14 +240,16 @@ export function renderFarmerDashboard(container) {
       </main>
     </div>
   `;
-  // Search bar handler
-  container.querySelector('#farmer-search-input')?.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase();
-    // Filter product cards if visible
-    container.querySelectorAll('.product-card, .tx-item').forEach(el => {
-      const text = el.textContent.toLowerCase();
-      el.style.display = text.includes(query) ? '' : 'none';
-    });
+  // Farmer stamp button handler
+  const farmerStampBtn = container.querySelector('#farmer-stamp-btn');
+  farmerStampBtn?.addEventListener('click', () => {
+    farmerStampBtn.textContent = 'Price Locked on Blockchain ✓';
+    farmerStampBtn.classList.add('is-success');
+    showToast('Fair price of ₹28.52/kg stamped to Block #2847 with 60% producer payout rule!', 'success');
+    setTimeout(() => {
+      farmerStampBtn.textContent = 'Stamp & Lock Fair Price';
+      farmerStampBtn.classList.remove('is-success');
+    }, 3000);
   });
 
   // Notification bell handler

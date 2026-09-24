@@ -70,7 +70,97 @@ export function renderIntermediaryDashboard(container) {
             </div>
           </div>
 
-          <!-- Quality Re-Verification Panel -->
+          <!-- Intermediary Hero Moment: Visual Merge of 3 Farmer Lots into 1 Batch -->
+          <div class="card ledger-card" style="margin-bottom: 24px; border-left: 4px solid var(--role-intermediary);">
+            <div class="card-header" style="border-bottom: 1px solid var(--border-rule);">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="stamp-seal" style="border-color: var(--role-intermediary); color: var(--role-intermediary); background: var(--role-intermediary-bg);">
+                    Custody Aggregation Matrix
+                  </span>
+                  <span class="stamp-seal stamp-verified">
+                    Origin Names Preserved on Blockchain ✓
+                  </span>
+                </div>
+                <div class="card-title" style="margin-top: 8px; font-size: 1.15rem;">
+                  Multi-Farmer Inbound Merge → Outgoing Dispatch Batch #PUN-9920
+                </div>
+              </div>
+              <div class="stamp-round" style="border-color: var(--role-intermediary); color: var(--role-intermediary);">
+                APMC<br/>HUB
+              </div>
+            </div>
+
+            <!-- Visual Flow Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 60px 1.1fr; gap: 16px; align-items: center; margin: 12px 0;">
+              <!-- Left: 3 Incoming Farmer Lots -->
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: var(--parchment-warm); border: 1px solid var(--border-rule); border-left: 3px solid var(--role-farmer); border-radius: var(--radius-sm); padding: 10px 12px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: var(--text-xs); color: var(--loam);">Lot #FRM-102 · Shirish Patil</strong>
+                    <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--role-farmer); font-weight: 700;">400 kg</span>
+                  </div>
+                  <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--loam-faded); margin-top: 2px;">
+                    Ratnagiri Orchards · Brix 96% · Grade A+
+                  </div>
+                </div>
+
+                <div style="background: var(--parchment-warm); border: 1px solid var(--border-rule); border-left: 3px solid var(--role-farmer); border-radius: var(--radius-sm); padding: 10px 12px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: var(--text-xs); color: var(--loam);">Lot #FRM-204 · Ganesh Deshmukh</strong>
+                    <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--role-farmer); font-weight: 700;">500 kg</span>
+                  </div>
+                  <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--loam-faded); margin-top: 2px;">
+                    Devgad Coast · Brix 94% · Grade A+
+                  </div>
+                </div>
+
+                <div style="background: var(--parchment-warm); border: 1px solid var(--border-rule); border-left: 3px solid var(--role-farmer); border-radius: var(--radius-sm); padding: 10px 12px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: var(--text-xs); color: var(--loam);">Lot #FRM-309 · Sunita Shinde</strong>
+                    <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--role-farmer); font-weight: 700;">300 kg</span>
+                  </div>
+                  <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--loam-faded); margin-top: 2px;">
+                    Raigad Hill · Brix 92% · Grade A
+                  </div>
+                </div>
+              </div>
+
+              <!-- Center: Converging SVG stream lines -->
+              <div style="display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 60 120" width="50" height="100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M 5 20 C 35 20, 35 60, 55 60" stroke="#B8963E" stroke-width="2" stroke-dasharray="3 3"/>
+                  <path d="M 5 60 L 55 60" stroke="#B8963E" stroke-width="2.5"/>
+                  <path d="M 5 100 C 35 100, 35 60, 55 60" stroke="#B8963E" stroke-width="2" stroke-dasharray="3 3"/>
+                  <circle cx="55" cy="60" r="4" fill="#B8963E"/>
+                </svg>
+              </div>
+
+              <!-- Right: Unified Outgoing Dispatch Batch -->
+              <div style="background: var(--parchment-card-alt); border: 1.5px solid var(--role-intermediary); border-radius: var(--radius-sm); padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                  <div style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--loam);">
+                    Batch #BATCH-PUN-9920
+                  </div>
+                  <span class="stamp-seal" style="background: var(--role-intermediary-bg); color: var(--role-intermediary); border-color: var(--role-intermediary); font-size: 0.65rem;">
+                    Consolidated 1,200 kg
+                  </span>
+                </div>
+
+                <div style="font-size: var(--text-xs); color: var(--loam-light); line-height: 1.5; margin-bottom: 12px;">
+                  All 3 farm origins cryptographically hashed into batch metadata. Retailers and consumers will see exact grower splits (33% Ratnagiri / 42% Devgad / 25% Raigad).
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px dashed var(--border-rule);">
+                  <span class="stamp-hash" id="merge-batch-hash">Root: 0x9b44...71cf</span>
+                  <button class="btn btn-primary btn-sm" id="btn-merge-lots" style="background: var(--role-intermediary); border-color: var(--role-intermediary); font-size: var(--text-xs);">
+                    Merge & Stamp On-Chain
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.06), rgba(168, 85, 247, 0.06)); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <div>
@@ -469,4 +559,22 @@ export function renderIntermediaryDashboard(container) {
       btn.innerHTML = `🔬 Re-Verify: ${productName.substring(0, 18)}${productName.length > 18 ? '...' : ''} (${originalScore}%)`;
     });
   });
+
+  // Batch Merge Hero Button Handler
+  const mergeBtn = container.querySelector('#btn-merge-lots');
+  mergeBtn?.addEventListener('click', () => {
+    mergeBtn.textContent = 'Batch Sealed ✓';
+    mergeBtn.classList.add('is-success');
+    const hashEl = container.querySelector('#merge-batch-hash');
+    if (hashEl) {
+      hashEl.textContent = 'Root: 0x' + Math.random().toString(16).slice(2, 10) + '...sealed';
+      hashEl.style.color = 'var(--role-intermediary)';
+    }
+    showToast('Batch #PUN-9920 successfully merged with 3 farmer origins preserved on-chain!', 'success');
+    setTimeout(() => {
+      mergeBtn.textContent = 'Merge & Stamp On-Chain';
+      mergeBtn.classList.remove('is-success');
+    }, 3000);
+  });
 }
+

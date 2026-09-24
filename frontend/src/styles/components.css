@@ -18,24 +18,33 @@
 .form-input,
 .form-select,
 .form-textarea {
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
-  background: rgba(6, 8, 15, 0.6);
-  border: 1px solid var(--border-medium);
-  color: var(--text-primary);
+  background: var(--parchment-card);
+  border: 1px solid var(--border-rule);
+  color: var(--loam);
   font-size: 0.9rem;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-  border-color: var(--accent-green);
-  box-shadow: 0 0 0 3px var(--accent-green-dim);
+  border-color: var(--ledger-ink);
+  box-shadow: 0 0 0 2px var(--ledger-ink-dim);
+  background: #FFFFFF;
 }
 
 .form-input::placeholder {
-  color: var(--text-muted);
+  color: var(--loam-faded);
+  opacity: 0.85;
+}
+
+.card-dark .form-input::placeholder,
+.auth-card .form-input::placeholder,
+.dark-surface .form-input::placeholder {
+  color: #94A3B8;
+  opacity: 1;
 }
 
 .form-textarea {
@@ -46,7 +55,7 @@
 .form-select {
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232B241A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 36px;
@@ -61,14 +70,16 @@
 /* --- Cards --- */
 .card {
   padding: 24px;
-  border-radius: var(--radius-lg);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  transition: all var(--transition-base);
+  border-radius: var(--radius-md);
+  background: var(--parchment-card);
+  border: 1px solid var(--border-rule);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
 }
 
 .card:hover {
-  border-color: var(--border-medium);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
 }
 
 .card-header {
@@ -76,175 +87,183 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-hairline);
 }
 
 .card-title {
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--loam);
 }
 
 /* --- Stat Cards --- */
 .stat-card {
-  padding: 24px;
-  border-radius: var(--radius-lg);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  transition: all var(--transition-base);
+  padding: 20px 22px;
+  border-radius: var(--radius-md);
+  background: var(--parchment-card);
+  border: 1px solid var(--border-rule);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--dur-base) var(--ease-out);
   position: relative;
   overflow: hidden;
 }
 
-.stat-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  opacity: 0.05;
-  transform: translate(30%, -30%);
-}
-
 .stat-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-medium);
+  border-color: var(--border-strong);
   box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .stat-card-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
-  margin-bottom: 14px;
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-hairline);
 }
 
 .stat-card-value {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  font-weight: 800;
-  line-height: 1;
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
   margin-bottom: 4px;
+  color: var(--loam);
 }
 
 .stat-card-label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--loam-faded);
   font-weight: 500;
+  letter-spacing: 0.03em;
 }
 
 .stat-card-change {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
   margin-top: 8px;
 }
 
 .stat-card-change.positive {
-  background: var(--accent-green-dim);
-  color: var(--accent-green);
+  background: var(--semantic-success-dim);
+  color: var(--semantic-success);
 }
 
 .stat-card-change.negative {
-  background: var(--accent-red-dim);
-  color: var(--accent-red);
+  background: var(--semantic-error-dim);
+  color: var(--semantic-error);
 }
 
 /* --- Product Cards --- */
 .product-card {
-  border-radius: var(--radius-lg);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--parchment-card);
+  border: 1px solid var(--border-rule);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
-  transition: all var(--transition-base);
+  transition: all var(--dur-base) var(--ease-out);
 }
 
 .product-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--border-accent);
-  box-shadow: var(--shadow-lg);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .product-card-image {
-  height: 180px;
-  background: var(--bg-tertiary);
+  height: 160px;
+  background: var(--parchment-warm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 4rem;
+  font-size: 3.5rem;
   position: relative;
+  border-bottom: 1px solid var(--border-hairline);
 }
 
 .product-card-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-size: 0.7rem;
+  top: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .badge-organic {
-  background: var(--accent-green-dim);
-  color: var(--accent-green);
+  background: var(--role-farmer-bg);
+  color: var(--role-farmer);
+  border: 1px solid rgba(74, 124, 89, 0.3);
 }
 
 .badge-verified {
-  background: var(--accent-cyan-dim);
-  color: var(--accent-cyan);
+  background: rgba(44, 74, 62, 0.1);
+  color: var(--ledger-ink);
+  border: 1px solid var(--ledger-ink-border);
 }
 
 .badge-new {
-  background: var(--accent-purple-dim);
-  color: var(--accent-purple);
+  background: var(--role-consumer-bg);
+  color: var(--role-consumer);
+  border: 1px solid rgba(107, 91, 123, 0.3);
 }
 
 .product-card-body {
-  padding: 20px;
+  padding: 16px;
 }
 
 .product-card-name {
+  font-family: var(--font-heading);
   font-size: 1.05rem;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.product-card-origin {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 12px;
-}
-
-.product-card-price {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
   font-weight: 700;
-  color: var(--accent-green);
+  color: var(--loam);
   margin-bottom: 4px;
 }
 
+.product-card-origin {
+  font-size: 0.78rem;
+  color: var(--loam-faded);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.product-card-price {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ledger-ink);
+  margin-bottom: 2px;
+}
+
 .product-card-unit {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--loam-faded);
 }
 
 .product-card-footer {
-  padding: 14px 20px;
-  border-top: 1px solid var(--border-subtle);
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-hairline);
+  background: var(--parchment-warm);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -254,8 +273,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--loam-faded);
 }
 
 /* --- Badges --- */
@@ -263,69 +283,78 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .badge-success {
-  background: var(--accent-green-dim);
-  color: var(--accent-green);
+  background: var(--semantic-success-dim);
+  color: var(--semantic-success);
+  border: 1px solid rgba(74, 124, 89, 0.3);
 }
 
 .badge-warning {
-  background: var(--accent-amber-dim);
-  color: var(--accent-amber);
+  background: var(--semantic-warning-dim);
+  color: var(--semantic-warning);
+  border: 1px solid rgba(184, 150, 62, 0.3);
 }
 
 .badge-info {
-  background: var(--accent-cyan-dim);
-  color: var(--accent-cyan);
+  background: rgba(44, 74, 62, 0.08);
+  color: var(--ledger-ink);
+  border: 1px solid var(--ledger-ink-border);
 }
 
 .badge-danger {
-  background: var(--accent-red-dim);
-  color: var(--accent-red);
+  background: var(--semantic-error-dim);
+  color: var(--semantic-error);
+  border: 1px solid rgba(160, 64, 64, 0.3);
 }
 
 .badge-purple {
-  background: var(--accent-purple-dim);
-  color: var(--accent-purple);
+  background: var(--role-consumer-bg);
+  color: var(--role-consumer);
+  border: 1px solid rgba(107, 91, 123, 0.3);
 }
 
-/* --- Tables --- */
+/* --- Tables: The Physical Ledger --- */
 .data-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
 }
 
 .data-table thead th {
-  padding: 12px 16px;
+  padding: 10px 14px;
   text-align: left;
-  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--loam-faded);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid var(--border-subtle);
+  letter-spacing: 0.04em;
+  background: var(--parchment-warm);
+  border-bottom: 1.5px solid var(--border-rule);
   white-space: nowrap;
 }
 
 .data-table tbody td {
-  padding: 14px 16px;
-  font-size: 0.88rem;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  color: var(--loam);
+  border-bottom: 1px solid var(--border-hairline);
   vertical-align: middle;
 }
 
 .data-table tbody tr {
-  transition: background var(--transition-fast);
+  transition: background var(--dur-fast) var(--ease-out);
 }
 
 .data-table tbody tr:hover {
-  background: rgba(34, 197, 94, 0.03);
+  background: rgba(44, 74, 62, 0.04);
 }
 
 .data-table tbody tr:last-child td {
@@ -336,7 +365,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(43, 36, 26, 0.55);
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex;
@@ -350,9 +379,10 @@
   max-width: 560px;
   max-height: 85vh;
   overflow-y: auto;
-  border-radius: var(--radius-xl);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  background: var(--parchment-card);
+  border: 1px solid var(--border-rule);
+  box-shadow: var(--shadow-lg);
   animation: scaleIn 0.3s ease-out;
 }
 
@@ -501,22 +531,51 @@
 }
 
 .block-hash {
-  font-family: 'Courier New', monospace;
-  font-size: 0.72rem;
-  color: var(--text-muted);
+  font-family: var(--font-mono, 'IBM Plex Mono', 'Courier New', monospace);
+  font-size: 0.78rem;
+  color: #1E293B;
   word-break: break-all;
-  padding: 6px 10px;
+  padding: 8px 12px;
   border-radius: var(--radius-sm);
-  background: rgba(6, 8, 15, 0.5);
+  background: var(--parchment-card-alt, #F1ECE0);
+  border: 1px solid var(--border-rule, rgba(43, 36, 26, 0.25));
   margin-top: 8px;
+  line-height: 1.5;
 }
 
 .block-hash-label {
-  color: var(--accent-cyan);
-  font-weight: 600;
-  font-size: 0.7rem;
+  color: var(--ledger-ink, #2C4A3E);
+  font-weight: 700;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+  margin-right: 6px;
+}
+
+.block-hash-value {
+  color: #0F172A;
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-weight: 600;
+}
+
+.card-dark .block-hash,
+.dark-surface .block-hash,
+.explorer-chain .block-hash {
+  background: #0D1526;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: #F8FAFC;
+}
+
+.card-dark .block-hash-label,
+.dark-surface .block-hash-label,
+.explorer-chain .block-hash-label {
+  color: #38BDF8;
+}
+
+.card-dark .block-hash-value,
+.dark-surface .block-hash-value,
+.explorer-chain .block-hash-value {
+  color: #F8FAFC;
 }
 
 /* --- Tabs --- */
@@ -704,16 +763,22 @@
   width: 100%;
   padding: 10px 14px 10px 40px;
   border-radius: var(--radius-md);
-  background: rgba(6, 8, 15, 0.6);
-  border: 1px solid var(--border-medium);
-  color: var(--text-primary);
+  background: var(--parchment-card, #FAF6ED);
+  border: 1px solid var(--border-rule, rgba(43, 36, 26, 0.25));
+  color: var(--loam, #1E170F);
   font-size: 0.9rem;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
+.search-bar input::placeholder {
+  color: #64748B;
+  opacity: 1;
+}
+
 .search-bar input:focus {
-  border-color: var(--accent-green);
-  box-shadow: 0 0 0 3px var(--accent-green-dim);
+  border-color: var(--accent-green, #4A7C59);
+  box-shadow: 0 0 0 3px var(--accent-green-dim, rgba(74, 124, 89, 0.15));
+  background: #FFFFFF;
 }
 
 .search-bar-icon {
@@ -721,8 +786,25 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-muted);
+  color: var(--loam-faded, #4E4436);
   font-size: 1rem;
+}
+
+.card-dark .search-bar input,
+.dark-surface .search-bar input {
+  background: #0F172A;
+  border-color: rgba(226, 232, 240, 0.25);
+  color: #F8FAFC;
+}
+
+.card-dark .search-bar input::placeholder,
+.dark-surface .search-bar input::placeholder {
+  color: #94A3B8;
+}
+
+.card-dark .search-bar-icon,
+.dark-surface .search-bar-icon {
+  color: #94A3B8;
 }
 
 /* --- Loading --- */

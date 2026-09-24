@@ -101,10 +101,10 @@ export function renderAdminExplorer(container) {
                 </div>
 
                 <div class="block-hash">
-                  <span class="block-hash-label">Hash: </span>${block.hash || 'N/A'}
+                  <span class="block-hash-label">Hash:</span> <span class="block-hash-value">${block.hash || 'N/A'}</span>
                 </div>
-                <div class="block-hash" style="margin-top: 4px;">
-                  <span class="block-hash-label">Previous Hash: </span>${block.previousHash || 'N/A'}
+                <div class="block-hash" style="margin-top: 6px;">
+                  <span class="block-hash-label">Previous Hash:</span> <span class="block-hash-value">${block.previousHash || 'N/A'}</span>
                 </div>
 
                 <div style="margin-top: 8px; display: flex; justify-content: flex-end;">

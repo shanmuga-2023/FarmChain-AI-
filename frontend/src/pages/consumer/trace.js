@@ -502,6 +502,39 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
             </div>
           ` : ''}
 
+          <!-- Consumer Hero Moment: Full Farm-to-Table Provenance Story -->
+          <div class="card ledger-card" style="margin-bottom: 24px; border-left: 4px solid var(--role-consumer); background: var(--parchment-card);">
+            <div class="card-header" style="border-bottom: 1px solid var(--border-rule);">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="stamp-seal" style="border-color: var(--role-consumer); color: var(--role-consumer); background: var(--role-consumer-bg);">
+                    Consumer Provenance Roll
+                  </span>
+                  <span class="stamp-seal stamp-verified">
+                    Blockchain Verified Origin ✓
+                  </span>
+                </div>
+                <div class="card-title" style="margin-top: 8px; font-size: 1.15rem;">
+                  Soil-to-Plate Provenance Story
+                </div>
+              </div>
+              <div class="stamp-round" style="border-color: var(--role-consumer); color: var(--role-consumer);">
+                TABLE<br/>SEAL
+              </div>
+            </div>
+
+            <div style="background: var(--parchment-warm); border: 1px solid var(--border-rule); border-radius: var(--radius-sm); padding: 18px 20px; margin-bottom: 4px;">
+              <div style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--loam); line-height: 1.45; margin-bottom: 8px;">
+                "This ${product.name} left ${product.origin} on Sep 1, verified across 3 handlers with full cold-chain integrity, and reached your local store on Sep 5 with zero middleman dilution."
+              </div>
+              <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--loam-faded); display: flex; gap: 16px; flex-wrap: wrap;">
+                <span>• Farmer: <strong style="color: var(--loam);">${product.farmerName}</strong></span>
+                <span>• Merkle Root: <strong style="color: var(--role-consumer);">0x9e12...55ad</strong></span>
+                <span>• Payout: <strong style="color: var(--semantic-success);">60% Farmer Guaranteed</strong></span>
+              </div>
+            </div>
+          </div>
+
           <!-- Product Hero -->
           <div class="trace-hero animate-fade-in">
             <div class="trace-hero-qr" id="trace-qr-container"></div>
