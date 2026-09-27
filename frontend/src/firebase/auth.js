@@ -7,7 +7,9 @@ import {
   signInWithPopup,
   signOut,
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db, googleProvider, isFirebaseReady } from './config.js';
@@ -209,6 +211,218 @@ export async function loginWithGoogle(desiredRole = 'consumer') {
   }
 }
 
+// ==========================================
+// Phone OTP Authentication (Real Firebase SMS)
+// ==========================================
+
+let _appVerifier = null;
+
+/**
+ * Normalize and validate Indian mobile phone numbers to E.164 format (+91XXXXXXXXXX)
+ * @param {string} input - Raw input phone number
+ * @returns {string|null} E.164 formatted string or null if invalid
+ */
+export function normalizeIndianPhone(input) {
+  if (!input || typeof input !== 'string') return null;
+  const cleaned = input.trim().replace(/[\s\-\(\)]/g, '');
+
+  if (cleaned.startsWith('+91')) {
+    const rest = cleaned.slice(3).replace(/^0+/, '');
+    if (/^[6-9]\d{9}$/.test(rest) || /^\d{10}$/.test(rest)) return `+91${rest}`;
+    return null;
+  }
+  if (cleaned.startsWith('91') && cleaned.length === 12) {
+    const rest = cleaned.slice(2);
+    if (/^[6-9]\d{9}$/.test(rest) || /^\d{10}$/.test(rest)) return `+91${rest}`;
+    return null;
+  }
+  if (cleaned.startsWith('0') && cleaned.length === 11) {
+    const rest = cleaned.slice(1);
+    if (/^[6-9]\d{9}$/.test(rest) || /^\d{10}$/.test(rest)) return `+91${rest}`;
+    return null;
+  }
+  if (/^[6-9]\d{9}$/.test(cleaned) || /^\d{10}$/.test(cleaned)) {
+    return `+91${cleaned}`;
+  }
+  return null;
+}
+
+/**
+ * Map Firebase error codes to clear, user-friendly messages
+ * @param {Error|{code: string, message: string}} error 
+ * @returns {string} User-friendly message
+ */
+export function getFriendlyAuthErrorMessage(error) {
+  if (!error) return 'An error occurred during authentication.';
+  const code = (error.code || '').toLowerCase();
+  const message = (error.message || '').toLowerCase();
+
+  if (code.includes('billing-not-enabled') || message.includes('billing-not-enabled')) {
+    return 'Firebase SMS verification is not enabled for this project. Please enable billing for the Firebase project in Google Cloud / Firebase Console.';
+  }
+  if (code.includes('invalid-phone-number') || message.includes('invalid-phone-number')) {
+    return 'Please enter a valid phone number.';
+  }
+  if (code.includes('missing-phone-number') || message.includes('missing-phone-number')) {
+    return 'Please enter your phone number.';
+  }
+  if (code.includes('too-many-requests') || message.includes('too-many-requests')) {
+    return 'Too many attempts. Please try again later.';
+  }
+  if (code.includes('quota-exceeded') || message.includes('quota-exceeded')) {
+    return 'SMS quota exceeded for this project. Please try again later.';
+  }
+  if (code.includes('captcha-check-failed') || message.includes('captcha-check-failed')) {
+    return 'reCAPTCHA verification failed. Please try again.';
+  }
+  if (code.includes('invalid-verification-code') || message.includes('invalid-verification-code')) {
+    return 'Invalid OTP. Please check the SMS and try again.';
+  }
+  if (code.includes('code-expired') || message.includes('code-expired')) {
+    return 'OTP expired. Please request a new OTP.';
+  }
+  if (code.includes('network-request-failed') || message.includes('network-request-failed')) {
+    return 'Network connection error. Please check your internet connection.';
+  }
+  if (code.includes('app-not-authorized') || code.includes('unauthorized-domain') || message.includes('unauthorized-domain')) {
+    return 'This domain is not authorized in Firebase Console → Authentication → Settings → Authorized domains.';
+  }
+  if (code.includes('operation-not-allowed') || message.includes('operation-not-allowed')) {
+    return 'Phone authentication is disabled in Firebase Console. Please enable Phone provider in Authentication → Sign-in method.';
+  }
+  if (code.includes('invalid-app-credential') || message.includes('invalid-app-credential')) {
+    return 'Invalid app credential. Please check reCAPTCHA configuration in Firebase Console.';
+  }
+
+  return error.message || 'Authentication failed. Please try again.';
+}
+
+/**
+ * Safely clean up any existing reCAPTCHA instance to avoid duplicates
+ */
+export function clearRecaptchaVerifier(containerId = 'recaptcha-container') {
+  if (_appVerifier) {
+    try {
+      _appVerifier.clear();
+    } catch (e) {
+      console.warn('Error clearing _appVerifier:', e);
+    }
+    _appVerifier = null;
+  }
+  if (typeof window !== 'undefined' && window.recaptchaVerifier) {
+    try {
+      window.recaptchaVerifier.clear();
+    } catch (e) {
+      // Ignored
+    }
+    window.recaptchaVerifier = null;
+  }
+
+  if (typeof document !== 'undefined') {
+    const container = document.getElementById(containerId);
+    if (container) {
+      container.innerHTML = '';
+    }
+  }
+}
+
+/**
+ * Get or create a reCAPTCHA verifier instance
+ * @param {string} containerId - Element ID for reCAPTCHA widget
+ * @returns {RecaptchaVerifier}
+ */
+export function getRecaptchaVerifier(containerId = 'recaptcha-container') {
+  if (!isFirebaseReady || !auth) {
+    throw new Error('Firebase Authentication is not ready. Please check Firebase configuration.');
+  }
+
+  // Clear previous instance to avoid "reCAPTCHA already rendered" error
+  clearRecaptchaVerifier(containerId);
+
+  _appVerifier = new RecaptchaVerifier(auth, containerId, {
+    size: 'invisible',
+    callback: () => {
+      // reCAPTCHA solved automatically
+    },
+    'expired-callback': () => {
+      console.warn('⚠️ reCAPTCHA expired, resetting verifier...');
+      clearRecaptchaVerifier(containerId);
+    },
+  });
+
+  if (typeof window !== 'undefined') {
+    window.recaptchaVerifier = _appVerifier;
+  }
+
+  return _appVerifier;
+}
+
+/**
+ * Send real SMS OTP via Firebase Authentication
+ * The OTP is NEVER generated, displayed, logged, or returned here.
+ * It is dispatched directly by Firebase SMS to the user's mobile device.
+ * @param {string} rawPhone - 10-digit Indian phone number or E.164 number
+ * @param {string} containerId - reCAPTCHA container ID
+ * @returns {Promise<{confirmationResult: import('firebase/auth').ConfirmationResult, phone: string}>}
+ */
+export async function sendPhoneOtp(rawPhone, containerId = 'recaptcha-container') {
+  const e164Phone = normalizeIndianPhone(rawPhone);
+  if (!e164Phone) {
+    const err = new Error('Invalid phone number. Please enter a valid 10-digit Indian mobile number.');
+    err.code = 'auth/invalid-phone-number';
+    throw err;
+  }
+
+  if (!isFirebaseReady || !auth) {
+    throw new Error('Firebase Authentication is offline or not configured.');
+  }
+
+  const verifier = getRecaptchaVerifier(containerId);
+
+  try {
+    const confirmationResult = await signInWithPhoneNumber(auth, e164Phone, verifier);
+    return {
+      confirmationResult,
+      phone: e164Phone,
+    };
+  } catch (error) {
+    clearRecaptchaVerifier(containerId);
+    throw error;
+  }
+}
+
+/**
+ * Verify user-entered SMS OTP with Firebase Authentication
+ * Purely verifies through Firebase ConfirmationResult.confirm(otp).
+ * Never compares against or generates any local/mock OTP.
+ * @param {import('firebase/auth').ConfirmationResult} confirmationResult
+ * @param {string} otpCode - 6-digit code entered by user
+ * @returns {Promise<{firebaseUser: import('firebase/auth').User, idToken: string, phone: string, uid: string}>}
+ */
+export async function verifyPhoneOtp(confirmationResult, otpCode) {
+  if (!confirmationResult || typeof confirmationResult.confirm !== 'function') {
+    throw new Error('No active SMS verification session. Please request a new OTP.');
+  }
+
+  const cleanOtp = (otpCode || '').trim();
+  if (!cleanOtp || cleanOtp.length !== 6) {
+    const err = new Error('Please enter the complete 6-digit OTP code received on your mobile phone.');
+    err.code = 'auth/invalid-verification-code';
+    throw err;
+  }
+
+  const credential = await confirmationResult.confirm(cleanOtp);
+  const firebaseUser = credential.user;
+  const idToken = await firebaseUser.getIdToken();
+
+  return {
+    firebaseUser,
+    idToken,
+    phone: firebaseUser.phoneNumber,
+    uid: firebaseUser.uid,
+  };
+}
+
 export async function logoutUser() {
   if (auth && isFirebaseReady) {
     try {
@@ -216,6 +430,10 @@ export async function logoutUser() {
     } catch (e) {
       console.warn('Sign out error:', e);
     }
+  }
+  clearRecaptchaVerifier();
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('farmchain_gasless');
   }
   store.logout();
 }
@@ -230,3 +448,4 @@ function getRoleAvatar(role) {
   };
   return map[role.toLowerCase()] || '👤';
 }
+

@@ -2,13 +2,14 @@
 // Firebase Authentication & Registration Page for all 5 Stakeholder Roles
 // + Phone OTP Login (ERC-4337 Account Abstraction)
 
-import { loginWithEmail, registerWithEmail, loginWithGoogle, DEMO_CREDENTIALS } from '../firebase/auth.js';
+import { loginWithEmail, registerWithEmail, loginWithGoogle, DEMO_CREDENTIALS, clearRecaptchaVerifier, normalizeIndianPhone } from '../firebase/auth.js';
 import { web3Service } from '../web3/provider.js';
 import { GaslessProvider } from '../web3/gasless.js';
 import { router } from '../utils/router.js';
 import { showToast, getCropEmoji } from '../utils/helpers.js';
 import { i18n } from '../i18n/index.js';
 import { store } from '../data/store.js';
+import { verifyBackendToken } from '../utils/api.js';
 
 export function renderAuthPage(container) {
   const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
@@ -110,7 +111,7 @@ export function renderAuthPage(container) {
             <div style="background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(168, 85, 247, 0.45); border-radius: var(--radius-md); padding: 18px;">
               <div style="font-size: 0.9rem; font-weight: 700; color: #E9D5FF; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
                 <span style="display: flex; align-items: center; gap: 8px;">📱 ${i18n.t('auth.phoneOtpTitle')}</span>
-                <span class="badge" style="background: rgba(168, 85, 247, 0.3); color: #FAF5FF; border: 1px solid rgba(168, 85, 247, 0.6); font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 4px;">ERC-4337</span>
+                <span class="badge" style="background: rgba(168, 85, 247, 0.3); color: #FAF5FF; border: 1px solid rgba(168, 85, 247, 0.6); font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 4px;">Firebase SMS</span>
               </div>
               <p style="font-size: 0.78rem; color: #CBD5E1; margin-bottom: 14px; line-height: 1.45;">
                 ${i18n.t('auth.phoneOtpDesc')}
@@ -118,19 +119,40 @@ export function renderAuthPage(container) {
               
               <!-- Phone Input Step -->
               <div id="otp-phone-step">
+                <label class="form-label" style="font-size: 0.76rem; font-weight: 600; color: #E2E8F0; margin-bottom: 6px; display: block;">
+                  ${i18n.t('auth.phoneNumberLabel')}
+                </label>
                 <div style="display: flex; gap: 8px;">
                   <div style="display: flex; align-items: center; background: rgba(15, 23, 42, 0.85); padding: 0 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.22); font-size: 0.85rem; font-weight: 700; color: #F8FAFC;">
                     🇮🇳 +91
                   </div>
-                  <input type="tel" class="form-input" id="otp-phone" placeholder="98765 43210" maxlength="10" style="flex: 1; font-size: 0.95rem; font-family: var(--font-mono); letter-spacing: 1.2px; background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.22); color: #FFFFFF;" />
+                  <input type="tel" class="form-input" id="otp-phone" placeholder="98765 43210" maxlength="10" autocomplete="tel-national" style="flex: 1; font-size: 0.95rem; font-family: var(--font-mono); letter-spacing: 1.2px; background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.22); color: #FFFFFF;" />
                   <button type="button" class="btn btn-primary btn-sm" id="send-otp-btn" style="white-space: nowrap; padding: 8px 16px; font-weight: 700;">📱 ${i18n.t('auth.sendOtpBtn')}</button>
                 </div>
+                <!-- reCAPTCHA Container -->
+                <div id="recaptcha-container" style="margin-top: 10px; display: flex; justify-content: center; min-height: 20px;"></div>
+                <!-- Error Notice Banner -->
+                <div id="otp-error-banner" style="display: none; margin-top: 12px; padding: 12px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: var(--radius-md); font-size: 0.8rem; line-height: 1.45; color: #FCA5A5;"></div>
               </div>
 
               <!-- 6-Digit OTP Verification Step -->
               <div id="otp-verify-section" style="display: none; margin-top: 14px;">
-                <div style="font-size: 0.78rem; color: #E2E8F0; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                  <span>📲 ${i18n.t('auth.otpPrompt')}</span>
+                <!-- Status Banner: OTP sent to number with change option -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(74, 222, 128, 0.35); border-radius: var(--radius-md); margin-bottom: 12px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1rem;">📲</span>
+                    <span style="font-size: 0.82rem; color: #86EFAC; font-weight: 600;">
+                      OTP sent to <strong id="confirmed-phone-display" style="color: #FFFFFF; font-family: var(--font-mono);">+91 XXXXX XXXXX</strong>
+                    </span>
+                  </div>
+                  <button type="button" id="change-phone-btn" style="background: none; border: none; font-size: 0.74rem; color: #FDE047; cursor: pointer; text-decoration: underline; font-weight: 600; padding: 0;">
+                    ${i18n.t('auth.changePhone')}
+                  </button>
+                </div>
+
+                <div style="font-size: 0.78rem; color: #E2E8F0; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-weight: 600;">📲 ${i18n.t('auth.enterOtpLabel')}</span>
+                  <span style="font-size: 0.7rem; color: #94A3B8;">Check your physical mobile phone</span>
                 </div>
 
                 <div class="otp-digits-container" id="otp-digits-group">
@@ -147,7 +169,7 @@ export function renderAuthPage(container) {
                     ${i18n.t('auth.resendCode')}
                   </button>
                   <button type="button" class="btn btn-primary btn-sm" id="verify-otp-btn" style="padding: 6px 16px; font-weight: 700;">
-                    ✅ ${i18n.t('auth.verifyAndEnter')}
+                    ✅ ${i18n.t('auth.verifyOtpBtn')}
                   </button>
                 </div>
               </div>
@@ -274,6 +296,7 @@ export function renderAuthPage(container) {
     // Phone OTP Login (Account Abstraction)
     // ==========================================
     let resendTimer = null;
+    let activePhone = '';
 
     function startResendCountdown() {
       let seconds = 30;
@@ -302,11 +325,21 @@ export function renderAuthPage(container) {
 
     async function sendOtpAction() {
       const phoneInput = document.getElementById('otp-phone');
-      const rawPhone = phoneInput?.value.trim();
-      if (!rawPhone || rawPhone.length < 10) {
+      const rawPhone = phoneInput?.value.trim() || activePhone;
+      const formattedPhone = normalizeIndianPhone(rawPhone);
+
+      if (!formattedPhone) {
         showToast(i18n.t('auth.toasts.invalidPhone'), 'warning');
         phoneInput?.focus();
         return;
+      }
+
+      activePhone = formattedPhone;
+
+      const errorBanner = document.getElementById('otp-error-banner');
+      if (errorBanner) {
+        errorBanner.style.display = 'none';
+        errorBanner.innerHTML = '';
       }
 
       const sendBtn = container.querySelector('#send-otp-btn');
@@ -317,36 +350,57 @@ export function renderAuthPage(container) {
 
       try {
         GaslessProvider.init();
-        const loginRes = await GaslessProvider.loginWithPhone(rawPhone);
+        const loginRes = await GaslessProvider.loginWithPhone(formattedPhone);
 
-        // Show verify section
+        // Transition UI: Hide phone step, show verify section
+        const phoneStep = document.getElementById('otp-phone-step');
         const verifySection = document.getElementById('otp-verify-section');
+        const phoneDisplay = document.getElementById('confirmed-phone-display');
+
+        if (phoneDisplay) {
+          phoneDisplay.textContent = loginRes.phone || formattedPhone;
+        }
+
+        if (phoneStep) {
+          phoneStep.style.display = 'none';
+        }
+
         if (verifySection) {
           verifySection.style.display = 'block';
           verifySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        if (sendBtn) {
-          sendBtn.textContent = `✅ ${i18n.t('auth.toasts.otpSent')}`;
-          sendBtn.style.background = 'var(--accent-green)';
-          sendBtn.style.borderColor = 'var(--accent-green)';
-        }
+        // Clear all digits and focus first digit
+        const digitInputs = container.querySelectorAll('.otp-digit-input');
+        digitInputs.forEach(d => { d.value = ''; d.classList.remove('filled'); });
+        setTimeout(() => {
+          digitInputs[0]?.focus();
+        }, 100);
 
         startResendCountdown();
 
-        // Focus first digit box
-        setTimeout(() => {
-          const firstDigit = container.querySelector('.otp-digit-input[data-index="0"]');
-          firstDigit?.focus();
-        }, 100);
-
-        if (loginRes.method === 'firebase') {
-          showToast(i18n.t('auth.toasts.smsSent', { phone: rawPhone }), 'success');
-        } else {
-          showToast(i18n.t('auth.toasts.demoOtpDispatched'), 'info');
-        }
+        showToast(i18n.t('auth.toasts.smsSent', { phone: loginRes.phone || formattedPhone }), 'success');
       } catch (err) {
-        showToast(i18n.t('auth.toasts.otpSendFailed', { error: err.message }), 'error');
+        if (errorBanner) {
+          errorBanner.style.display = 'block';
+          if (err.message && err.message.toLowerCase().includes('billing')) {
+            errorBanner.innerHTML = `
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <span style="font-size: 1.2rem; line-height: 1;">💳</span>
+                <div>
+                  <strong style="color: #F87171; display: block; margin-bottom: 4px;">Firebase Cloud Billing Required</strong>
+                  <span>${err.message}</span>
+                  <div style="margin-top: 8px; font-size: 0.74rem; color: #E2E8F0; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 6px; line-height: 1.4;">
+                    🔧 <strong>Manual Firebase Console Step:</strong> To send real SMS to mobile phones, upgrade your Firebase project <code>farmchainai</code> from Spark to the <strong>Blaze (Pay-as-you-go)</strong> plan in <strong>Firebase Console → Project Overview → Upgrade</strong>.
+                  </div>
+                </div>
+              </div>
+            `;
+          } else {
+            errorBanner.textContent = `⚠️ ${err.message || 'Failed to send OTP. Please try again.'}`;
+          }
+        }
+        showToast(err.message || i18n.t('auth.toasts.otpSendFailed', { error: 'Service error' }), 'error');
         if (sendBtn) {
           sendBtn.disabled = false;
           sendBtn.textContent = `📱 ${i18n.t('auth.sendOtpBtn')}`;
@@ -355,6 +409,27 @@ export function renderAuthPage(container) {
     }
 
     container.querySelector('#send-otp-btn')?.addEventListener('click', sendOtpAction);
+
+    // Change Phone Number handler (switches back to phone input)
+    container.querySelector('#change-phone-btn')?.addEventListener('click', () => {
+      const phoneStep = document.getElementById('otp-phone-step');
+      const verifySection = document.getElementById('otp-verify-section');
+      const sendBtn = container.querySelector('#send-otp-btn');
+      const errorBanner = document.getElementById('otp-error-banner');
+
+      if (verifySection) verifySection.style.display = 'none';
+      if (phoneStep) phoneStep.style.display = 'block';
+      if (errorBanner) errorBanner.style.display = 'none';
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.textContent = `📱 ${i18n.t('auth.sendOtpBtn')}`;
+      }
+
+      clearRecaptchaVerifier('recaptcha-container');
+      const phoneInput = document.getElementById('otp-phone');
+      phoneInput?.focus();
+    });
+
     container.querySelector('#resend-otp-btn')?.addEventListener('click', () => {
       const resendBtn = container.querySelector('#resend-otp-btn');
       if (resendBtn && !resendBtn.disabled) {
@@ -369,11 +444,9 @@ export function renderAuthPage(container) {
         const val = e.target.value;
         if (val.length > 0) {
           input.classList.add('filled');
-          // Move to next input if available
           if (index < digitInputs.length - 1) {
             digitInputs[index + 1].focus();
           } else {
-            // All 6 digits filled, trigger auto-verify
             container.querySelector('#verify-otp-btn')?.click();
           }
         } else {
@@ -408,12 +481,8 @@ export function renderAuthPage(container) {
       });
     });
 
-    // Verification Submit Handler
+    // Verification Submit Handler (pure Firebase verification)
     container.querySelector('#verify-otp-btn')?.addEventListener('click', async () => {
-      const phoneInput = document.getElementById('otp-phone');
-      const rawPhone = phoneInput?.value.trim();
-
-      // Gather 6 digits from individual boxes
       let otp = '';
       digitInputs.forEach(inp => { otp += inp.value.trim(); });
 
@@ -429,10 +498,23 @@ export function renderAuthPage(container) {
       }
 
       try {
-        const result = await GaslessProvider.verifyOtpAndCreateAccount(rawPhone, otp);
+        const result = await GaslessProvider.verifyOtpAndCreateAccount(activePhone, otp);
         const selectedRole = container.querySelector('.role-tab.active')?.dataset.role || 'farmer';
+        const firebaseUser = result.firebaseUser;
+        const idToken = result.idToken;
 
-        // Show success
+        // Securely sync ID token to Node.js backend for verification via Firebase Admin SDK
+        if (idToken) {
+          verifyBackendToken(idToken, {
+            role: selectedRole,
+            phone: firebaseUser?.phoneNumber || activePhone,
+            walletAddress: result.account?.address || '',
+          }).catch(err => {
+            console.warn('Backend token sync notice:', err.message);
+          });
+        }
+
+        // Show success section
         const successSection = document.getElementById('otp-success-section');
         if (successSection) {
           successSection.style.display = 'block';
@@ -453,26 +535,69 @@ export function renderAuthPage(container) {
 
         showToast(i18n.t('auth.toasts.smartAccountVerified'), 'success');
 
+        // Check if user has an existing Firestore profile to preserve registered role
+        let targetRole = selectedRole;
+        let targetName = `${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} User`;
+        let targetLocation = 'India';
+
+        if (firebaseUser) {
+          try {
+            const { db } = await import('../firebase/config.js');
+            const { doc, getDoc, setDoc } = await import('firebase/firestore');
+            if (db) {
+              const userRef = doc(db, 'users', firebaseUser.uid);
+              const userSnap = await getDoc(userRef);
+              if (userSnap.exists()) {
+                const existingData = userSnap.data();
+                if (existingData.role) targetRole = existingData.role;
+                if (existingData.name) targetName = existingData.name;
+                if (existingData.location) targetLocation = existingData.location;
+              } else {
+                await setDoc(userRef, {
+                  id: firebaseUser.uid,
+                  uid: firebaseUser.uid,
+                  phoneNumber: firebaseUser.phoneNumber || activePhone,
+                  phone: activePhone,
+                  role: selectedRole,
+                  name: targetName,
+                  location: targetLocation,
+                  walletAddress: result.account?.address || '',
+                  loginMethod: 'Firebase Phone OTP (ERC-4337)',
+                  createdAt: Date.now(),
+                  verified: true,
+                });
+              }
+            }
+          } catch (firestoreErr) {
+            console.warn('Firestore profile check notice:', firestoreErr.message);
+          }
+        }
+
         setTimeout(() => {
-          store.login(selectedRole, `phone-${rawPhone}`, {
-            id: `phone-${rawPhone}`,
-            role: selectedRole,
-            name: `${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} User`,
-            email: `${rawPhone}@farmchain.phone`,
-            phone: rawPhone,
-            loginMethod: 'Phone OTP (ERC-4337)',
-            walletAddress: result.account.address,
+          store.login(targetRole, firebaseUser ? firebaseUser.uid : `phone-${activePhone}`, {
+            id: firebaseUser ? firebaseUser.uid : `phone-${activePhone}`,
+            role: targetRole,
+            name: targetName,
+            location: targetLocation,
+            email: `${(activePhone || '').replace(/\+/g, '')}@farmchain.phone`,
+            phone: activePhone,
+            loginMethod: 'Firebase Phone OTP (ERC-4337)',
+            walletAddress: result.account?.address || '',
           });
 
-          router.navigate(`/${selectedRole}/dashboard`);
-        }, 1500);
+          const redirectPath = targetRole.toLowerCase() === 'consumer' ? '/consumer/marketplace' : `/${targetRole.toLowerCase()}/dashboard`;
+          router.navigate(redirectPath);
+        }, 1200);
 
       } catch (err) {
         showToast(err.message || i18n.t('errors.otpFailed'), 'error');
         if (verifyBtn) {
           verifyBtn.disabled = false;
-          verifyBtn.textContent = `✅ ${i18n.t('auth.verifyAndEnter')}`;
+          verifyBtn.textContent = `✅ ${i18n.t('auth.verifyOtpBtn')}`;
         }
+        // Clear inputs and refocus first digit on failure
+        digitInputs.forEach(d => { d.value = ''; d.classList.remove('filled'); });
+        digitInputs[0]?.focus();
       }
     });
   }

@@ -8,13 +8,13 @@ import { getAnalytics, isSupported } from 'firebase/analytics';
 
 // Your web app's Firebase configuration
 export const firebaseConfig = {
-  apiKey: "AIzaSyDTdSIlJLs6_ihB26HBseo7mGuG3l36SDE",
-  authDomain: "farmchainai.firebaseapp.com",
-  projectId: "farmchainai",
-  storageBucket: "farmchainai.firebasestorage.app",
-  messagingSenderId: "844000232180",
-  appId: "1:844000232180:web:e63282a51b20169cc554a1",
-  measurementId: "G-5ZQ7J2V6CF"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDTdSIlJLs6_ihB26HBseo7mGuG3l36SDE",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "farmchainai.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "farmchainai",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "farmchainai.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "844000232180",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:844000232180:web:e63282a51b20169cc554a1",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-5ZQ7J2V6CF"
 };
 
 let app;

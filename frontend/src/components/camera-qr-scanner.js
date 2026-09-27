@@ -50,17 +50,41 @@ export function openCameraScanner() {
         (decodedText) => {
           if (statusEl) statusEl.textContent = `✅ ${i18n.t('scanner.qrDetected')}: ${decodedText.slice(0, 40)}...`;
 
-          // Parse QR data
+          // Parse QR data — handle ALL possible formats
           let productId = null;
+
+          // Format 1: JSON object with FARMCHAIN_PRODUCT type
           try {
             const data = JSON.parse(decodedText);
-            if (data.type === 'FARMCHAIN_PRODUCT' && data.productId) {
+            if (data.productId) {
               productId = data.productId;
+            } else if (data.traceUrl) {
+              // Extract product ID from embedded traceUrl
+              const urlMatch = data.traceUrl.match(/[?&]id=([^&\s#]+)/);
+              if (urlMatch) productId = decodeURIComponent(urlMatch[1]);
             }
           } catch {
-            // Maybe it's a direct product ID string
-            if (decodedText.startsWith('PROD-')) {
-              productId = decodedText;
+            // Not JSON — try other formats
+          }
+
+          // Format 2: Direct product ID string (e.g. "PROD-170300...")
+          if (!productId && decodedText.startsWith('PROD-')) {
+            productId = decodedText.trim();
+          }
+
+          // Format 3: URL containing product ID (e.g. "https://.../#/consumer/trace?id=PROD-...")
+          if (!productId) {
+            const urlIdMatch = decodedText.match(/[?&]id=([^&\s#]+)/);
+            if (urlIdMatch) {
+              productId = decodeURIComponent(urlIdMatch[1]);
+            }
+          }
+
+          // Format 4: Any string containing a PROD- pattern
+          if (!productId) {
+            const prodMatch = decodedText.match(/(PROD-[A-Za-z0-9_-]+)/);
+            if (prodMatch) {
+              productId = prodMatch[1];
             }
           }
 
@@ -91,8 +115,25 @@ export function openCameraScanner() {
   document.getElementById('manual-verify-btn')?.addEventListener('click', () => {
     const val = document.getElementById('manual-batch-input')?.value.trim();
     if (val) {
+      // Try to extract product ID from various formats
+      let productId = val;
+
+      // If it looks like JSON, try parsing
+      try {
+        const data = JSON.parse(val);
+        if (data.productId) productId = data.productId;
+      } catch {
+        // Not JSON
+      }
+
+      // If it's a URL, extract the id param
+      const urlIdMatch = val.match(/[?&]id=([^&\s#]+)/);
+      if (urlIdMatch) {
+        productId = decodeURIComponent(urlIdMatch[1]);
+      }
+
       cleanup();
-      router.navigate(`/consumer/trace?id=${val}`);
+      router.navigate(`/consumer/trace?id=${productId}`);
     } else {
       showToast(i18n.t('scanner.enterValidId'), 'warning');
     }
@@ -101,8 +142,12 @@ export function openCameraScanner() {
   // Cleanup function
   const cleanup = () => {
     if (scannerInstance) {
-      scannerInstance.stop().catch(() => {});
-      scannerInstance.clear();
+      try {
+        scannerInstance.stop().catch(() => {});
+        scannerInstance.clear();
+      } catch {
+        // Scanner may not have been fully initialized
+      }
       scannerInstance = null;
     }
     closeModal();

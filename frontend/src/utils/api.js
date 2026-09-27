@@ -204,9 +204,21 @@ export async function postUser(user) {
 }
 
 // ==========================================
+// Firebase Token Verification
+// ==========================================
+
+export async function verifyBackendToken(idToken, userData = {}) {
+  return await apiFetch('/auth/verify-token', {
+    method: 'POST',
+    body: JSON.stringify({ idToken, ...userData }),
+  });
+}
+
+// ==========================================
 // Platform Reset
 // ==========================================
 
 export async function resetPlatform() {
   return await apiFetch('/reset', { method: 'POST' });
 }
+

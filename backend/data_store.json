@@ -85,7 +85,7 @@
       "email": "admin@farmchain.io",
       "avatar": "🔧",
       "joinedAt": 1700000000000,
-      "rating": 5.0,
+      "rating": 5,
       "verified": true
     }
   },
@@ -465,6 +465,136 @@
       "issuedAt": 1731500000000
     }
   ],
-  "blocks": [],
+  "blocks": [
+    {
+      "batchId": "BATCH-TEST-POLYGON-001",
+      "cropName": "Organic Basmati Rice",
+      "quantity": 1200,
+      "dataHash": "0x95c690a787e75c7ab3a0e96d976c5fd3d3db285e9bbe4d291b2a16e1b7a6ee4e",
+      "currentOwner": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+      "currentStage": "Harvested",
+      "pricePerUnit": 65,
+      "network": "polygonAmoy",
+      "chainId": 80002,
+      "timestamp": 1790526512,
+      "isLiveOnChain": false,
+      "txHash": "0xb3a83dd06113cb1b6f754ece0c0f9879d51683eb5bace0dd591311aed68f4e9c",
+      "blockNumber": 10370458,
+      "stageHistory": [
+        {
+          "stage": "Harvested",
+          "stageIndex": 0,
+          "updatedBy": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "location": "Origin Farm",
+          "price": 65,
+          "timestamp": 1790526512,
+          "txHash": "0xb3a83dd06113cb1b6f754ece0c0f9879d51683eb5bace0dd591311aed68f4e9c"
+        }
+      ],
+      "ownershipHistory": [
+        {
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "timestamp": 1790526512,
+          "txHash": "0xb3a83dd06113cb1b6f754ece0c0f9879d51683eb5bace0dd591311aed68f4e9c"
+        }
+      ],
+      "priceHistory": [
+        {
+          "pricePerUnit": 65,
+          "updatedBy": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "timestamp": 1790526512,
+          "txHash": "0xb3a83dd06113cb1b6f754ece0c0f9879d51683eb5bace0dd591311aed68f4e9c"
+        }
+      ],
+      "qualityHistory": []
+    },
+    {
+      "batchId": "BATCH-TEST-POLYGON-002",
+      "cropName": "Organic Alphonso Mangoes",
+      "quantity": 400,
+      "dataHash": "0x3511b1db5d7ba9caef4a5aa00131ac986cbfdf024da5b41ff89f7860fad635b0",
+      "currentOwner": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+      "currentStage": "Harvested",
+      "pricePerUnit": 120,
+      "network": "polygonAmoy",
+      "chainId": 80002,
+      "timestamp": 1790526603,
+      "isLiveOnChain": false,
+      "txHash": "0x0261a866cde71441c113b9964a724513e70697e3e36f8a4c6498340c8d8f8383",
+      "blockNumber": 10188420,
+      "stageHistory": [
+        {
+          "stage": "Harvested",
+          "stageIndex": 0,
+          "updatedBy": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "location": "Origin Farm",
+          "price": 120,
+          "timestamp": 1790526603,
+          "txHash": "0x0261a866cde71441c113b9964a724513e70697e3e36f8a4c6498340c8d8f8383"
+        }
+      ],
+      "ownershipHistory": [
+        {
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "timestamp": 1790526603,
+          "txHash": "0x0261a866cde71441c113b9964a724513e70697e3e36f8a4c6498340c8d8f8383"
+        }
+      ],
+      "priceHistory": [
+        {
+          "pricePerUnit": 120,
+          "updatedBy": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "timestamp": 1790526603,
+          "txHash": "0x0261a866cde71441c113b9964a724513e70697e3e36f8a4c6498340c8d8f8383"
+        }
+      ],
+      "qualityHistory": []
+    },
+    {
+      "batchId": "PROD-AUDIT-TEST-001",
+      "cropName": "Audited Basmati Rice",
+      "quantity": 1000,
+      "dataHash": "0x6006c0b744c5b1d6d17b3d568624e5ab51fcb3f5b9a621aab358fddf94a01ef9",
+      "currentOwner": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+      "currentStage": "Harvested",
+      "pricePerUnit": 55,
+      "network": "polygonAmoy",
+      "chainId": 80002,
+      "timestamp": 1790528582,
+      "isLiveOnChain": false,
+      "txHash": "0xedb59c0989dfe5d84c5ff2ab53ab337b3c5b4d53c79d8d493d0a058ac2b59d6f",
+      "blockNumber": 10376939,
+      "stageHistory": [
+        {
+          "stage": "Harvested",
+          "stageIndex": 0,
+          "updatedBy": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "location": "Origin Farm",
+          "price": 55,
+          "timestamp": 1790528582,
+          "txHash": "0xedb59c0989dfe5d84c5ff2ab53ab337b3c5b4d53c79d8d493d0a058ac2b59d6f"
+        }
+      ],
+      "ownershipHistory": [
+        {
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "timestamp": 1790528582,
+          "txHash": "0xedb59c0989dfe5d84c5ff2ab53ab337b3c5b4d53c79d8d493d0a058ac2b59d6f"
+        }
+      ],
+      "priceHistory": [
+        {
+          "pricePerUnit": 55,
+          "updatedBy": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "timestamp": 1790528582,
+          "txHash": "0xedb59c0989dfe5d84c5ff2ab53ab337b3c5b4d53c79d8d493d0a058ac2b59d6f"
+        }
+      ],
+      "qualityHistory": []
+    }
+  ],
   "fraudAlerts": []
 }

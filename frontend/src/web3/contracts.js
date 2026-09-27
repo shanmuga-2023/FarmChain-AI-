@@ -1,56 +1,134 @@
 // src/web3/contracts.js
-// Solidity Smart Contract interaction helpers via ethers.js
+// Enterprise Smart Contract interface for AgriSupplyChain on Polygon Amoy (80002)
 
 import { ethers } from 'ethers';
-import { web3Service } from './provider.js';
+import { web3Service, POLYGON_AMOY_CONFIG } from './provider.js';
+import contractArtifact from '../contracts/AgriSupplyChain.json';
 
-// Minimal ABIs for compiled Solidity contracts
-export const PRODUCT_REGISTRY_ABI = [
-  "function registerProduct(string _productId, string _name, string _category, string _farmerName, string _originLocation, uint256 _quantity, string _unit, uint256 _pricePerUnitWei, string _harvestDate, bool _isOrganic, string _ipfsMetadataHash) external returns (bool)",
-  "function getProduct(string _productId) external view returns (tuple(string productId, string name, string category, address farmerAddress, string farmerName, string originLocation, uint256 quantity, string unit, uint256 pricePerUnitWei, string harvestDate, bool isOrganic, string ipfsMetadataHash, uint8 status, uint256 registeredAt))",
-  "function getAllProductIds() external view returns (string[])",
-  "event ProductRegistered(string indexed productId, string name, address indexed farmerAddress, uint256 quantity, uint256 pricePerUnitWei, bool isOrganic, uint256 registeredAt)"
-];
+export const AMOY_EXPLORER_BASE = 'https://amoy.polygonscan.com';
 
-export const MARKETPLACE_ESCROW_ABI = [
-  "function createOrder(string _orderId, string _productId, address payable _farmer, address payable _intermediary, address payable _retailer, uint256 _quantity) external payable returns (bool)",
-  "function confirmShipment(string _orderId) external",
-  "function confirmDeliveryAndRelease(string _orderId) external",
-  "function getOrder(string _orderId) external view returns (tuple(string orderId, string productId, address buyer, address payable farmer, address payable intermediary, address payable retailer, uint256 totalAmountWei, uint256 quantity, uint8 status, uint256 createdAt, uint256 completedAt))",
-  "event FundsReleased(string indexed orderId, uint256 farmerShare, uint256 intermediaryShare, uint256 retailerShare, uint256 platformShare)"
-];
+export function getExplorerTxUrl(txHash) {
+  if (!txHash) return '#';
+  return `${AMOY_EXPLORER_BASE}/tx/${txHash}`;
+}
 
-export const CONTRACT_ADDRESSES = {
-  sepolia: {
-    ProductRegistry: "0x71C25e1aF1b30D6bFE4F6D3f8A7831d1E852D402",
-    MarketplaceEscrow: "0x89A36a18d19F9F8d5B39d997232230D6222b4033",
-    explorerBase: "https://sepolia.etherscan.io",
-  },
-  baseSepolia: {
-    ProductRegistry: "0x4b78A229F628e937d2f9C198a287a957b489816B",
-    MarketplaceEscrow: "0x2C46e7b1652f416Ffe82672B10471d5b306B626C",
-    explorerBase: "https://sepolia.basescan.org",
+export function getExplorerAddressUrl(address) {
+  if (!address) return '#';
+  return `${AMOY_EXPLORER_BASE}/address/${address}`;
+}
+
+/**
+ * Get contract instance connected with active signer or fallback provider
+ */
+export function getAgriSupplyChainContract() {
+  const address = contractArtifact.address;
+  const isAddressValid = address && address !== '0x0000000000000000000000000000000000000000' && ethers.isAddress(address);
+
+  if (!isAddressValid) {
+    return null;
   }
-};
 
-export function getExplorerTxUrl(txHash, network = 'sepolia') {
-  const base = CONTRACT_ADDRESSES[network]?.explorerBase || 'https://sepolia.etherscan.io';
-  return `${base}/tx/${txHash}`;
+  if (web3Service.signer) {
+    return new ethers.Contract(address, contractArtifact.abi, web3Service.signer);
+  }
+
+  if (web3Service.provider) {
+    return new ethers.Contract(address, contractArtifact.abi, web3Service.provider);
+  }
+
+  // Fallback public RPC read-only provider
+  const publicProvider = new ethers.JsonRpcProvider(POLYGON_AMOY_CONFIG.rpcUrls[0], {
+    chainId: POLYGON_AMOY_CONFIG.chainIdDecimal,
+    name: 'polygonAmoy'
+  });
+  return new ethers.Contract(address, contractArtifact.abi, publicProvider);
 }
 
-export function getExplorerAddressUrl(address, network = 'sepolia') {
-  const base = CONTRACT_ADDRESSES[network]?.explorerBase || 'https://sepolia.etherscan.io';
-  return `${base}/address/${address}`;
+/**
+ * Mint or register batch directly on Polygon Amoy with MetaMask or through backend API
+ */
+export async function createBatchOnChain({ batchId, cropName, quantity, price, dataHash }) {
+  const contract = getAgriSupplyChainContract();
+  const hash = dataHash || ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify({ batchId, cropName, date: Date.now() })));
+
+  if (contract && web3Service.signer) {
+    try {
+      const tx = await contract.createBatch(batchId, cropName, quantity, hash);
+      const receipt = await tx.wait();
+      return {
+        success: true,
+        txHash: receipt.hash,
+        blockNumber: receipt.blockNumber,
+        isLiveOnChain: true,
+        polygonScanUrl: getExplorerTxUrl(receipt.hash)
+      };
+    } catch (e) {
+      console.warn('MetaMask transaction failed or rejected. Delegating to backend API relayer:', e.message);
+    }
+  }
+
+  // Fallback / Relayer via backend API
+  const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+  const res = await fetch(`${apiBase}/blockchain/batch`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      batchId,
+      cropName,
+      quantity,
+      price,
+      dataHash: hash,
+      ownerAddress: web3Service.address || '0xFee2B36737BDdBB3AB8C0924B013f898e512715F'
+    })
+  });
+
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Failed to mint on-chain batch');
+  return json.data;
 }
 
-export function getProductRegistryContract() {
-  if (!web3Service.signer) return null;
-  const address = CONTRACT_ADDRESSES.sepolia.ProductRegistry;
-  return new ethers.Contract(address, PRODUCT_REGISTRY_ABI, web3Service.signer);
+/**
+ * Verify batch authenticity via on-chain contract or backend verification endpoint
+ */
+export async function verifyBatchOnChain(batchId, expectedDataHash) {
+  const contract = getAgriSupplyChainContract();
+
+  if (contract) {
+    try {
+      const verification = await contract.verifyBatch(batchId);
+      if (verification && verification.isValid) {
+        return {
+          isValid: true,
+          currentOwner: verification.currentOwner,
+          currentStage: Number(verification.currentStage),
+          certCount: Number(verification.certCount),
+          dataHash: verification.dataHash,
+          source: 'Polygon Amoy Smart Contract'
+        };
+      }
+    } catch (e) {
+      console.warn('On-chain read failed, querying backend verification endpoint:', e.message);
+    }
+  }
+
+  const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+  const url = `${apiBase}/blockchain/verify/${encodeURIComponent(batchId)}${expectedDataHash ? `?hash=${expectedDataHash}` : ''}`;
+  const res = await fetch(url);
+  const json = await res.json();
+  return json.data || { isValid: false };
 }
 
-export function getMarketplaceEscrowContract() {
-  if (!web3Service.signer) return null;
-  const address = CONTRACT_ADDRESSES.sepolia.MarketplaceEscrow;
-  return new ethers.Contract(address, MARKETPLACE_ESCROW_ABI, web3Service.signer);
+/**
+ * Get batch traceability lifecycle & price history
+ */
+export async function getBatchHistory(batchId) {
+  const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+  try {
+    const res = await fetch(`${apiBase}/blockchain/history/${encodeURIComponent(batchId)}`);
+    const json = await res.json();
+    return json.data || { stages: [], prices: [], certificates: [] };
+  } catch (e) {
+    console.error('Failed to fetch batch history:', e);
+    return { stages: [], prices: [], certificates: [] };
+  }
 }

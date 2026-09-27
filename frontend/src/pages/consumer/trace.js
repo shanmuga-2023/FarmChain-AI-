@@ -14,6 +14,7 @@ import { generateProductQR, createQRDisplay } from '../../utils/qr.js';
 import { createDoughnutChart } from '../../components/charts.js';
 import { GeoVelocityChecker } from '../../ai/geo-velocity.js';
 import { i18n } from '../../i18n/index.js';
+import { getExplorerTxUrl, getExplorerAddressUrl } from '../../web3/contracts.js';
 
 export function renderConsumerTrace(container) {
   const user = store.get('currentUser');
@@ -509,6 +510,11 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
                 ${product.isOrganic ? `<span class="badge badge-success">🌿 ${i18n.t('common.organicCertified') || 'Organic Certified'}</span>` : ''}
                 ${productCerts.map(c => `<span class="badge badge-info">✅ ${c.certType} ${i18n.t('common.grade') || 'Grade'} ${c.grade}</span>`).join('')}
+                <a href="${product.onChainTxHash ? getExplorerTxUrl(product.onChainTxHash) : getExplorerAddressUrl('0xFee2B36737BDdBB3AB8C0924B013f898e512715F')}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                  <span class="badge" style="background: rgba(147, 51, 234, 0.15); color: #9333EA; border: 1px solid rgba(147, 51, 234, 0.4); display: inline-flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
+                    🟣 Verified on Polygon Amoy (80002) ↗
+                  </span>
+                </a>
                 <span class="badge badge-purple">⛓️ ${i18n.t('common.blockchainVerified') || 'Blockchain Verified'}</span>
                 ${aiScore > 0 ? `<span class="badge ${aiScore >= 90 ? 'badge-success' : aiScore >= 65 ? 'badge-info' : 'badge-warning'}">🔬 AI: ${aiGrade} (${aiScore}%)</span>` : ''}
                 ${aiScore >= 95 ? `<span class="badge badge-purple" style="font-size: 0.65rem;">🏆 ${i18n.t('trace.qualityBonusBadge') || 'Quality Bonus'}</span>` : ''}

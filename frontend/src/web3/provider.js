@@ -1,7 +1,24 @@
 // src/web3/provider.js
-// MetaMask & Web3 Ethers.js integration for Ethereum Sepolia & Polygon Amoy
+// MetaMask & Web3 Ethers.js integration for Polygon Amoy Testnet (Chain ID: 80002)
 
 import { ethers } from 'ethers';
+
+export const POLYGON_AMOY_CONFIG = {
+  chainIdHex: '0x13882', // 80002 in hex
+  chainIdDecimal: 80002,
+  chainName: 'Polygon Amoy Testnet',
+  nativeCurrency: {
+    name: 'POL',
+    symbol: 'POL',
+    decimals: 18,
+  },
+  rpcUrls: [
+    'https://polygon-amoy-bor-rpc.publicnode.com',
+    'https://polygon-amoy.drpc.org',
+    'https://80002.rpc.thirdweb.com'
+  ],
+  blockExplorerUrls: ['https://amoy.polygonscan.com/'],
+};
 
 class Web3ProviderService {
   constructor() {
@@ -19,7 +36,7 @@ class Web3ProviderService {
       this.provider = new ethers.BrowserProvider(window.ethereum);
 
       window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length === 0) {
+        if (!accounts || accounts.length === 0) {
           this.disconnect();
         } else {
           this.address = accounts[0];
@@ -28,16 +45,15 @@ class Web3ProviderService {
       });
 
       window.ethereum.on('chainChanged', (chainId) => {
-        this.chainId = chainId;
+        this.chainId = parseInt(chainId, 16);
         this._notify();
-        window.location.reload();
       });
     }
   }
 
   async connect() {
     if (!window.ethereum) {
-      throw new Error("MetaMask is not installed. Please install MetaMask from https://metamask.io/");
+      throw new Error("MetaMask is not detected. Please install the MetaMask extension from https://metamask.io/ or use a Web3-compatible browser.");
     }
 
     try {
@@ -45,9 +61,15 @@ class Web3ProviderService {
       const accounts = await this.provider.send("eth_requestAccounts", []);
       this.signer = await this.provider.getSigner();
       this.address = accounts[0];
+
       const network = await this.provider.getNetwork();
-      this.chainId = network.chainId.toString();
+      this.chainId = Number(network.chainId);
       this.isConnected = true;
+
+      // Auto check and suggest switching to Polygon Amoy if on another network
+      if (this.chainId !== POLYGON_AMOY_CONFIG.chainIdDecimal) {
+        await this.switchToPolygonAmoy();
+      }
 
       this._notify();
       return { address: this.address, chainId: this.chainId, signer: this.signer };
@@ -57,28 +79,41 @@ class Web3ProviderService {
     }
   }
 
-  async switchToSepolia() {
-    if (!window.ethereum) return;
-    const sepoliaChainId = '0xaa36a7'; // 11155111
+  async switchToPolygonAmoy() {
+    if (!window.ethereum) return false;
 
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: sepoliaChainId }],
+        params: [{ chainId: POLYGON_AMOY_CONFIG.chainIdHex }],
       });
+      this.chainId = POLYGON_AMOY_CONFIG.chainIdDecimal;
+      this._notify();
+      return true;
     } catch (switchError) {
-      if (switchError.code === 4902) {
-        await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId: sepoliaChainId,
-            chainName: 'Sepolia Test Network',
-            nativeCurrency: { name: 'SepoliaETH', symbol: 'ETH', decimals: 18 },
-            rpcUrls: ['https://rpc.sepolia.org'],
-            blockExplorerUrls: ['https://sepolia.etherscan.io'],
-          }],
-        });
+      // 4902 code indicates that the chain has not been added to MetaMask
+      if (switchError.code === 4902 || switchError.data?.originalError?.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: POLYGON_AMOY_CONFIG.chainIdHex,
+              chainName: POLYGON_AMOY_CONFIG.chainName,
+              nativeCurrency: POLYGON_AMOY_CONFIG.nativeCurrency,
+              rpcUrls: POLYGON_AMOY_CONFIG.rpcUrls,
+              blockExplorerUrls: POLYGON_AMOY_CONFIG.blockExplorerUrls,
+            }],
+          });
+          this.chainId = POLYGON_AMOY_CONFIG.chainIdDecimal;
+          this._notify();
+          return true;
+        } catch (addError) {
+          console.error('Failed to add Polygon Amoy to MetaMask:', addError);
+          return false;
+        }
       }
+      console.error('Failed to switch to Polygon Amoy:', switchError);
+      return false;
     }
   }
 
@@ -107,11 +142,18 @@ class Web3ProviderService {
   }
 
   _notify() {
-    this.listeners.forEach(cb => cb({
-      isConnected: this.isConnected,
-      address: this.address,
-      chainId: this.chainId,
-    }));
+    this.listeners.forEach(cb => {
+      try {
+        cb({
+          isConnected: this.isConnected,
+          address: this.address,
+          chainId: this.chainId,
+          isAmoy: this.chainId === POLYGON_AMOY_CONFIG.chainIdDecimal
+        });
+      } catch (e) {
+        console.error('Listener callback error:', e);
+      }
+    });
   }
 }
 

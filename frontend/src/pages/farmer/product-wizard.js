@@ -17,6 +17,7 @@ import { GaslessProvider } from '../../web3/gasless.js';
 import { postProduct } from '../../utils/api.js';
 import { addFirestoreProduct } from '../../firebase/firestore.js';
 import { LiveCamera } from '../../components/live-camera.js';
+import { createBatchOnChain } from '../../web3/contracts.js';
 
 export class FarmerProductWizard {
   constructor(container, onComplete, initialData = {}) {
@@ -596,6 +597,20 @@ export class FarmerProductWizard {
             </div>
           </div>
 
+          <!-- Polygon Amoy On-Chain Mint Toggle -->
+          <div style="margin-top: 14px; background: #FAF5FF; border: 1.5px solid #DDD6FE; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.3rem;">⛓️</span>
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 800; color: #5B21B6;">Mint On-Chain Batch on Polygon Amoy</div>
+                <div style="font-size: 0.74rem; color: #6D28D9;">Chain ID: 80002 · Cryptographic provenance & fair pricing</div>
+              </div>
+            </div>
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" id="wizard-mint-onchain" checked style="width: 18px; height: 18px; accent-color: #7C3AED; cursor: pointer;" />
+            </label>
+          </div>
+
           <!-- Edit links -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 0.85rem;">
             <button type="button" id="wizard-edit-details-btn" style="background: none; border: none; color: #2563EB; cursor: pointer; text-decoration: underline; font-weight: 800; padding: 0;">
@@ -1116,6 +1131,29 @@ export class FarmerProductWizard {
 
       postProduct(productData).catch(() => {});
       addFirestoreProduct(productData).catch(() => {});
+
+      // Mint on Polygon Amoy
+      const shouldMint = document.getElementById('wizard-mint-onchain')?.checked ?? true;
+      if (shouldMint) {
+        createBatchOnChain({
+          batchId: productData.productId,
+          cropName: productData.name,
+          quantity: productData.quantity,
+          price: productData.pricePerUnit
+        }).then(txResult => {
+          console.log('✅ Batch successfully minted on-chain:', txResult);
+          productData.onChainBatchId = productData.productId;
+          productData.blockchainVerified = true;
+          if (txResult?.txHash) productData.txHash = txResult.txHash;
+          store.updateItem('products', p => p.productId === productData.productId, {
+            blockchainVerified: true,
+            onChainBatchId: productData.productId,
+            onChainTxHash: txResult?.txHash
+          });
+        }).catch(err => {
+          console.warn('On-chain mint notice:', err.message);
+        });
+      }
 
       this.isSubmitting = false;
       this.isSuccess = true;

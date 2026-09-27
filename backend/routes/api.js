@@ -2,6 +2,7 @@
 import express from 'express';
 import { db } from '../db.js';
 import { getLiveMandiRates } from '../services/mandiData.js';
+import { verifyFirebaseIdToken } from '../firebaseAdmin.js';
 
 export const apiRouter = express.Router();
 
@@ -74,8 +75,7 @@ apiRouter.get('/', (req, res) => {
       orders: 'GET, POST, PATCH /api/orders',
       orderDetail: 'GET /api/orders/:orderId',
       users: 'GET, POST /api/users',
-      sendOtp: 'POST /api/auth/send-otp',
-      verifyOtp: 'POST /api/auth/verify-otp',
+      verifyToken: 'POST /api/auth/verify-token',
     },
   });
 });
@@ -308,70 +308,59 @@ apiRouter.post('/blocks', (req, res) => {
 });
 
 // ==========================================
-// Phone OTP Authentication (ERC-4337 Support)
+// Firebase Authenticated Session Verification
+// (Node.js Backend Token Verification via Firebase Admin SDK)
 // ==========================================
-const activeOtps = new Map();
-
-apiRouter.post('/send-otp', async (req, res) => {
-  const { phone } = req.body;
-  if (!phone || typeof phone !== 'string' || phone.trim().length < 10) {
-    return res.status(400).json({ success: false, code: 'ERR_INVALID_PHONE' });
+apiRouter.post('/auth/verify-token', async (req, res) => {
+  const { idToken, role, name, location, walletAddress } = req.body;
+  if (!idToken || typeof idToken !== 'string') {
+    return res.status(400).json({
+      success: false,
+      code: 'ERR_TOKEN_REQUIRED',
+      message: 'Firebase ID token is required',
+    });
   }
 
-  const cleanPhone = phone.trim().replace(/\s+/g, '');
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  
-  activeOtps.set(cleanPhone, {
-    otp,
-    createdAt: Date.now(),
-    expiresAt: Date.now() + 5 * 60 * 1000,
-  });
+  try {
+    const decodedToken = await verifyFirebaseIdToken(idToken);
+    const uid = decodedToken.uid;
+    const phoneNumber = decodedToken.phone_number || '';
+    const email = decodedToken.email || (phoneNumber ? `${phoneNumber.replace(/\+/g, '')}@farmchain.phone` : `user-${uid}@farmchain.io`);
 
-  console.log(`\n📱 [SMS GATEWAY] Dispatching OTP to ${cleanPhone}`);
-  console.log(`💬 Message: "Your FarmChain AI smart wallet verification code is ${otp}. Valid for 5 minutes."\n`);
+    let user = db.findItem('users', u => u.id === uid || u.uid === uid);
+    if (!user) {
+      user = {
+        id: uid,
+        uid,
+        phoneNumber,
+        email,
+        role: (role || 'farmer').toLowerCase(),
+        name: name || (phoneNumber ? `User (${phoneNumber.slice(-4)})` : 'Verified User'),
+        location: location || 'India',
+        walletAddress: walletAddress || '',
+        authProvider: 'firebase-phone',
+        createdAt: Date.now(),
+        verified: true,
+      };
+      db.addItem('users', user);
+    }
 
-  if (req.app.get('io')) {
-    req.app.get('io').emit('otp_dispatched', { code: 'OTP_SENT', phone: cleanPhone, timestamp: Date.now() });
+    res.json({
+      success: true,
+      code: 'AUTH_VERIFIED',
+      uid,
+      phoneNumber,
+      role: user.role,
+      user,
+    });
+  } catch (err) {
+    console.warn('Backend Firebase token verification failed:', err.message);
+    res.status(401).json({
+      success: false,
+      code: 'ERR_INVALID_TOKEN',
+      message: err.message || 'Token verification failed',
+    });
   }
-
-  res.json({
-    success: true,
-    code: 'OTP_SENT',
-    phone: cleanPhone,
-    expiresIn: 300,
-  });
-});
-
-apiRouter.post('/verify-otp', (req, res) => {
-  const { phone, otp } = req.body;
-  if (!phone || !otp) {
-    return res.status(400).json({ success: false, code: 'ERR_PHONE_AND_OTP_REQUIRED' });
-  }
-
-  const cleanPhone = phone.trim().replace(/\s+/g, '');
-  const record = activeOtps.get(cleanPhone);
-
-  if (!record) {
-    return res.status(400).json({ success: false, code: 'ERR_OTP_NOT_FOUND' });
-  }
-
-  if (Date.now() > record.expiresAt) {
-    activeOtps.delete(cleanPhone);
-    return res.status(400).json({ success: false, code: 'ERR_OTP_EXPIRED' });
-  }
-
-  if (record.otp !== otp.trim()) {
-    return res.status(400).json({ success: false, code: 'ERR_OTP_INVALID' });
-  }
-
-  activeOtps.delete(cleanPhone);
-
-  res.json({
-    success: true,
-    code: 'OTP_VERIFIED',
-    phone: cleanPhone,
-    verified: true,
-  });
 });
 
 // ==========================================
@@ -379,7 +368,6 @@ apiRouter.post('/verify-otp', (req, res) => {
 // ==========================================
 apiRouter.post('/reset', (req, res) => {
   db.reset();
-  activeOtps.clear();
   if (req.app.get('io')) {
     req.app.get('io').emit('platform_reset', { code: 'PLATFORM_RESET' });
   }

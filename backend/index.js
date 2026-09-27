@@ -1,9 +1,19 @@
 // backend/index.js
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../blockchain/.env') });
+
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { Server } from 'socket.io';
 import { apiRouter } from './routes/api.js';
+import { blockchainRouter } from './routes/blockchain.js';
 import { db } from './db.js';
 
 const app = express();
@@ -48,12 +58,22 @@ app.get('/', (req, res) => {
       productDetail: '/api/products/:productId',
       orders: '/api/orders',
       users: '/api/users',
+      blockchain: {
+        status: '/api/blockchain/status',
+        batch: '/api/blockchain/batch',
+        transfer: '/api/blockchain/transfer',
+        stage: '/api/blockchain/stage',
+        certificate: '/api/blockchain/certificate',
+        verify: '/api/blockchain/verify/:batchId',
+        history: '/api/blockchain/history/:batchId'
+      }
     },
     frontend: 'https://farm-chain-ai.vercel.app',
   });
 });
 
 // Mount API routes
+app.use('/api/blockchain', blockchainRouter);
 app.use('/api', apiRouter);
 
 const PORT = process.env.PORT || 4000;

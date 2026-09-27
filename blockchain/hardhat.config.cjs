@@ -1,7 +1,17 @@
+const path = require("path");
+// Load environment variables from both root and blockchain directories
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+
+require("@nomicfoundation/hardhat-toolbox");
+
+const rpcUrl = process.env.POLYGON_AMOY_RPC_URL || "https://polygon-amoy-bor-rpc.publicnode.com";
+const privateKey = process.env.BLOCKCHAIN_PRIVATE_KEY ? [process.env.BLOCKCHAIN_PRIVATE_KEY] : [];
+
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
-    version: "0.8.20",
+    version: "0.8.24",
     settings: {
       optimizer: {
         enabled: true,
@@ -14,14 +24,10 @@ module.exports = {
     hardhat: {
       chainId: 31337,
     },
-    // Example testnet configurations for Polygon & Base
     polygonAmoy: {
-      url: process.env.POLYGON_AMOY_RPC || "https://rpc-amoy.polygon.technology/",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-    },
-    baseSepolia: {
-      url: process.env.BASE_SEPOLIA_RPC || "https://sepolia.base.org",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      url: rpcUrl,
+      accounts: privateKey,
+      chainId: 80002,
     },
   },
   paths: {

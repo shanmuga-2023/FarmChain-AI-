@@ -9,7 +9,11 @@
     "preview": "vite preview",
     "start": "node backend/index.js",
     "server": "node backend/index.js",
-    "compile:contracts": "npx hardhat compile --config blockchain/hardhat.config.cjs"
+    "compile:contracts": "npx hardhat compile --config blockchain/hardhat.config.cjs",
+    "test:contracts": "npx hardhat test --config blockchain/hardhat.config.cjs",
+    "deploy:contracts:local": "npx hardhat run blockchain/scripts/deploy.js --network hardhat --config blockchain/hardhat.config.cjs",
+    "deploy:contracts:amoy": "npx hardhat run blockchain/scripts/deploy.js --network polygonAmoy --config blockchain/hardhat.config.cjs",
+    "export:contracts": "node blockchain/scripts/export-abi.cjs"
   },
   "dependencies": {
     "chart.js": "^4.4.7",
@@ -17,12 +21,16 @@
     "ethers": "^6.17.0",
     "express": "^4.22.2",
     "firebase": "^12.17.1",
+    "firebase-admin": "^14.5.0",
     "html5-qrcode": "^2.3.8",
     "qrcode": "^1.5.4",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "@openzeppelin/contracts": "^5.6.1",
+    "dotenv": "^18.0.4",
     "hardhat": "^2.29.1",
     "vite": "^6.3.5"
   }
