@@ -149,6 +149,27 @@ async function init() {
     // Seed demo data
     await seedData();
 
+    // Sync live produce catalog from backend API if reachable
+    try {
+      const { fetchProducts } = await import('./utils/api.js');
+      const backendProducts = await fetchProducts();
+      if (Array.isArray(backendProducts) && backendProducts.length > 0) {
+        const local = store.get('products') || [];
+        const merged = [...local];
+        for (const bp of backendProducts) {
+          const idx = merged.findIndex(p => p.productId === bp.productId);
+          if (idx >= 0) {
+            merged[idx] = { ...merged[idx], ...bp };
+          } else {
+            merged.push(bp);
+          }
+        }
+        store.set('products', merged);
+      }
+    } catch (syncErr) {
+      console.warn('Backend produce catalog sync notice:', syncErr.message);
+    }
+
     // Small delay for dramatic effect
     await new Promise(resolve => setTimeout(resolve, 800));
 

@@ -1094,6 +1094,7 @@ export class FarmerProductWizard {
         farmerName: this.user.name,
         quantity: this.formData.quantity,
         unit: this.formData.unit,
+        pricePerUnit: this.formData.pricePerUnit,
         origin: this.formData.origin || this.user.location || 'Tamil Nadu, India',
         harvestDate: this.formData.harvestDate,
         isOrganic: this.formData.isOrganic,
@@ -1104,6 +1105,8 @@ export class FarmerProductWizard {
 
       const productData = {
         ...result,
+        productId: result.productId,
+        pricePerUnit: this.formData.pricePerUnit,
         emoji: getCropEmoji(this.formData.name),
         status: 'available',
         photoUrl: this.photoData || '',
@@ -1129,7 +1132,12 @@ export class FarmerProductWizard {
         pricePerUnit: this.formData.pricePerUnit,
       });
 
-      postProduct(productData).catch(() => {});
+      // Synchronously post to backend API so all clients/consumers can access immediately
+      postProduct(productData).then(saved => {
+        console.log('✅ Product synced to backend API:', saved);
+      }).catch(err => {
+        console.warn('Backend product sync warning:', err);
+      });
       addFirestoreProduct(productData).catch(() => {});
 
       // Mint on Polygon Amoy

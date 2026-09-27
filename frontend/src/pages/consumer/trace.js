@@ -14,11 +14,14 @@ import { generateProductQR, createQRDisplay } from '../../utils/qr.js';
 import { createDoughnutChart } from '../../components/charts.js';
 import { GeoVelocityChecker } from '../../ai/geo-velocity.js';
 import { i18n } from '../../i18n/index.js';
-import { getExplorerTxUrl, getExplorerAddressUrl } from '../../web3/contracts.js';
+import { getExplorerTxUrl, getExplorerAddressUrl, getAgriSupplyChainContract } from '../../web3/contracts.js';
+import { fetchProduct } from '../../utils/api.js';
 
-export function renderConsumerTrace(container) {
+const escapeHtml = (str) => String(str || '').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+export async function renderConsumerTrace(container) {
   const user = store.get('currentUser');
-  const products = store.get('products') || [];
+  let products = store.get('products') || [];
   const certs = store.get('certificates') || [];
   const transfers = store.get('transfers') || [];
   const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
@@ -138,8 +141,130 @@ export function renderConsumerTrace(container) {
     return;
   }
 
-  // Product found — show full trace OR Counterfeit Alert
-  const product = products.find(p => p.productId === productId);
+  // 1. Look up in local client store first
+  let product = products.find(p => p.productId === productId || p.id === productId || p.onChainBatchId === productId);
+
+  // 2. If not found in local store, show verifying UI and query Backend API & Blockchain
+  if (!product) {
+    container.innerHTML = `
+      <div class="dashboard-layout">
+        ${sidebarContainer.innerHTML}
+        <main class="dashboard-main">
+          <div class="topbar">
+            <div class="topbar-left">
+              <div>
+                <div class="topbar-title">${i18n.t('trace.title') || 'Trace Product 🔍'}</div>
+                <div class="topbar-breadcrumb"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('trace.breadcrumb') || 'Verifying Batch'}</span></div>
+              </div>
+            </div>
+            <div class="topbar-right">
+              <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/consumer/trace'">${i18n.t('trace.backToScanner') || '← Back to Scanner'}</button>
+            </div>
+          </div>
+          <div class="page-content">
+            <div class="card" style="max-width: 620px; margin: 40px auto; text-align: center; padding: 48px 24px;">
+              <div class="spinner" style="width: 52px; height: 52px; border-width: 4px; margin: 0 auto 20px;"></div>
+              <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px;">⛓️ Verifying Cryptographic Provenance...</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                Checking decentralized produce registry & Polygon Amoy blockchain ledger for batch:
+              </p>
+              <div style="display: inline-block; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); padding: 8px 16px; border-radius: 8px; font-size: 0.95rem; color: var(--accent-green); font-weight: 700; font-family: var(--font-mono);">
+                ${escapeHtml(productId)}
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    `;
+
+    // Tier A: Query Backend API
+    try {
+      const backendProd = await fetchProduct(productId);
+      if (backendProd && (backendProd.productId || backendProd.name)) {
+        product = backendProd;
+      }
+    } catch (e) {
+      console.warn('Backend product fetch notice:', e);
+    }
+
+    // Tier B: Query Backend Blockchain Ledger endpoint
+    if (!product) {
+      try {
+        const isLocalHost = typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' ||
+          window.location.hostname === '127.0.0.1' ||
+          window.location.hostname.startsWith('192.168.') ||
+          window.location.hostname.startsWith('10.') ||
+          window.location.hostname.endsWith('.local')
+        );
+        const apiBase = import.meta.env.VITE_API_URL || (isLocalHost ? `http://${window.location.hostname}:4000/api` : 'https://farmchain-ai-1oge.onrender.com/api');
+        const res = await fetch(`${apiBase}/blockchain/batch/${encodeURIComponent(productId)}`);
+        if (res.ok) {
+          const batchJson = await res.json();
+          if (batchJson?.data) {
+            const b = batchJson.data;
+            product = {
+              productId: b.batchId || productId,
+              name: b.cropName || 'Farm Produce',
+              quantity: b.quantity || 100,
+              unit: 'kg',
+              pricePerUnit: b.pricePerUnit || 50,
+              farmerName: b.currentOwner ? `Producer (${b.currentOwner.slice(0, 6)}...${b.currentOwner.slice(-4)})` : 'Verified Producer',
+              origin: 'Verified Origin Farm',
+              emoji: getCropEmoji(b.cropName || 'Produce'),
+              status: 'available',
+              blockchainVerified: true,
+              onChainBatchId: b.batchId || productId,
+              onChainTxHash: b.txHash,
+              currentStage: b.currentStage || 'Harvested',
+              createdAt: (b.timestamp ? b.timestamp * 1000 : Date.now())
+            };
+          }
+        }
+      } catch (e) {
+        console.warn('Backend blockchain batch fetch notice:', e);
+      }
+    }
+
+    // Tier C: Query Polygon Amoy Smart Contract directly via Ethers.js
+    if (!product) {
+      try {
+        const contract = getAgriSupplyChainContract();
+        if (contract) {
+          const onChain = await contract.getBatchDetails(productId);
+          if (onChain && onChain.exists) {
+            const STAGES = ['Harvested', 'InTransit', 'QualityChecked', 'AtRetailer', 'Sold'];
+            product = {
+              productId: onChain.batchId || productId,
+              name: onChain.cropName,
+              quantity: Number(onChain.quantity),
+              unit: 'kg',
+              pricePerUnit: Number(onChain.currentPrice || 0),
+              farmerName: `Producer (${onChain.currentOwner.slice(0, 6)}...${onChain.currentOwner.slice(-4)})`,
+              origin: 'Verified Polygon Amoy Origin',
+              emoji: getCropEmoji(onChain.cropName),
+              status: 'available',
+              blockchainVerified: true,
+              onChainBatchId: productId,
+              currentStage: STAGES[Number(onChain.stage)] || 'Harvested',
+              dataHash: onChain.dataHash,
+              createdAt: Number(onChain.createdAt) * 1000 || Date.now()
+            };
+          }
+        }
+      } catch (e) {
+        console.warn('Direct smart contract batch check notice:', e);
+      }
+    }
+
+    // If successfully resolved, cache into local store for instant future lookups
+    if (product) {
+      store.addItem('products', product);
+      products = store.get('products') || [];
+    }
+  }
+
+  // If still not found after exhaustive verification, render security/counterfeit alert
   if (!product) {
     renderCounterfeitAlert(container, sidebarContainer, productId);
     return;

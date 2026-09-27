@@ -223,9 +223,9 @@ export async function createBatchRecord({ batchId, cropName, quantity, dataHash,
   db.addItem('blocks', record);
 
   // Sync with product in db if exists
-  const existingProduct = db.findItem('products', p => p.id === batchId || p.batchId === batchId);
+  const existingProduct = db.findItem('products', p => p.id === batchId || p.batchId === batchId || p.productId === batchId);
   if (existingProduct) {
-    db.updateItem('products', p => p.id === existingProduct.id, {
+    db.updateItem('products', p => p.id === existingProduct.id || p.productId === batchId, {
       onChainBatchId: batchId,
       onChainTxHash: txResult.txHash,
       onChainBlockNumber: txResult.blockNumber,
@@ -441,10 +441,10 @@ export async function getBatchDetails(batchId) {
   }
 
   // Fallback to checking products collection
-  const prod = db.findItem('products', p => p.id === batchId || p.batchId === batchId);
+  const prod = db.findItem('products', p => p.id === batchId || p.batchId === batchId || p.productId === batchId);
   if (prod) {
     return {
-      batchId: prod.id,
+      batchId: prod.productId || prod.batchId || prod.id || batchId,
       cropName: prod.name,
       quantity: prod.quantity,
       dataHash: prod.dataHash || computeDataHash(prod),
@@ -508,7 +508,7 @@ export async function verifyBatch(batchId, expectedDataHash) {
       }
     } else {
       // Check if product exists in catalog
-      const prod = db.findItem('products', p => p.id === batchId || p.batchId === batchId);
+      const prod = db.findItem('products', p => p.id === batchId || p.batchId === batchId || p.productId === batchId);
       if (prod) {
         const hash = prod.dataHash || computeDataHash(prod);
         onChainResult = {
