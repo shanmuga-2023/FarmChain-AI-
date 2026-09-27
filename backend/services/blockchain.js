@@ -428,7 +428,8 @@ export async function getBatchDetails(batchId) {
         contractAddress: contractConfig.address
       };
     } catch (e) {
-      console.warn(`Query on-chain getBatchDetails failed (${e.message}). Falling back to database record.`);
+      const reason = e.shortMessage || (e.message && e.message.includes('batch does not exist') ? 'batch not on-chain' : e.message);
+      console.log(`ℹ️ Batch ${batchId} check: ${reason}. Falling back to database record.`);
     }
   }
 
@@ -486,7 +487,8 @@ export async function verifyBatch(batchId, expectedDataHash) {
         }
       }
     } catch (e) {
-      console.warn(`Query on-chain verifyBatch failed: ${e.message}`);
+      const reason = e.shortMessage || (e.message && e.message.includes('batch does not exist') ? 'batch not on-chain' : e.message);
+      // Clean fallback if batch is not on-chain
     }
   }
 
