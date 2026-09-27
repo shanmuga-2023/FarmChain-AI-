@@ -21,7 +21,7 @@ export function getExplorerAddressUrl(address) {
  * Get contract instance connected with active signer or fallback provider
  */
 export function getAgriSupplyChainContract() {
-  const address = contractArtifact.address;
+  const address = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_AGRI_CONTRACT_ADDRESS) || contractArtifact.address;
   const isAddressValid = address && address !== '0x0000000000000000000000000000000000000000' && ethers.isAddress(address);
 
   if (!isAddressValid) {
@@ -37,7 +37,8 @@ export function getAgriSupplyChainContract() {
   }
 
   // Fallback public RPC read-only provider
-  const publicProvider = new ethers.JsonRpcProvider(POLYGON_AMOY_CONFIG.rpcUrls[0], {
+  const rpcUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_POLYGON_AMOY_RPC_URL) || POLYGON_AMOY_CONFIG.rpcUrls[0];
+  const publicProvider = new ethers.JsonRpcProvider(rpcUrl, {
     chainId: POLYGON_AMOY_CONFIG.chainIdDecimal,
     name: 'polygonAmoy'
   });
