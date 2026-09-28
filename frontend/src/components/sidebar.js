@@ -7,7 +7,7 @@ import { store } from '../data/store.js';
 import { getRoleConfig } from '../utils/helpers.js';
 import { router } from '../utils/router.js';
 import { i18n } from '../i18n/index.js';
-import { toggleTheme } from '../utils/theme.js';
+import { toggleTheme, updateAllThemeIcons } from '../utils/theme.js';
 import { getIcon } from '../utils/icons.js';
 
 function getSidebarMenus() {
@@ -187,9 +187,9 @@ export function renderSidebar(container) {
           <div id="sidebar-wallet-slot" style="margin-top: 2px;"></div>
 
           <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 2px;">
-            <button id="theme-toggle-btn" style="background: transparent; border: none; font-size: 1rem; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 8px; transition: all 0.2s ease;">
-              <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-              <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <button id="theme-toggle-btn" class="theme-toggle-btn" data-action="toggle-theme" title="Toggle Dark/Light Mode" aria-label="Toggle theme" style="background: transparent; border: none; font-size: 1rem; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 8px; transition: all 0.2s ease;">
+              <svg id="theme-icon-sun" class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+              <svg id="theme-icon-moon" class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
             </button>
             <button class="logout-btn" data-action="logout" style="background: transparent; border: none; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s ease;">
               Logout
@@ -201,26 +201,8 @@ export function renderSidebar(container) {
     </aside>
   `;
 
-  // Update Theme Icon Based on Current State
-  const updateThemeIcon = () => {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const sun = container.querySelector('#theme-icon-sun');
-    const moon = container.querySelector('#theme-icon-moon');
-    if (sun && moon) {
-      sun.style.display = isDark ? 'block' : 'none';
-      moon.style.display = isDark ? 'none' : 'block';
-    }
-  };
-  
-  updateThemeIcon();
-
-  const themeBtn = container.querySelector('#theme-toggle-btn');
-  if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
-      toggleTheme();
-      updateThemeIcon();
-    });
-  }
+  // Synchronize Theme Icon Based on Current Theme State
+  setTimeout(updateAllThemeIcons, 10);
 
   // Render MetaMask connect button in sidebar only for non-farmer roles
   if (role !== 'farmer') {

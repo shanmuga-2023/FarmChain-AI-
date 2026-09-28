@@ -9,7 +9,7 @@ import { blockchain } from './blockchain/core.js';
 import { seedData } from './data/seed.js';
 import { destroyAllCharts } from './components/charts.js';
 import { showToast } from './utils/helpers.js';
-import { initTheme } from './utils/theme.js';
+import { initTheme, toggleTheme, updateAllThemeIcons } from './utils/theme.js';
 import { initMobileUI } from './utils/mobile.js';
 
 // Pages
@@ -223,8 +223,17 @@ async function init() {
   }
 }
 
-// Global click handler for logout buttons and notification bell across all pages
+// Global click handler for logout buttons, theme toggling, and notification bell across all pages
 document.addEventListener('click', async (e) => {
+  // Theme Toggle handler across all pages and sidebars
+  const themeToggle = e.target.closest('#theme-toggle-btn, .theme-toggle-btn, [data-action="toggle-theme"], #header-theme-toggle');
+  if (themeToggle) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleTheme();
+    return;
+  }
+
   // Logout handler
   const logoutBtn = e.target.closest('[data-action="logout"], .logout-btn, #logout-btn, .sidebar-logout');
   if (logoutBtn) {
@@ -261,8 +270,9 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-// Update bell badge on route change
+// Update bell badge and theme icons on route change
 router.beforeEach(() => {
+  setTimeout(updateAllThemeIcons, 50);
   import('./components/notification-center.js').then(({ updateNotificationBellBadge }) => {
     setTimeout(updateNotificationBellBadge, 100);
   });
