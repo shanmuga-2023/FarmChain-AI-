@@ -2,21 +2,28 @@ import { router } from '../utils/router.js';
 import { i18n } from '../i18n/index.js';
 
 export function renderLanding(container) {
-  const isIntroSkipped = sessionStorage.getItem('farmchainIntroShown') === 'true';
+  // Always replay intro on a fresh page load/refresh.
+  // The flag is only set *after* the intro finishes, so navigating within
+  // the app (hash changes) still skips it — only hard reloads trigger it.
+  sessionStorage.removeItem('farmchainIntroShown');
+  const isIntroSkipped = false;
 
   // Render cinematic intro + new landing page
   container.innerHTML = `
     <style>
       /* --- Intro Styles --- */
       .cinematic-intro {
-        position: relative;
-        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
         height: 100vh;
         background: #000000;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
+        z-index: 99999;
       }
       #intro-logo-container {
         opacity: 0;
@@ -96,11 +103,12 @@ export function renderLanding(container) {
       /* Hero Section */
       .landing-hero {
         display: flex;
-        padding: 80px 48px;
-        max-width: 1400px;
-        margin: 0 auto;
-        gap: 60px;
+        flex-direction: column;
         align-items: center;
+        text-align: center;
+        padding: 100px 48px;
+        max-width: 900px;
+        margin: 0 auto;
       }
       .hero-content {
         flex: 1;
@@ -131,7 +139,7 @@ export function renderLanding(container) {
         color: #475569;
         line-height: 1.6;
         margin-bottom: 40px;
-        max-width: 600px;
+        max-width: 700px;
       }
       
       .hero-actions {
@@ -195,6 +203,7 @@ export function renderLanding(container) {
         color: #64748b;
         font-weight: 500;
         flex-wrap: wrap;
+        justify-content: center;
       }
       
       /* Hero Card (Right) */
@@ -505,83 +514,34 @@ export function renderLanding(container) {
       <nav class="landing-nav">
         <div class="nav-left">
           <img src="/logo.png" alt="FarmChain AI" class="nav-logo" style="filter: brightness(0); height: 28px;" />
-          <div class="nav-links">
-            <a href="#how-it-works">${i18n.t('landing.nav.howItWorks') || 'How It Works'}</a>
-            <a href="#" onclick="event.preventDefault(); window.location.hash='#demos';">${i18n.t('landing.nav.demos') || 'Interactive Demos'}</a>
-            <a href="#" onclick="event.preventDefault(); window.location.hash='#mandi';">${i18n.t('landing.nav.mandi') || 'Live Mandi Rates'}</a>
-            <a href="#" onclick="event.preventDefault(); window.location.hash='#roles';">${i18n.t('landing.nav.roles') || 'Stakeholder Roles'}</a>
-          </div>
         </div>
         <div class="nav-right">
-          <select id="lang-switch-landing" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; font-size: 0.85rem; font-weight: 500; color: #475569; cursor: pointer;">
+          <select id="lang-switch-landing" class="farmchain-lang-select" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; font-size: 0.85rem; font-weight: 500; color: #475569; cursor: pointer;">
             <option value="en" ${i18n.currentLocale === 'en' ? 'selected' : ''}>EN | English</option>
+            <option value="hi" ${i18n.currentLocale === 'hi' ? 'selected' : ''}>HI | हिन्दी</option>
             <option value="ta" ${i18n.currentLocale === 'ta' ? 'selected' : ''}>TA | தமிழ்</option>
+            <option value="te" ${i18n.currentLocale === 'te' ? 'selected' : ''}>TE | తెలుగు</option>
           </select>
-          <a href="#" onclick="event.preventDefault(); document.getElementById('login-btn').click();" style="color: #475569; font-weight: 600; text-decoration: none; font-size: 0.95rem;">${i18n.t('auth.signIn') || 'Sign In'}</a>
-          <button id="login-btn" class="btn btn-primary" style="padding: 8px 16px; border-radius: 8px; font-weight: 600;">${i18n.t('landing.hero.enterBtn') || 'Get Started'}</button>
+          <button id="login-btn" class="btn btn-primary" onclick="window.location.hash='/login'" style="padding: 8px 16px; border-radius: 8px; font-weight: 600;">${i18n.t('landing.hero.enterBtn') || 'Explore Platform'}</button>
         </div>
       </nav>
       
       <!-- Hero Section -->
       <section class="landing-hero">
-        <div class="hero-content">
-          <div class="hero-badge">${i18n.t('landing.newHero.badge') || 'Blockchain-Verified Agri Ledger · Polygon Amoy'}</div>
-          <h1 class="hero-title">
-            <span class="line1">${i18n.t('landing.newHero.title1') || 'Fair Harvest Prices.'}</span>
-            <span class="line2">${i18n.t('landing.newHero.title2') || 'Zero-Trust Provenance.'}</span>
-          </h1>
-          <p class="hero-subtitle">
-            ${i18n.t('landing.newHero.subtitle') || "India's premier agricultural marketplace connecting farmers, traders, retailers, and consumers with AI-driven MSP floors, smart escrow contracts, and cryptographic QR traceability."}
-          </p>
-          <div class="hero-actions">
-            <button class="btn-hero-primary" onclick="window.location.hash='/marketplace'">${i18n.t('landing.newHero.primaryBtn') || 'Launch Marketplace →'}</button>
-            <button class="btn-hero-secondary" onclick="window.location.hash='/farmer/assistant'">${i18n.t('landing.newHero.secondaryBtn') || 'AI Price Engine'}</button>
-            <button class="btn-hero-video" onclick="window.scrollTo({top:0, behavior:'smooth'})">${i18n.t('landing.newHero.videoBtn') || '▶ Watch Video'}</button>
-          </div>
-          <div class="hero-trust">
-            <span>${i18n.t('landing.newHero.trust1') || '★ 4.9/5 Farmer Satisfaction'}</span>
-            <span>${i18n.t('landing.newHero.trust2') || '100% Escrow Protected'}</span>
-            <span>${i18n.t('landing.newHero.trust3') || '0.4s Gasless Finality'}</span>
-          </div>
+        <h1 class="hero-title">
+          <span class="line1">${i18n.t('landing.newHero.title1') || 'Fair Harvest Prices.'}</span>
+          <span class="line2">${i18n.t('landing.newHero.title2') || 'Zero-Trust Provenance.'}</span>
+        </h1>
+        <p class="hero-subtitle">
+          ${i18n.t('landing.newHero.subtitle') || "India's premier agricultural marketplace connecting farmers, traders, retailers, and consumers with AI-driven MSP floors, smart escrow contracts, and cryptographic QR traceability."}
+        </p>
+        <div class="hero-actions">
+          <button class="btn-hero-primary" onclick="window.location.hash='/login'">${i18n.t('landing.newHero.primaryBtn') || 'Explore Platform →'}</button>
         </div>
-        
-        <div class="hero-visual">
-          <div class="verification-card">
-            <div class="vc-header">
-              <span class="vc-title">${i18n.t('landing.newHero.cardTitle') || 'ON-CHAIN VERIFIED ESCROW'}</span>
-              <span class="vc-badge-net">${i18n.t('landing.newHero.network') || 'Polygon Amoy'}</span>
-            </div>
-            
-            <div class="vc-product">
-              <h3>${i18n.t('landing.newHero.product') || 'Alphonso Mangoes · Batch #FC-9482'}</h3>
-              <div class="vc-status">${i18n.t('landing.newHero.status') || 'Grade A+ Certified'}</div>
-              <div class="vc-location">📍 ${i18n.t('landing.newHero.location') || 'Ratnagiri Organic Co-op, Maharashtra'}</div>
-            </div>
-            
-            <div class="vc-pricing">
-              <div class="vc-price-box">
-                <div class="label">${i18n.t('landing.newHero.aiPriceLabel') || 'AI FAIR PRICE (MSP PROTECTED)'}</div>
-                <div class="val">${i18n.t('landing.newHero.aiPriceValue') || '₹58.50/kg'}</div>
-              </div>
-              <div class="vc-price-box">
-                <div class="label">${i18n.t('landing.newHero.escrowLabel') || 'SMART ESCROW LOCKED'}</div>
-                <div class="val">${i18n.t('landing.newHero.escrowValue') || '₹58,500.00'}</div>
-                <div class="sub">${i18n.t('landing.newHero.autoRelease') || 'Auto-Release on QC Delivery'}</div>
-              </div>
-            </div>
-            
-            <div class="vc-timeline">
-              <div class="vc-node"><div class="vc-dot"></div><span>Harvest</span></div>
-              <div class="vc-node"><div class="vc-dot"></div><span>Mandi QC</span></div>
-              <div class="vc-node"><div class="vc-dot"></div><span>Cold Retail</span></div>
-              <div class="vc-node"><div class="vc-dot"></div><span>Table/Pune</span></div>
-            </div>
-            
-            <div class="vc-footer">
-              <span class="vc-hash">${i18n.t('landing.newHero.hash') || 'Hash: 0x82a...419'}</span>
-              <button class="btn-verify" onclick="window.location.hash='/consumer/trace'">${i18n.t('landing.newHero.verifyBtn') || '✓ Verify Provenance'}</button>
-            </div>
-          </div>
+        <div class="hero-trust">
+          <span>${i18n.t('landing.newHero.trust1') || '★ 4.9/5 Farmer Satisfaction'}</span>
+          <span>${i18n.t('landing.newHero.trust2') || '100% Escrow Protected'}</span>
+          <span>${i18n.t('landing.newHero.trust3') || '0.4s Gasless Finality'}</span>
         </div>
       </section>
       
@@ -649,8 +609,8 @@ export function renderLanding(container) {
   const langSwitch = container.querySelector('#lang-switch-landing');
   if (langSwitch) {
     langSwitch.addEventListener('change', (e) => {
-      i18n.setLocale(e.target.value);
-      renderLanding(container);
+      i18n.setLanguage(e.target.value);
+      // The global farmchain:lang_changed event in main.js will re-render all pages
     });
   }
 
@@ -718,6 +678,7 @@ export function renderLanding(container) {
       await vid.play();
     } catch (err) {
       console.warn("Autoplay prevented or video missing.");
+      finishIntro();
     }
   };
 

@@ -105,12 +105,10 @@ class I18nService {
       }
     });
 
-    // We do NOT dispatch farmchain:lang_changed anymore, because that triggers a full page re-render in main.js
-    // which destroys modals and duplicates UI if not careful.
+    // Dispatch both event names for compatibility
     if (typeof window !== 'undefined') {
-       // Optional: dispatch a lightweight event if other pure UI scripts need to know,
-       // but we'll call it something else so main.js router doesn't blow up the page.
-       window.dispatchEvent(new CustomEvent('farmchain:lang_updated', { detail: { language: lang } }));
+      window.dispatchEvent(new CustomEvent('farmchain:lang_updated', { detail: { language: lang } }));
+      window.dispatchEvent(new CustomEvent('farmchain:lang_changed', { detail: { language: lang } }));
     }
   }
 
@@ -261,6 +259,15 @@ class I18nService {
     }
 
     return str;
+  }
+
+  // Alias for compatibility with pages that call setLocale
+  setLocale(lang) {
+    return this.setLanguage(lang);
+  }
+
+  get currentLocale() {
+    return this.currentLanguage;
   }
 
   onChange(callback) {

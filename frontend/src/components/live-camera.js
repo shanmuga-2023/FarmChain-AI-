@@ -43,6 +43,8 @@ export class LiveCamera {
    * @returns {Promise<{imageDataUrl, canvas, proofData}>}
    */
   static open(options = {}) {
+    // Pre-fetch location in background so it's ready when modal opens
+    this.getLocation(false).catch(() => {});
     return new Promise((resolve, reject) => {
       const modal = this._createCameraModal(options, resolve, reject);
       document.body.appendChild(modal);
@@ -53,7 +55,7 @@ export class LiveCamera {
    * Get current exact location with multi-layer fallback & BigDataCloud reverse geocoding
    * @param {boolean} forceRefresh - whether to bypass cache
    */
-  static async getLocation(forceRefresh = false) {
+  static async getLocation(forceRefresh = false, onProgress = null) {
     if (!forceRefresh && this._locationCache && (Date.now() - this._locationCache.timestamp < 30000)) {
       return this._locationCache;
     }
@@ -64,15 +66,35 @@ export class LiveCamera {
     let source = 'Hardware GPS';
     let isGps = false;
 
-    // Layer 1: Hardware Geolocation (High Accuracy)
+    // Layer 1: Hardware Geolocation (High Accuracy) — watchPosition refines fix in real-time
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
       try {
         const pos = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 10000,
-          });
+          let bestPos = null;
+          let watchId = null;
+          const done = (p) => {
+            navigator.geolocation.clearWatch(watchId);
+            resolve(p);
+          };
+          const deadline = setTimeout(() => {
+            if (bestPos) done(bestPos);
+            else reject(new Error('GPS timeout'));
+          }, 15000);
+          watchId = navigator.geolocation.watchPosition(
+            (p) => {
+              bestPos = p;
+              // Fire live progress callback so UI can show real-time accuracy
+              if (typeof onProgress === 'function') {
+                onProgress({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: Math.round(p.coords.accuracy) });
+              }
+              if (p.coords.accuracy <= 50) {
+                clearTimeout(deadline);
+                done(p);
+              }
+            },
+            (err) => { clearTimeout(deadline); reject(err); },
+            { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
+          );
         });
         lat = pos.coords.latitude;
         lng = pos.coords.longitude;
@@ -80,13 +102,13 @@ export class LiveCamera {
         isGps = true;
         source = 'GPS (High Accuracy)';
       } catch (err1) {
-        // Layer 2: Standard Browser Geolocation (WiFi / Cell)
+        // Layer 2: Standard Geolocation (WiFi / Cell tower)
         try {
           const pos = await new Promise((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject, {
               enableHighAccuracy: false,
-              timeout: 4000,
-              maximumAge: 30000,
+              timeout: 8000,
+              maximumAge: 0,
             });
           });
           lat = pos.coords.latitude;
@@ -170,20 +192,22 @@ export class LiveCamera {
       console.warn('BigDataCloud reverse geocode error:', e);
     }
 
-    // Fallback reverse geocode via Nominatim
+    // Fallback reverse geocode via Nominatim — zoom=18 for street-level precision
     if (!address) {
       try {
         const nomResp = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`,
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
           { headers: { 'Accept-Language': 'en' } }
         );
         if (nomResp.ok) {
           const data = await nomResp.json();
           const addr = data.address || {};
-          const cityPart = addr.village || addr.town || addr.city || addr.suburb || addr.hamlet || '';
+          // Most specific → least specific
+          const localPart = addr.road || addr.neighbourhood || addr.quarter || addr.hamlet ||
+                            addr.suburb || addr.village || addr.town || addr.city || '';
           const distPart = addr.state_district || addr.county || '';
           const statePart = addr.state || '';
-          address = [cityPart, distPart, statePart].filter(Boolean).join(', ');
+          address = [localPart, distPart, statePart].filter(Boolean).join(', ');
         }
       } catch (e) {}
     }
@@ -569,10 +593,20 @@ export class LiveCamera {
       }
     };
 
-    // Get location
+    // Get location — with real-time accuracy progress updates
     const fetchLocation = async (force = false) => {
-      gpsStatusText.textContent = i18n.t('camera.acquiringLocation');
-      const loc = await this.getLocation(force);
+      gpsStatusText.textContent = '🛰️ Acquiring GPS...';
+      gpsStatusText.style.color = '#f59e0b';
+      gpsAccuracyBadge.textContent = '...';
+      // Show live GPS refinement updates
+      const onProgress = ({ lat, lng, accuracy }) => {
+        gpsStatusText.textContent = `🛰️ Locking GPS... ±${accuracy}m`;
+        gpsAccuracyBadge.textContent = `±${accuracy}m`;
+        gpsAccuracyBadge.style.background = accuracy <= 100 ? 'rgba(34,197,94,0.15)' : 'rgba(245,158,11,0.15)';
+        gpsAccuracyBadge.style.color = accuracy <= 100 ? '#22c55e' : '#f59e0b';
+        gpsAddressText.textContent = `${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E`;
+      };
+      const loc = await this.getLocation(force, onProgress);
       applyLocationToUI(loc);
     };
 
