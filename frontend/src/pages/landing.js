@@ -2,6 +2,8 @@ import { router } from '../utils/router.js';
 import { i18n } from '../i18n/index.js';
 
 export function renderLanding(container) {
+  const isIntroSkipped = sessionStorage.getItem('farmchainIntroShown') === 'true';
+
   // Render cinematic intro + new landing page
   container.innerHTML = `
     <style>
@@ -35,7 +37,7 @@ export function renderLanding(container) {
         inset: 0;
         opacity: 0;
         transition: opacity 0.5s ease;
-        pointer-events: none;
+        pointer-events: auto;
         z-index: 1;
       }
       #intro-video {
@@ -486,8 +488,8 @@ export function renderLanding(container) {
     
     <!-- Cinematic Intro Section -->
     <div class="cinematic-intro" id="cinematic-container">
-      <div id="intro-video-container">
-        <video id="intro-video" muted playsinline preload="auto" loop>
+      <div id="intro-video-container">`n        <button id="skip-intro-btn" style="position:absolute; bottom:40px; right:40px; z-index:99; background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.4); padding:8px 16px; border-radius:20px; font-size:0.85rem; font-weight:600; cursor:pointer; backdrop-filter:blur(10px);">Skip Intro >></button>
+        <video id="intro-video" muted playsinline preload="auto">
           <source src="/tomato_supply_chain.mp4" type="video/mp4" />
         </video>
       </div>
@@ -655,9 +657,30 @@ export function renderLanding(container) {
   const logo = container.querySelector('#intro-logo-container');
   const vidContainer = container.querySelector('#intro-video-container');
   const vid = container.querySelector('#intro-video');
+  const cinematicContainer = container.querySelector('#cinematic-container');
+
+  if (isIntroSkipped && cinematicContainer) {
+    cinematicContainer.style.display = 'none';
+  } else {
 
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
   const setOpacity = (op) => { logo.style.opacity = op; };
+
+  const finishIntro = () => {
+    if (!cinematicContainer) return;
+    cinematicContainer.style.transition = 'opacity 0.5s ease';
+    cinematicContainer.style.opacity = '0';
+    setTimeout(() => {
+      cinematicContainer.style.display = 'none';
+      sessionStorage.setItem('farmchainIntroShown', 'true');
+      window.scrollTo(0, 0);
+    }, 500);
+  };
+
+  vid.addEventListener('ended', finishIntro);
+  vid.addEventListener('error', finishIntro);
+    const skipBtn = container.querySelector('#skip-intro-btn');
+    if(skipBtn) skipBtn.addEventListener('click', finishIntro);
 
   const startSequence = async () => {
     // 1. Initial elegant entrance
@@ -698,5 +721,6 @@ export function renderLanding(container) {
   };
 
   // Kick off sequence
-  startSequence();
+    startSequence();
+  }
 }
