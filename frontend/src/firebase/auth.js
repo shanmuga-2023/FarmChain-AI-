@@ -69,7 +69,11 @@ export async function registerWithEmail(email, password, displayName, role, loca
     };
 
     if (db) {
-      await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+      try {
+        await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+      } catch (dbErr) {
+        console.warn('Firestore setDoc notice (offline/fallback):', dbErr.message);
+      }
     }
 
     // Asynchronously sync to backend DB
@@ -100,8 +104,9 @@ export async function registerWithEmail(email, password, displayName, role, loca
         return { user: userProfile, isFallback: true };
       }
 
-      const localUsers = store.get('users') || [];
-      const localUser = localUsers.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+      const rawUsers = store.get('users') || {};
+      const usersList = Array.isArray(rawUsers) ? rawUsers : Object.values(rawUsers);
+      const localUser = usersList.find(u => u && u.email && u.email.toLowerCase() === email.toLowerCase());
       if (localUser) {
         store.login(localUser.role || role || 'farmer', localUser.id, localUser);
         return { user: localUser, isFallback: true };
@@ -161,9 +166,13 @@ export async function loginWithEmail(email, password) {
 
     let userProfile = null;
     if (db) {
-      const docSnap = await getDoc(doc(db, 'users', firebaseUser.uid));
-      if (docSnap.exists()) {
-        userProfile = docSnap.data();
+      try {
+        const docSnap = await getDoc(doc(db, 'users', firebaseUser.uid));
+        if (docSnap.exists()) {
+          userProfile = docSnap.data();
+        }
+      } catch (docErr) {
+        console.warn('Firestore user fetch notice (offline/fallback):', docErr.message);
       }
     }
 
@@ -172,9 +181,9 @@ export async function loginWithEmail(email, password) {
         id: firebaseUser.uid,
         name: firebaseUser.displayName || email.split('@')[0],
         email: firebaseUser.email,
-        role: 'consumer',
+        role: 'farmer',
         location: 'India',
-        avatar: '👤',
+        avatar: '👨‍🌾',
       };
     }
 
@@ -201,8 +210,9 @@ export async function loginWithEmail(email, password) {
     }
 
     // Check if user exists in local store
-    const localUsers = store.get('users') || [];
-    const localUser = localUsers.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+    const rawUsers = store.get('users') || {};
+    const usersList = Array.isArray(rawUsers) ? rawUsers : Object.values(rawUsers);
+    const localUser = usersList.find(u => u && u.email && u.email.toLowerCase() === email.toLowerCase());
     if (localUser) {
       console.info(`Logging in with local profile for ${email}`);
       store.login(localUser.role || 'farmer', localUser.id, localUser);
@@ -238,9 +248,13 @@ export async function loginWithGoogle(desiredRole = 'consumer') {
 
     let userProfile = null;
     if (db) {
-      const docSnap = await getDoc(doc(db, 'users', firebaseUser.uid));
-      if (docSnap.exists()) {
-        userProfile = docSnap.data();
+      try {
+        const docSnap = await getDoc(doc(db, 'users', firebaseUser.uid));
+        if (docSnap.exists()) {
+          userProfile = docSnap.data();
+        }
+      } catch (docErr) {
+        console.warn('Firestore user fetch notice (offline/fallback):', docErr.message);
       }
     }
 
@@ -255,7 +269,11 @@ export async function loginWithGoogle(desiredRole = 'consumer') {
         createdAt: Date.now(),
       };
       if (db) {
-        await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+        try {
+          await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+        } catch (dbErr) {
+          console.warn('Firestore setDoc notice (offline/fallback):', dbErr.message);
+        }
       }
     }
 
