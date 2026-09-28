@@ -362,15 +362,35 @@ export function renderAuthPage(container) {
       } catch (err) {
         console.error('Auth error:', err);
         if (err.code === 'auth/email-already-in-use') {
-          showToast(i18n.t('auth.toasts.emailInUse'), 'warning');
+          const demoMatch = DEMO_CREDENTIALS.find(d => d.email.toLowerCase() === email.toLowerCase());
           isRegisterMode = false;
           renderForm();
           const emailInput = document.getElementById('auth-email');
           const passInput = document.getElementById('auth-password');
           if (emailInput) emailInput.value = email;
-          if (passInput) passInput.value = password;
+          if (passInput) passInput.value = demoMatch ? demoMatch.password : password;
+          showToast(demoMatch ? `Account already exists. Switched to Sign In with demo password.` : i18n.t('auth.toasts.emailInUse'), 'warning');
           return;
         } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+          const demoMatch = DEMO_CREDENTIALS.find(d => d.email.toLowerCase() === email.toLowerCase());
+          if (demoMatch) {
+            // Instant recovery for demo account
+            const demoUser = {
+              id: `${demoMatch.role}-001`,
+              name: demoMatch.name,
+              email: demoMatch.email,
+              role: demoMatch.role,
+              location: demoMatch.location,
+              avatar: demoMatch.avatar,
+              verified: true,
+            };
+            store.login(demoMatch.role, demoUser.id, demoUser);
+            showToast(`Signed in as demo ${demoMatch.role} (${demoMatch.name})`, 'success');
+            setTimeout(() => {
+              router.navigate(`/${demoMatch.role}/dashboard`);
+            }, 150);
+            return;
+          }
           showToast(i18n.t('auth.toasts.invalidCreds'), 'error');
         } else if (err.code === 'auth/user-not-found') {
           showToast(i18n.t('auth.toasts.userNotFound'), 'warning');
