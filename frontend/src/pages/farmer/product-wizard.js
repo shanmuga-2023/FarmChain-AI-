@@ -80,34 +80,34 @@ export class FarmerProductWizard {
       overlay = document.createElement('div');
       overlay.id = 'farmer-wizard-overlay';
       overlay.className = 'modal-overlay';
-      overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(30, 23, 15, 0.75); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;';
+      overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(10, 15, 30, 0.75); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;';
       document.body.appendChild(overlay);
     }
 
     overlay.innerHTML = `
-      <div class="farmer-wizard-modal animate-scale-up" style="max-width: 660px; width: 100%; height: 90vh; max-height: 820px; background: #FAF6ED; color: #1E170F; border-radius: 20px; border: 2px solid rgba(44, 74, 62, 0.35); box-shadow: 0 25px 60px -15px rgba(0,0,0,0.6); display: flex; flex-direction: column; overflow: hidden; position: relative;">
+      <div class="farmer-wizard-modal animate-scale-up" style="max-width: 660px; width: 100%; height: 90vh; max-height: 820px; background: var(--bg-primary); color: var(--text-primary); border-radius: 20px; border: 1px solid var(--border-rule); box-shadow: 0 25px 60px -15px rgba(0,0,0,0.6); display: flex; flex-direction: column; overflow: hidden; position: relative;">
 
         <!-- 1. STICKY TOP HEADER -->
-        <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 18px 24px 14px; border-bottom: 2px solid #E4DCCB; background: #FAF6ED; z-index: 20;">
+        <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 18px 24px 14px; border-bottom: 1px solid var(--border-rule); background: var(--bg-glass); backdrop-filter: blur(20px); z-index: 20;">
           <div style="display: flex; align-items: center; gap: 12px;">
             <span style="font-size: 1.8rem;">🌾</span>
             <div>
-              <h2 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; margin: 0; color: #1E170F; letter-spacing: -0.01em;">
+              <h2 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; margin: 0; color: var(--text-primary); letter-spacing: -0.01em;">
                 ${i18n.t('wizardTitle')}
               </h2>
-              <div style="font-size: 0.8rem; color: #5C4D3C; font-weight: 600;">
+              <div style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;">
                 ${this._getStepSubtext()}
               </div>
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 10px;">
-            ${i18n.renderLanguageSelector('wizard-lang-select', 'padding: 6px 12px; font-size: 0.82rem; font-weight: 700; background: #FFFFFF; color: #1E170F; border-radius: 20px; border: 2px solid #CBD5E1; cursor: pointer;')}
-            <button type="button" id="wizard-close-btn" style="background: #E4DCCB; border: none; color: #1E170F; width: 34px; height: 34px; border-radius: 50%; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">✕</button>
+            ${i18n.renderLanguageSelector('wizard-lang-select', 'padding: 6px 12px; font-size: 0.82rem; font-weight: 700; background: var(--surface-1); color: var(--text-primary); border-radius: 20px; border: 1px solid var(--border-rule); cursor: pointer;')}
+            <button type="button" id="wizard-close-btn" style="background: var(--surface-2); border: none; color: var(--text-primary); width: 34px; height: 34px; border-radius: 50%; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">✕</button>
           </div>
         </div>
 
         <!-- 2. STICKY 4-STEP PROGRESS INDICATOR -->
-        <div style="flex-shrink: 0; padding: 12px 24px; background: #F1ECE0; border-bottom: 2px solid #E4DCCB; z-index: 15;">
+        <div style="flex-shrink: 0; padding: 12px 24px; background: var(--surface-1); border-bottom: 1px solid var(--border-rule); z-index: 15;">
           <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
             ${this._renderStepIndicator(1, '🌾', i18n.t('step1Tab'))}
             ${this._renderStepIndicator(2, '📸', i18n.t('step2Tab'))}
@@ -118,18 +118,18 @@ export class FarmerProductWizard {
 
         <!-- 3. STICKY INPUT MODE TOGGLE (Only shown on Step 1: Details) -->
         ${this.step === 1 ? `
-          <div style="flex-shrink: 0; padding: 12px 24px 10px; background: #FAF6ED; border-bottom: 1.5px solid #E4DCCB; z-index: 10;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #E4DCCB; padding: 6px; border-radius: 14px;">
-              <button type="button" class="wizard-mode-btn" data-mode="voice" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; font-weight: 800; font-size: 0.95rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; ${this.inputMode === 'voice' ? 'background: #16a34a; color: #FFFFFF; border: 2px solid #15803d; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);' : 'background: #FFFFFF; color: #1E170F; border: 2px solid #CBD5E1; box-shadow: 0 2px 6px rgba(0,0,0,0.05);'}">
+          <div style="flex-shrink: 0; padding: 12px 24px 10px; background: var(--surface-0); border-bottom: 1px solid var(--border-rule); z-index: 10;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: var(--surface-1); padding: 6px; border-radius: 14px;">
+              <button type="button" class="wizard-mode-btn" data-mode="voice" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; font-weight: 800; font-size: 0.95rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; ${this.inputMode === 'voice' ? 'background: rgba(16, 185, 129, 0.2); color: var(--brand-green); border: 1px solid var(--brand-green); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);' : 'background: transparent; color: var(--text-primary); border: 1px solid transparent;'}">
                 <span style="font-size: 1.25rem;">🎤</span>
                 <span>${i18n.t('modeSpeak')}</span>
               </button>
-              <button type="button" class="wizard-mode-btn" data-mode="manual" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; font-weight: 800; font-size: 0.95rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; ${this.inputMode === 'manual' ? 'background: #2563eb; color: #FFFFFF; border: 2px solid #1d4ed8; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);' : 'background: #FFFFFF; color: #1E170F; border: 2px solid #CBD5E1; box-shadow: 0 2px 6px rgba(0,0,0,0.05);'}">
+              <button type="button" class="wizard-mode-btn" data-mode="manual" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; font-weight: 800; font-size: 0.95rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; ${this.inputMode === 'manual' ? 'background: rgba(124, 58, 237, 0.2); color: var(--brand-violet); border: 1px solid var(--brand-violet); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);' : 'background: transparent; color: var(--text-primary); border: 1px solid transparent;'}">
                 <span style="font-size: 1.25rem;">⌨️</span>
                 <span>${i18n.t('modeType')}</span>
               </button>
             </div>
-            <div style="font-size: 0.74rem; color: #64748b; text-align: center; margin-top: 5px; font-weight: 600;">
+            <div style="font-size: 0.74rem; color: var(--text-muted); text-align: center; margin-top: 5px; font-weight: 600;">
               💡 ${i18n.t('switchPrompt')}
             </div>
           </div>
@@ -142,14 +142,14 @@ export class FarmerProductWizard {
 
         <!-- 5. GUARANTEED STICKY FOOTER WITH PROMINENT NEXT & CANCEL BUTTONS -->
         ${!this.isSuccess ? `
-          <div style="flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-top: 2px solid #E4DCCB; background: #FAF6ED; box-shadow: 0 -4px 16px rgba(0,0,0,0.06); z-index: 30;">
+          <div style="flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-top: 1px solid var(--border-rule); background: var(--bg-glass); backdrop-filter: blur(20px); box-shadow: 0 -4px 16px rgba(0,0,0,0.2); z-index: 30;">
             <div>
               ${this.step > 1 ? `
-                <button type="button" class="btn btn-secondary" id="wizard-back-btn" style="padding: 12px 20px; font-weight: 700; font-size: 0.9rem; border-radius: 12px; background: #FFFFFF; color: #1E170F; border: 2px solid #CBD5E1; cursor: pointer;">
+                <button type="button" class="btn btn-secondary" id="wizard-back-btn" style="padding: 12px 20px; font-weight: 700; font-size: 0.9rem; border-radius: 12px; background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border-rule); cursor: pointer;">
                   ${i18n.t('backBtn')}
                 </button>
               ` : `
-                <button type="button" class="btn btn-secondary" id="wizard-cancel-btn" style="padding: 12px 20px; font-weight: 700; font-size: 0.9rem; border-radius: 12px; background: #FFFFFF; color: #1E170F; border: 2px solid #CBD5E1; cursor: pointer;">
+                <button type="button" class="btn btn-secondary" id="wizard-cancel-btn" style="padding: 12px 20px; font-weight: 700; font-size: 0.9rem; border-radius: 12px; background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border-rule); cursor: pointer;">
                   ${i18n.t('cancelBtn')}
                 </button>
               `}
@@ -181,25 +181,25 @@ export class FarmerProductWizard {
     const isCompleted = this.step > stepNum;
 
     const bg = isActive
-      ? '#FFFFFF'
+      ? 'var(--surface-3)'
       : isCompleted
-      ? '#DCFCE7'
-      : '#E4DCCB';
+      ? 'rgba(16, 185, 129, 0.2)'
+      : 'var(--surface-0)';
 
     const border = isActive
-      ? '#16a34a'
+      ? 'var(--brand-green)'
       : isCompleted
-      ? '#22c55e'
-      : '#D1C7B3';
+      ? 'var(--brand-green)'
+      : 'var(--border-rule)';
 
     const color = isActive
-      ? '#15803d'
+      ? 'var(--brand-green)'
       : isCompleted
-      ? '#166534'
-      : '#5C4D3C';
+      ? 'var(--brand-green)'
+      : 'var(--text-muted)';
 
     return `
-      <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 6px 4px; background: ${bg}; border: 2px solid ${border}; border-radius: 10px; transition: all 0.2s;">
+      <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 6px 4px; background: ${bg}; border: 1px solid ${border}; border-radius: 10px; transition: all 0.2s;">
         <span style="font-size: 0.95rem; font-weight: 800;">${isCompleted ? '✓' : icon}</span>
         <span style="font-size: 0.72rem; font-weight: 800; color: ${color}; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">
           ${label}
