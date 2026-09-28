@@ -27,195 +27,374 @@ export function renderAuthPage(container) {
     };
 
     container.innerHTML = `
-      <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 48px 16px; background: var(--background); position: relative;">
-        <!-- Top Right Language/Theme Toggle -->
-        <div style="position: absolute; top: 24px; right: 24px;">
-           ${i18n.renderLanguageSelector('auth-header-lang-select', 'padding: 8px 16px; font-size: 14px; font-weight: 600; background: var(--surface); color: var(--text-primary); border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-soft); cursor: pointer;')}
-        </div>
-
-        <div class="saas-card" style="width: 100%; max-width: 480px; padding: 40px; border-radius: 24px; box-shadow: var(--shadow-xl); border: 1px solid var(--border);">
-          <div style="text-align: center; margin-bottom: 28px;">
-            <a href="#/" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: 16px;">
-              <div style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-12.5.5-16.5-5-20"/><path d="M14 20c-5.5-12.5-.5-16.5 5-20"/></svg>
+      <div class="auth-page-wrapper">
+        <div class="auth-card-modal">
+          <!-- LEFT: Auth Form Panel -->
+          <div class="auth-card-left">
+            <!-- Header bar: Back arrow & Language switcher -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+              <a href="#/" id="auth-back-btn" title="Back to home" style="color: #94a3b8; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #161c32; border: 1px solid #232b49; transition: all 0.2s ease;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m15 18-6-6 6-6"/>
+                </svg>
+              </a>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                ${i18n.renderLanguageSelector('auth-header-lang-select', 'padding: 6px 12px; font-size: 13px; font-weight: 600; background: #151b31; color: #cbd5e1; border-radius: 16px; border: 1px solid #252f52; cursor: pointer; outline: none;')}
               </div>
-              <span style="font-size: 22px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px;">FarmChain</span>
-            </a>
-            <h2 style="font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0;">${isRegister ? i18n.t('auth_new.createAccountTitle') : i18n.t('auth_new.welcomeBackTitle')}</h2>
-            <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">${isRegister ? i18n.t('auth_new.joinRevolution') : i18n.t('auth_new.signInSubtitle')}</p>
-          </div>
+            </div>
 
-            <!-- Role Selection -->
-            <div style="margin-bottom: 24px;">
-              <style>
-                .role-card-grid {
-                  display: grid;
-                  grid-template-columns: 1fr 1fr;
-                  gap: 12px;
-                }
-                .role-card {
-                  background: var(--surface);
-                  border: 1px solid var(--border);
-                  border-radius: 12px;
-                  padding: 12px;
-                  text-align: center;
-                  cursor: pointer;
-                  transition: all 0.2s;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  gap: 8px;
-                  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-                  outline: none;
-                }
-                .role-card:hover {
-                  border-color: rgba(14, 165, 233, 0.4);
-                  background: rgba(14, 165, 233, 0.02);
-                }
-                .role-card.active {
-                  border-color: #0EA5E9;
-                  background: #E0F2FE;
-                  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
-                }
-                [data-theme="dark"] .role-card.active {
-                  background: rgba(14, 165, 233, 0.15);
-                  border-color: #0EA5E9;
-                  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
-                }
-                .role-icon {
-                  width: 36px; height: 36px;
-                  border-radius: 10px;
-                  background: var(--surface-secondary);
-                  display: flex; align-items: center; justify-content: center;
-                  color: var(--text-primary);
-                  transition: all 0.2s;
-                }
-                .role-card.active .role-icon {
-                  background: #0EA5E9;
-                  color: #FFF;
-                }
-                .role-title {
-                  font-weight: 800;
-                  font-size: 0.95rem;
-                  color: var(--text-primary);
-                  margin-bottom: 2px;
-                  white-space: normal;
-                  line-height: 1.2;
-                }
-              </style>
-              <div class="role-card-grid" id="role-tabs">
-                <!-- Farmer -->
-                <button type="button" class="role-card role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer">
-                  <div class="role-icon">${roleIcons.farmer}</div>
-                  <div class="role-title">${i18n.t('farmerRole')}</div>
+            <!-- Title & Subtitle (matching user screenshot) -->
+            <h1 style="font-size: 30px; font-weight: 700; color: #ffffff; margin: 0 0 8px 0; letter-spacing: -0.5px;">
+              ${isRegister ? 'Register to system' : 'Login to system'}
+            </h1>
+            <p style="font-size: 14px; color: #94a3b8; margin: 0 0 22px 0; line-height: 1.5;">
+              ${isRegister ? 'Please enter your information to register or ' : 'Please enter your login information or '}
+              <a href="#" id="toggle-mode-btn" style="color: #38bdf8; text-decoration: none; font-weight: 600;">
+                ${isRegister ? 'click here to sign in' : 'click here to registration'}
+              </a>
+            </p>
+
+            <!-- Role Selector (Preserves stakeholder roles) -->
+            <div style="margin-bottom: 22px;">
+              <div class="role-pill-grid" id="role-tabs">
+                <button type="button" class="role-pill role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer">
+                  <span style="font-size: 14px;">🌾</span>
+                  <span>${i18n.t('farmerRole')}</span>
                 </button>
-                <!-- Retailer -->
-                <button type="button" class="role-card role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer">
-                  <div class="role-icon">${roleIcons.retailer}</div>
-                  <div class="role-title">${i18n.t('retailerRole')}</div>
+                <button type="button" class="role-pill role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer">
+                  <span style="font-size: 14px;">🏪</span>
+                  <span>${i18n.t('retailerRole')}</span>
                 </button>
-                <!-- Consumer -->
-                <button type="button" class="role-card role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer">
-                  <div class="role-icon">${roleIcons.consumer}</div>
-                  <div class="role-title">${i18n.t('consumerRole')}</div>
+                <button type="button" class="role-pill role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer">
+                  <span style="font-size: 14px;">🛒</span>
+                  <span>${i18n.t('consumerRole')}</span>
                 </button>
-                <!-- Intermediary -->
-                <button type="button" class="role-card role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary">
-                  <div class="role-icon">${roleIcons.intermediary}</div>
-                  <div class="role-title">${i18n.t('intermediaryRole')}</div>
+                <button type="button" class="role-pill role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary">
+                  <span style="font-size: 14px;">📦</span>
+                  <span>${i18n.t('intermediaryRole')}</span>
                 </button>
-                <!-- Admin hidden -->
                 <button type="button" class="tab role-tab ${initialRole === 'admin' ? 'active' : ''}" data-role="admin" style="display:none;"></button>
               </div>
             </div>
 
             <!-- Form -->
-            <form id="auth-form" style="display: flex; flex-direction: column; gap: 16px;">
+            <form id="auth-form" style="display: flex; flex-direction: column;">
               ${isRegister ? `
-                <div><input type="text" class="saas-input" id="auth-name" placeholder="${i18n.t('auth_new.fullName')}" required /></div>
-                <div><input type="tel" class="saas-input" id="auth-phone" placeholder="${i18n.t('auth_new.phonePlaceholder')}" required /></div>
-                <div><input type="text" class="saas-input" id="auth-location" placeholder="${i18n.t('auth_new.locationPlaceholder')}" required /></div>
+                <div class="system-input-group">
+                  <label class="system-label">${i18n.t('auth_new.fullName')}</label>
+                  <input type="text" class="system-underline-input" id="auth-name" placeholder="John Doe" required />
+                </div>
+                <div class="system-input-group">
+                  <label class="system-label">${i18n.t('auth_new.phonePlaceholder')}</label>
+                  <input type="tel" class="system-underline-input" id="auth-phone" placeholder="+91 98765 43210" required />
+                </div>
+                <div class="system-input-group">
+                  <label class="system-label">${i18n.t('auth_new.locationPlaceholder')}</label>
+                  <input type="text" class="system-underline-input" id="auth-location" placeholder="City, State" required />
+                </div>
                 ${initialRole === 'farmer' ? `
-                  <div><input type="text" class="saas-input" id="auth-farmsize" placeholder="${i18n.t('auth_new.farmSizePlaceholder')}" /></div>
-                  <div><input type="text" class="saas-input" id="auth-crops" placeholder="${i18n.t('auth_new.cropsPlaceholder')}" /></div>
+                  <div class="system-input-group">
+                    <label class="system-label">${i18n.t('auth_new.farmSizePlaceholder')}</label>
+                    <input type="text" class="system-underline-input" id="auth-farmsize" placeholder="5 Acres" />
+                  </div>
+                  <div class="system-input-group">
+                    <label class="system-label">${i18n.t('auth_new.cropsPlaceholder')}</label>
+                    <input type="text" class="system-underline-input" id="auth-crops" placeholder="Wheat, Rice" />
+                  </div>
                 ` : ''}
               ` : ''}
 
-              <div>
-                <input type="email" class="saas-input" id="auth-email" placeholder="${i18n.t('auth_new.emailPlaceholder')}" required />
+              <!-- Username / Email Field -->
+              <div class="system-input-group">
+                <label class="system-label">Username</label>
+                <input type="email" class="system-underline-input" id="auth-email" placeholder="example@farmchain.org" required autocomplete="username" />
               </div>
-              <div style="position: relative; display: flex; align-items: center;">
-                <input type="password" class="saas-input" id="auth-password" placeholder="${i18n.t('auth_new.passwordPlaceholder')}" required style="padding-right: 42px;" />
-                <button type="button" id="toggle-password-btn" title="Show or hide password" aria-label="Toggle password visibility" style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; padding: 4px; transition: color 0.2s;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
-              </div>
-              
-              ${isRegister ? `
-                <div style="position: relative; display: flex; align-items: center;">
-                  <input type="password" class="saas-input" id="auth-password-confirm" placeholder="${i18n.t('auth_new.confirmPassword')}" required style="padding-right: 42px;" />
-                  <button type="button" id="toggle-confirm-password-btn" title="Show or hide password" aria-label="Toggle confirm password visibility" style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; padding: 4px; transition: color 0.2s;">
+
+              <!-- Password Field -->
+              <div class="system-input-group">
+                <label class="system-label">Password</label>
+                <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                  <input type="password" class="system-underline-input" id="auth-password" placeholder="••••••••" required autocomplete="current-password" style="padding-right: 36px;" />
+                  <button type="button" id="toggle-password-btn" title="Show or hide password" aria-label="Toggle password visibility" style="position: absolute; right: 0; bottom: 8px; background: none; border: none; cursor: pointer; color: #8e9cb5; display: flex; align-items: center; padding: 4px; transition: color 0.2s;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                   </button>
                 </div>
-              ` : ''}
-              
-              <div style="display: flex; justify-content: flex-end; margin-top: -8px; ${isRegister ? 'display: none;' : ''}">
-                <a href="#" style="font-size: 13px; color: var(--primary); font-weight: 500; text-decoration: none;">${i18n.t('auth_new.forgotPassword')}</a>
               </div>
 
-              <button type="submit" class="saas-btn" id="submit-auth-btn" style="margin-top: 8px;">
-                ${isRegister ? i18n.t('auth_new.signUpBtn') : i18n.t('auth_new.signInBtn')}
-              </button>
+              ${isRegister ? `
+                <div class="system-input-group">
+                  <label class="system-label">${i18n.t('auth_new.confirmPassword')}</label>
+                  <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                    <input type="password" class="system-underline-input" id="auth-password-confirm" placeholder="••••••••" required style="padding-right: 36px;" />
+                    <button type="button" id="toggle-confirm-password-btn" title="Show or hide password" aria-label="Toggle confirm password visibility" style="position: absolute; right: 0; bottom: 8px; background: none; border: none; cursor: pointer; color: #8e9cb5; display: flex; align-items: center; padding: 4px; transition: color 0.2s;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- Remember Me & Forgot Password -->
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px; margin-bottom: 24px; ${isRegister ? 'display: none;' : ''}">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #8e9cb5; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="auth-remember" style="accent-color: #6366f1; width: 16px; height: 16px; border-radius: 4px; cursor: pointer;" checked />
+                  Remember me
+                </label>
+                <a href="#" style="font-size: 13px; color: #8e9cb5; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='#8e9cb5'">
+                  ${i18n.t('auth_new.forgotPassword')}
+                </a>
+              </div>
+
+              <!-- Submit Button (Glowing pill shape identical to image) -->
+              <div>
+                <button type="submit" class="system-pill-btn" id="submit-auth-btn">
+                  ${isRegister ? i18n.t('auth_new.signUpBtn') : 'Log In'}
+                </button>
+              </div>
             </form>
 
-            <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-secondary);">
-              ${isRegister ? i18n.t('auth_new.alreadyHaveAccount') : i18n.t('auth_new.newToFarmChain')}
-              <a href="#" id="toggle-mode-btn" style="color: var(--primary); font-weight: 600; text-decoration: none;">${isRegister ? i18n.t('auth_new.signInBtn') : i18n.t('auth_new.createAccountLink')}</a>
-            </div>
-
             <!-- Quick Demo Credentials for Judges -->
-            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); ${isRegister ? 'display: none;' : ''}">
-              <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">${i18n.t('auth_new.quickDemo')}</div>
+            <div style="margin-top: 26px; padding-top: 18px; border-top: 1px solid #1c233c; ${isRegister ? 'display: none;' : ''}">
+              <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.6px; display: flex; align-items: center; justify-content: space-between;">
+                <span>${i18n.t('auth_new.quickDemo')}</span>
+                <button type="button" id="toggle-otp-modal-btn" style="background: none; border: none; color: #38bdf8; font-size: 11px; cursor: pointer; font-weight: 600; padding: 0;">📱 Phone OTP</button>
+              </div>
               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;" id="demo-quick-buttons">
                 ${DEMO_CREDENTIALS.map(demo => `
-                  <button class="demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}" style="font-size: 13px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">
+                  <button type="button" class="demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}" style="font-size: 12px; padding: 8px 10px; background: #14192e; border: 1px solid #232b49; border-radius: 10px; color: #e2e8f0; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">
                     <span style="font-weight: 500;">${demo.avatar} ${demo.name.split(' ')[0]}</span>
-                    <span style="color: var(--primary); font-size: 11px; font-weight: 600; text-transform: capitalize;">${i18n.t(`roles.${demo.role}`) || demo.role}</span>
+                    <span style="color: #38bdf8; font-size: 10px; font-weight: 600; text-transform: capitalize;">${i18n.t(`roles.${demo.role}`) || demo.role}</span>
                   </button>
                 `).join('')}
               </div>
             </div>
+
+            <!-- Phone OTP Section (Collapsible) -->
+            <div id="otp-container-section" style="display: none; margin-top: 18px; padding: 18px; background: #14192e; border: 1px solid #2a3458; border-radius: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div style="font-weight: 700; font-size: 13px; color: #ffffff;">📱 Phone OTP (Smart Account)</div>
+                <button type="button" id="close-otp-section" style="background: none; border: none; color: #8e9cb5; cursor: pointer; font-size: 14px;">✕</button>
+              </div>
+              <div id="otp-phone-step">
+                <div class="system-input-group" style="margin-bottom: 12px;">
+                  <label class="system-label">Phone Number (+91)</label>
+                  <input type="tel" class="system-underline-input" id="otp-phone" placeholder="+91 98765 43210" />
+                </div>
+                <button type="button" id="send-otp-btn" class="system-pill-btn" style="width: 100%; min-width: 0; padding: 10px 16px; font-size: 13px;">
+                  📱 ${i18n.t('auth.sendOtpBtn')}
+                </button>
+                <div id="recaptcha-container"></div>
+              </div>
+              <div id="otp-verify-section" style="display: none;">
+                <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">
+                  Enter OTP sent to <strong id="confirmed-phone-display" style="color: #38bdf8;"></strong>
+                  <button type="button" id="change-phone-btn" style="background: none; border: none; color: #38bdf8; cursor: pointer; font-size: 11px; text-decoration: underline; margin-left: 6px;">Change</button>
+                </div>
+                <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px;">
+                  <input type="text" maxlength="1" class="otp-digit-input" style="width: 36px; height: 40px; text-align: center; font-size: 16px; font-weight: 700; background: #0f1325; border: 1px solid #2b3558; border-radius: 8px; color: #ffffff;" />
+                  <input type="text" maxlength="1" class="otp-digit-input" style="width: 36px; height: 40px; text-align: center; font-size: 16px; font-weight: 700; background: #0f1325; border: 1px solid #2b3558; border-radius: 8px; color: #ffffff;" />
+                  <input type="text" maxlength="1" class="otp-digit-input" style="width: 36px; height: 40px; text-align: center; font-size: 16px; font-weight: 700; background: #0f1325; border: 1px solid #2b3558; border-radius: 8px; color: #ffffff;" />
+                  <input type="text" maxlength="1" class="otp-digit-input" style="width: 36px; height: 40px; text-align: center; font-size: 16px; font-weight: 700; background: #0f1325; border: 1px solid #2b3558; border-radius: 8px; color: #ffffff;" />
+                  <input type="text" maxlength="1" class="otp-digit-input" style="width: 36px; height: 40px; text-align: center; font-size: 16px; font-weight: 700; background: #0f1325; border: 1px solid #2b3558; border-radius: 8px; color: #ffffff;" />
+                  <input type="text" maxlength="1" class="otp-digit-input" style="width: 36px; height: 40px; text-align: center; font-size: 16px; font-weight: 700; background: #0f1325; border: 1px solid #2b3558; border-radius: 8px; color: #ffffff;" />
+                </div>
+                <button type="button" id="verify-otp-btn" class="system-pill-btn" style="width: 100%; min-width: 0; padding: 10px 16px; font-size: 13px;">
+                  ✅ ${i18n.t('auth.verifyOtpBtn')}
+                </button>
+                <div style="text-align: center; margin-top: 8px;">
+                  <button type="button" id="resend-otp-btn" style="background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer;">Resend code in 30s</button>
+                </div>
+              </div>
+              <div id="otp-error-banner" style="display: none; margin-top: 10px; font-size: 11px; color: #f87171;"></div>
+              <div id="otp-success-section" style="display: none; margin-top: 10px; text-align: center;"></div>
+            </div>
           </div>
 
+          <!-- RIGHT: Abstract Neon Flow Graphic Panel (matching reference screenshot) -->
+          <div class="auth-card-right">
+            <div class="auth-card-right-overlay"></div>
+          </div>
+        </div>
+
         <style>
-          .role-tab { 
-            background: transparent; 
-            border: none; 
-            cursor: pointer; 
-            padding: 10px 4px; 
-            border-radius: 8px; 
-            font-size: 14px;
-            color: var(--text-muted);
-            transition: all 0.2s ease;
+          .auth-page-wrapper {
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 32px 16px;
+            background: radial-gradient(circle at 50% 40%, #3e4b85 0%, #2f3a6e 60%, #232c57 100%);
+            box-sizing: border-box;
           }
-          .role-tab:hover { color: var(--primary); background: rgba(14, 165, 233, 0.05); }
-          .role-tab.active {
-            background: var(--surface);
-            box-shadow: var(--shadow-soft);
-            border: 1px solid var(--border);
-            color: var(--primary);
+          .auth-card-modal {
+            width: 100%;
+            max-width: 980px;
+            min-height: 600px;
+            background: #0f1325;
+            border-radius: 28px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 35px 80px -15px rgba(5, 8, 22, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            position: relative;
           }
+          .auth-card-left {
+            flex: 1 1 50%;
+            min-width: 320px;
+            padding: 44px 44px 36px 44px;
+            background: #0f1325;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+          }
+          .auth-card-right {
+            flex: 1 1 50%;
+            position: relative;
+            background: #0a0d1b url('/auth-neon-wave.jpg') center center / cover no-repeat;
+            overflow: hidden;
+            min-height: 480px;
+          }
+          .auth-card-right-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(15, 19, 37, 0.8) 0%, transparent 15%, transparent 85%, rgba(15, 19, 37, 0.3) 100%);
+            pointer-events: none;
+          }
+          
+          .system-input-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+          }
+          .system-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #8e9cb5;
+            margin-bottom: 6px;
+            letter-spacing: 0.2px;
+          }
+          .system-underline-input {
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 1px solid #283050 !important;
+            border-radius: 0 !important;
+            padding: 8px 0 !important;
+            font-size: 15px !important;
+            color: #ffffff !important;
+            outline: none !important;
+            width: 100% !important;
+            transition: border-color 0.25s ease !important;
+          }
+          .system-underline-input::placeholder {
+            color: #3b4468 !important;
+            font-size: 14px !important;
+          }
+          .system-underline-input:focus {
+            border-bottom: 2px solid #38bdf8 !important;
+          }
+
+          .system-pill-btn {
+            background: linear-gradient(90deg, #6b21a8 0%, #4338ca 50%, #3b82f6 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 9999px;
+            padding: 13px 44px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -4px rgba(99, 102, 241, 0.5);
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 150px;
+          }
+          .system-pill-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px -4px rgba(99, 102, 241, 0.7);
+            filter: brightness(1.1);
+          }
+          .system-pill-btn:active {
+            transform: translateY(0);
+          }
+
+          .role-pill-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+          }
+          .role-pill {
+            background: #151b31;
+            border: 1px solid #232b49;
+            border-radius: 10px;
+            padding: 8px 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8e9cb5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+          }
+          .role-pill:hover {
+            border-color: #38bdf8;
+            color: #ffffff;
+            background: #1b2340;
+          }
+          .role-pill.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(56, 189, 248, 0.35));
+            border-color: #38bdf8;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+          }
+
           .demo-fill-btn:hover {
-            border-color: var(--primary) !important;
-            box-shadow: var(--shadow-soft);
+            border-color: #38bdf8 !important;
+            background: #1c2340 !important;
+          }
+
+          #auth-back-btn:hover {
+            background: #232b49 !important;
+            color: #ffffff !important;
+            border-color: #38bdf8 !important;
+          }
+
+          @media (max-width: 880px) {
+            .auth-card-modal {
+              flex-direction: column;
+              max-width: 520px;
+            }
+            .auth-card-right {
+              display: none;
+            }
+            .auth-card-left {
+              padding: 36px 24px;
+            }
           }
         </style>
       </div>
     `;
+
+    // Toggle Phone OTP Section
+    container.querySelector('#toggle-otp-modal-btn')?.addEventListener('click', () => {
+      const otpSection = document.getElementById('otp-container-section');
+      if (otpSection) {
+        const isHidden = otpSection.style.display === 'none';
+        otpSection.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+          otpSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    });
+
+    container.querySelector('#close-otp-section')?.addEventListener('click', () => {
+      const otpSection = document.getElementById('otp-container-section');
+      if (otpSection) otpSection.style.display = 'none';
+    });
 
     // Quick Fill Buttons
     container.querySelectorAll('.demo-fill-btn').forEach(btn => {
