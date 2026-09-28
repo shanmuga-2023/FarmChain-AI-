@@ -183,13 +183,19 @@ export function renderAuthPage(container) {
               <div>
                 <input type="email" class="saas-input" id="auth-email" placeholder="${i18n.t('auth_new.emailPlaceholder')}" required />
               </div>
-              <div>
-                <input type="password" class="saas-input" id="auth-password" placeholder="${i18n.t('auth_new.passwordPlaceholder')}" required />
+              <div style="position: relative; display: flex; align-items: center;">
+                <input type="password" class="saas-input" id="auth-password" placeholder="${i18n.t('auth_new.passwordPlaceholder')}" required style="padding-right: 42px;" />
+                <button type="button" id="toggle-password-btn" title="Show or hide password" aria-label="Toggle password visibility" style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; padding: 4px; transition: color 0.2s;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
               </div>
               
               ${isRegister ? `
-                <div>
-                  <input type="password" class="saas-input" id="auth-password-confirm" placeholder="${i18n.t('auth_new.confirmPassword')}" required />
+                <div style="position: relative; display: flex; align-items: center;">
+                  <input type="password" class="saas-input" id="auth-password-confirm" placeholder="${i18n.t('auth_new.confirmPassword')}" required style="padding-right: 42px;" />
+                  <button type="button" id="toggle-confirm-password-btn" title="Show or hide password" aria-label="Toggle confirm password visibility" style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; padding: 4px; transition: color 0.2s;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
                 </div>
               ` : ''}
               
@@ -294,6 +300,36 @@ export function renderAuthPage(container) {
         if (isRegisterMode) renderForm(); // re-render to show/hide role specific inputs
       });
     });
+
+    // Password Visibility Toggles
+    const eyeOpenSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const eyeClosedSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 2 20 20"/><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/></svg>`;
+
+    const togglePassBtn = container.querySelector('#toggle-password-btn');
+    if (togglePassBtn) {
+      togglePassBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const passInput = document.getElementById('auth-password');
+        if (!passInput) return;
+        const isPass = passInput.type === 'password';
+        passInput.type = isPass ? 'text' : 'password';
+        togglePassBtn.innerHTML = isPass ? eyeClosedSvg : eyeOpenSvg;
+        togglePassBtn.style.color = isPass ? 'var(--primary)' : 'var(--text-muted)';
+      });
+    }
+
+    const toggleConfirmPassBtn = container.querySelector('#toggle-confirm-password-btn');
+    if (toggleConfirmPassBtn) {
+      toggleConfirmPassBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const passConfirmInput = document.getElementById('auth-password-confirm');
+        if (!passConfirmInput) return;
+        const isPass = passConfirmInput.type === 'password';
+        passConfirmInput.type = isPass ? 'text' : 'password';
+        toggleConfirmPassBtn.innerHTML = isPass ? eyeClosedSvg : eyeOpenSvg;
+        toggleConfirmPassBtn.style.color = isPass ? 'var(--primary)' : 'var(--text-muted)';
+      });
+    }
 
 
 
