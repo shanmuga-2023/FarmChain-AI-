@@ -1,20 +1,16 @@
 import { router } from '../utils/router.js';
+import { i18n } from '../i18n/index.js';
 
 export function renderLanding(container) {
-  // If intro has already been shown in this session, skip straight to auth
-  if (sessionStorage.getItem('farmchainIntroShown') === 'true') {
-    router.navigate('/login');
-    return;
-  }
-
-  // Render cinematic intro
+  // Render cinematic intro + new landing page
   container.innerHTML = `
     <style>
+      /* --- Intro Styles --- */
       .cinematic-intro {
-        position: fixed;
-        inset: 0;
+        position: relative;
+        width: 100%;
+        height: 100vh;
         background: #000000;
-        z-index: 99999;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -28,6 +24,7 @@ export function renderLanding(container) {
         justify-content: center;
         align-items: center;
         filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.15));
+        z-index: 10;
       }
       #intro-logo-container img {
         width: 220px;
@@ -39,16 +36,458 @@ export function renderLanding(container) {
         opacity: 0;
         transition: opacity 0.5s ease;
         pointer-events: none;
+        z-index: 1;
       }
       #intro-video {
         width: 100vw;
         height: 100vh;
         object-fit: cover;
       }
+      
+      /* --- New Landing Page Styles --- */
+      .landing-page {
+        background: #ffffff;
+        color: #0f172a;
+        font-family: 'Inter', sans-serif;
+      }
+      
+      /* Navigation */
+      .landing-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 48px;
+        background: #ffffff;
+        border-bottom: 1px solid #f1f5f9;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+      }
+      .nav-logo {
+        height: 32px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 24px;
+      }
+      .nav-links a {
+        color: #475569;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: #0ea5e9;
+      }
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      /* Hero Section */
+      .landing-hero {
+        display: flex;
+        padding: 80px 48px;
+        max-width: 1400px;
+        margin: 0 auto;
+        gap: 60px;
+        align-items: center;
+      }
+      .hero-content {
+        flex: 1;
+      }
+      .hero-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #f0f9ff;
+        color: #0ea5e9;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 24px;
+        border: 1px solid #bae6fd;
+      }
+      .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 24px;
+        letter-spacing: -0.02em;
+      }
+      .hero-title .line1 { color: #0f172a; display: block; }
+      .hero-title .line2 { color: #f59e0b; display: block; } /* FarmChain Orange/Gold */
+      
+      .hero-subtitle {
+        font-size: 1.15rem;
+        color: #475569;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        max-width: 600px;
+      }
+      
+      .hero-actions {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+      }
+      
+      .btn-hero-primary {
+        background: #f59e0b;
+        color: white;
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+      .btn-hero-primary:hover {
+        background: #d97706;
+      }
+      .btn-hero-secondary {
+        background: #ffffff;
+        color: #0f172a;
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid #cbd5e1;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .btn-hero-secondary:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+      }
+      .btn-hero-video {
+        background: transparent;
+        color: #475569;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-hero-video:hover {
+        color: #0ea5e9;
+      }
+      
+      .hero-trust {
+        display: flex;
+        gap: 24px;
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+        flex-wrap: wrap;
+      }
+      
+      /* Hero Card (Right) */
+      .hero-visual {
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .verification-card {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 32px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        width: 100%;
+        max-width: 480px;
+        backdrop-filter: blur(10px);
+      }
+      .vc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .vc-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: 0.5px;
+      }
+      .vc-badge-net {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      
+      .vc-product {
+        margin-bottom: 24px;
+      }
+      .vc-product h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        color: #0f172a;
+      }
+      .vc-status {
+        display: inline-block;
+        background: #dcfce7;
+        color: #166534;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .vc-location {
+        font-size: 0.9rem;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      
+      .vc-pricing {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+      }
+      .vc-price-box {
+        flex: 1;
+      }
+      .vc-price-box .label {
+        font-size: 0.7rem;
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .vc-price-box .val {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .vc-price-box .sub {
+        font-size: 0.75rem;
+        color: #0ea5e9;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      
+      .vc-timeline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        position: relative;
+      }
+      .vc-timeline::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 10px;
+        right: 10px;
+        height: 2px;
+        background: #e2e8f0;
+        z-index: 1;
+      }
+      .vc-node {
+        position: relative;
+        z-index: 2;
+        background: #fff;
+        padding: 0 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+      .vc-dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #0ea5e9;
+        border: 4px solid #bae6fd;
+      }
+      .vc-node:last-child .vc-dot { background: #cbd5e1; border-color: #f1f5f9; }
+      .vc-node span {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #475569;
+      }
+      
+      .vc-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 20px;
+      }
+      .vc-hash {
+        font-family: monospace;
+        font-size: 0.8rem;
+        color: #94a3b8;
+      }
+      .btn-verify {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+      
+      /* Metrics Strip */
+      .metrics-strip {
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 40px 48px;
+      }
+      .metrics-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+      }
+      .metric-item {
+        flex: 1;
+        text-align: center;
+        border-right: 1px solid #e2e8f0;
+      }
+      .metric-item:last-child {
+        border-right: none;
+      }
+      .metric-val {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #f59e0b;
+        margin-bottom: 8px;
+      }
+      .metric-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.5px;
+      }
+      
+      /* How It Works */
+      .how-section {
+        padding: 100px 48px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .how-header {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+      .how-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #f1f5f9;
+        color: #64748b;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        letter-spacing: 1px;
+      }
+      .how-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 16px;
+      }
+      .how-subtitle {
+        font-size: 1.1rem;
+        color: #475569;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+      
+      .how-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+      .how-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
+      }
+      .how-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+      }
+      .hc-badge {
+        display: inline-block;
+        background: #f0f9ff;
+        color: #0ea5e9;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+      }
+      .hc-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 12px;
+      }
+      .hc-desc {
+        font-size: 0.95rem;
+        color: #475569;
+        line-height: 1.6;
+      }
+      
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .how-grid { grid-template-columns: repeat(2, 1fr); }
+        .hero-title { font-size: 3rem; }
+      }
+      @media (max-width: 768px) {
+        .landing-hero { flex-direction: column; padding: 40px 24px; text-align: center; gap: 40px; }
+        .hero-actions { justify-content: center; }
+        .hero-trust { justify-content: center; }
+        .hero-visual { justify-content: center; }
+        .landing-nav { padding: 16px 24px; }
+        .nav-links { display: none; } /* Hide on mobile to keep compact */
+        .metrics-container { flex-wrap: wrap; gap: 24px 0; }
+        .metric-item { flex: 0 0 50%; border-right: none; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; }
+        .how-grid { grid-template-columns: 1fr; }
+        .how-section { padding: 60px 24px; }
+        .hero-title { font-size: 2.5rem; }
+      }
     </style>
+    
+    <!-- Cinematic Intro Section -->
     <div class="cinematic-intro" id="cinematic-container">
       <div id="intro-video-container">
-        <video id="intro-video" muted playsinline preload="auto">
+        <video id="intro-video" muted playsinline preload="auto" loop>
           <source src="/tomato_supply_chain.mp4" type="video/mp4" />
         </video>
       </div>
@@ -56,12 +495,166 @@ export function renderLanding(container) {
         <img src="/logo.png" alt="FarmChain Logo" />
       </div>
     </div>
+    
+    <!-- New Landing Page Content -->
+    <div class="landing-page">
+      <!-- Navigation -->
+      <nav class="landing-nav">
+        <div class="nav-left">
+          <img src="/logo.png" alt="FarmChain AI" class="nav-logo" style="filter: brightness(0); height: 28px;" />
+          <div class="nav-links">
+            <a href="#how-it-works">${i18n.t('landing.nav.howItWorks') || 'How It Works'}</a>
+            <a href="#" onclick="event.preventDefault(); window.location.hash='#demos';">${i18n.t('landing.nav.demos') || 'Interactive Demos'}</a>
+            <a href="#" onclick="event.preventDefault(); window.location.hash='#mandi';">${i18n.t('landing.nav.mandi') || 'Live Mandi Rates'}</a>
+            <a href="#" onclick="event.preventDefault(); window.location.hash='#roles';">${i18n.t('landing.nav.roles') || 'Stakeholder Roles'}</a>
+          </div>
+        </div>
+        <div class="nav-right">
+          <select id="lang-switch-landing" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; font-size: 0.85rem; font-weight: 500; color: #475569; cursor: pointer;">
+            <option value="en" ${i18n.currentLocale === 'en' ? 'selected' : ''}>EN | English</option>
+            <option value="ta" ${i18n.currentLocale === 'ta' ? 'selected' : ''}>TA | தமிழ்</option>
+          </select>
+          <a href="#" onclick="event.preventDefault(); document.getElementById('login-btn').click();" style="color: #475569; font-weight: 600; text-decoration: none; font-size: 0.95rem;">${i18n.t('auth.signIn') || 'Sign In'}</a>
+          <button id="login-btn" class="btn btn-primary" style="padding: 8px 16px; border-radius: 8px; font-weight: 600;">${i18n.t('landing.hero.enterBtn') || 'Get Started'}</button>
+        </div>
+      </nav>
+      
+      <!-- Hero Section -->
+      <section class="landing-hero">
+        <div class="hero-content">
+          <div class="hero-badge">${i18n.t('newHero.badge') || 'Blockchain-Verified Agri Ledger · Polygon Amoy'}</div>
+          <h1 class="hero-title">
+            <span class="line1">${i18n.t('newHero.title1') || 'Fair Harvest Prices.'}</span>
+            <span class="line2">${i18n.t('newHero.title2') || 'Zero-Trust Provenance.'}</span>
+          </h1>
+          <p class="hero-subtitle">
+            ${i18n.t('newHero.subtitle') || "India's premier agricultural marketplace connecting farmers, traders, retailers, and consumers with AI-driven MSP floors, smart escrow contracts, and cryptographic QR traceability."}
+          </p>
+          <div class="hero-actions">
+            <button class="btn-hero-primary" onclick="window.location.hash='/marketplace'">${i18n.t('newHero.primaryBtn') || 'Launch Marketplace →'}</button>
+            <button class="btn-hero-secondary" onclick="window.location.hash='/farmer/assistant'">${i18n.t('newHero.secondaryBtn') || 'AI Price Engine'}</button>
+            <button class="btn-hero-video" onclick="window.scrollTo({top:0, behavior:'smooth'})">${i18n.t('newHero.videoBtn') || '▶ Watch Video'}</button>
+          </div>
+          <div class="hero-trust">
+            <span>${i18n.t('newHero.trust1') || '★ 4.9/5 Farmer Satisfaction'}</span>
+            <span>${i18n.t('newHero.trust2') || '100% Escrow Protected'}</span>
+            <span>${i18n.t('newHero.trust3') || '0.4s Gasless Finality'}</span>
+          </div>
+        </div>
+        
+        <div class="hero-visual">
+          <div class="verification-card">
+            <div class="vc-header">
+              <span class="vc-title">${i18n.t('newHero.cardTitle') || 'ON-CHAIN VERIFIED ESCROW'}</span>
+              <span class="vc-badge-net">${i18n.t('newHero.network') || 'Polygon Amoy'}</span>
+            </div>
+            
+            <div class="vc-product">
+              <h3>${i18n.t('newHero.product') || 'Alphonso Mangoes · Batch #FC-9482'}</h3>
+              <div class="vc-status">${i18n.t('newHero.status') || 'Grade A+ Certified'}</div>
+              <div class="vc-location">📍 ${i18n.t('newHero.location') || 'Ratnagiri Organic Co-op, Maharashtra'}</div>
+            </div>
+            
+            <div class="vc-pricing">
+              <div class="vc-price-box">
+                <div class="label">${i18n.t('newHero.aiPriceLabel') || 'AI FAIR PRICE (MSP PROTECTED)'}</div>
+                <div class="val">${i18n.t('newHero.aiPriceValue') || '₹58.50/kg'}</div>
+              </div>
+              <div class="vc-price-box">
+                <div class="label">${i18n.t('newHero.escrowLabel') || 'SMART ESCROW LOCKED'}</div>
+                <div class="val">${i18n.t('newHero.escrowValue') || '₹58,500.00'}</div>
+                <div class="sub">${i18n.t('newHero.autoRelease') || 'Auto-Release on QC Delivery'}</div>
+              </div>
+            </div>
+            
+            <div class="vc-timeline">
+              <div class="vc-node"><div class="vc-dot"></div><span>Harvest</span></div>
+              <div class="vc-node"><div class="vc-dot"></div><span>Mandi QC</span></div>
+              <div class="vc-node"><div class="vc-dot"></div><span>Cold Retail</span></div>
+              <div class="vc-node"><div class="vc-dot"></div><span>Table/Pune</span></div>
+            </div>
+            
+            <div class="vc-footer">
+              <span class="vc-hash">${i18n.t('newHero.hash') || 'Hash: 0x82a...419'}</span>
+              <button class="btn-verify" onclick="window.location.hash='/consumer/trace'">${i18n.t('newHero.verifyBtn') || '✓ Verify Provenance'}</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Metrics Strip -->
+      <section class="metrics-strip">
+        <div class="metrics-container">
+          <div class="metric-item">
+            <div class="metric-val">${i18n.t('newHero.stat1Value') || '31'}</div>
+            <div class="metric-label">${i18n.t('newHero.stat1Label') || 'BATCHES SEALED ON LEDGER'}</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-val">${i18n.t('newHero.stat2Value') || '₹4.20 Cr'}</div>
+            <div class="metric-label">${i18n.t('newHero.stat2Label') || 'ESCROW PROTECTED'}</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-val">${i18n.t('newHero.stat3Value') || '16'}</div>
+            <div class="metric-label">${i18n.t('newHero.stat3Label') || 'ACTIVE FARM PRODUCE'}</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-val">${i18n.t('newHero.stat4Value') || '9'}</div>
+            <div class="metric-label">${i18n.t('newHero.stat4Label') || 'REGISTERED STAKEHOLDERS'}</div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- How It Works -->
+      <section class="how-section" id="how-it-works">
+        <div class="how-header">
+          <div class="how-badge">${i18n.t('newHero.howBadge') || 'TRANSPARENT PHYSICAL LEDGER'}</div>
+          <h2 class="how-title">${i18n.t('newHero.howTitle') || 'How FarmChain Works'}</h2>
+          <p class="how-subtitle">${i18n.t('newHero.howSubtitle') || 'From seed sowing to supermarket shelf — every physical handoff is cryptographically sealed on-chain.'}</p>
+        </div>
+        
+        <div class="how-grid">
+          <div class="how-card">
+            <div class="hc-badge">01</div>
+            <h3 class="hc-title">${i18n.t('newHero.step1Title') || '1. Harvest & AI Pricing'}</h3>
+            <p class="hc-desc">${i18n.t('newHero.step1Desc') || 'Farmer logs produce batch. AI forecast rates and locks an guaranteed MSP floor price directly into a smart escrow contract.'}</p>
+          </div>
+          <div class="how-card">
+            <div class="hc-badge">02</div>
+            <h3 class="hc-title">${i18n.t('newHero.step2Title') || '2. Mandi Inspection'}</h3>
+            <p class="hc-desc">${i18n.t('newHero.step2Desc') || 'APMC intermediary verifies produce grade & QR link. Every contract records batch custody and funds the escrow pool.'}</p>
+          </div>
+          <div class="how-card">
+            <div class="hc-badge">03</div>
+            <h3 class="hc-title">${i18n.t('newHero.step3Title') || '3. Retail Cold Chain'}</h3>
+            <p class="hc-desc">${i18n.t('newHero.step3Desc') || 'Retail supermarket receives authenticated lots. Temperature and transit checkpoints are anchored to immutable Polygon blocks.'}</p>
+          </div>
+          <div class="how-card">
+            <div class="hc-badge">04</div>
+            <h3 class="hc-title">${i18n.t('newHero.step4Title') || '4. Consumer QR Trace'}</h3>
+            <p class="hc-desc">${i18n.t('newHero.step4Desc') || 'Consumer scans the unique on-package QR code to view the complete immutable farm journey, certificates, and farmer payouts.'}</p>
+          </div>
+        </div>
+      </section>
+    </div>
   `;
 
+  // Attach event listeners
+  container.querySelector('#login-btn').addEventListener('click', () => {
+    router.navigate('/login');
+  });
+
+  const langSwitch = container.querySelector('#lang-switch-landing');
+  if (langSwitch) {
+    langSwitch.addEventListener('change', (e) => {
+      i18n.setLocale(e.target.value);
+      renderLanding(container);
+    });
+  }
+
+  // Handle intro logic
   const logo = container.querySelector('#intro-logo-container');
   const vidContainer = container.querySelector('#intro-video-container');
   const vid = container.querySelector('#intro-video');
-  const cinematicContainer = container.querySelector('#cinematic-container');
 
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
   const setOpacity = (op) => { logo.style.opacity = op; };
@@ -100,23 +693,9 @@ export function renderLanding(container) {
     try {
       await vid.play();
     } catch (err) {
-      console.warn("Autoplay prevented or video missing, skipping intro.");
-      finishIntro();
+      console.warn("Autoplay prevented or video missing.");
     }
   };
-
-  const finishIntro = () => {
-    cinematicContainer.style.transition = 'opacity 0.5s ease';
-    cinematicContainer.style.opacity = '0';
-    setTimeout(() => {
-      sessionStorage.setItem('farmchainIntroShown', 'true');
-      router.navigate('/login');
-    }, 500);
-  };
-
-  // Listeners for video completion or error
-  vid.addEventListener('ended', finishIntro);
-  vid.addEventListener('error', finishIntro);
 
   // Kick off sequence
   startSequence();
