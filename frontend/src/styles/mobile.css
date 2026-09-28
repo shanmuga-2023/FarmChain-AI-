@@ -1,0 +1,396 @@
+/* =========================================================
+   FARMCHAIN AI 2.0 - MOBILE RESPONSIVE UI OVERRIDES
+   ========================================================= */
+
+@media screen and (max-width: 768px) {
+  /* 1. Global Viewport & Basic Resets */
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden; /* Prevent horizontal scrolling entirely */
+    box-sizing: border-box;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    max-width: 100vw; /* Hard limit for everything */
+  }
+
+  /* 2. Global Layout Structure (Sidebar -> Drawer) */
+  .dashboard-layout,
+  .app-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  .dashboard-main,
+  .app-main {
+    width: 100%;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  .dashboard-content,
+  .page-content,
+  .main-content {
+    width: 100%;
+    padding: 16px !important;
+    overflow-x: hidden;
+  }
+  
+  @media screen and (max-width: 375px) {
+    .dashboard-content,
+    .page-content,
+    .main-content {
+      padding: 12px !important;
+    }
+  }
+
+  /* Hide the fixed desktop sidebar by default */
+  .saas-sidebar,
+  .sidebar,
+  .desktop-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%; /* Hidden off-screen */
+    width: min(85vw, 320px) !important;
+    height: 100dvh;
+    z-index: 9999;
+    transition: left 0.3s ease-in-out;
+    background: var(--surface);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* When the sidebar is active (mobile drawer) */
+  .saas-sidebar.active,
+  .sidebar.active,
+  .mobile-drawer-open .saas-sidebar {
+    left: 0 !important;
+  }
+  
+  /* Sidebar Overlay */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    backdrop-filter: blur(2px);
+  }
+  
+  .saas-sidebar.active ~ .sidebar-overlay,
+  .sidebar.active ~ .sidebar-overlay,
+  .mobile-drawer-open .sidebar-overlay {
+    display: block;
+  }
+
+  /* 3. Mobile Header & Topbar */
+  .dashboard-header,
+  .app-header,
+  .topbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 12px;
+    flex-wrap: wrap; /* Allow search to wrap below */
+  }
+
+  /* Ensure Search Bar in Header is full width and drops to new line on mobile */
+  .header-search,
+  .search-bar,
+  .global-search {
+    width: 100% !important;
+    order: 3; /* Push below hamburger and icons */
+    margin-top: 8px;
+    height: 44px;
+    max-width: none !important;
+  }
+
+  .header-search input,
+  .search-bar input {
+    width: 100%;
+    height: 100%;
+    padding: 8px 12px;
+  }
+
+  /* Hamburger Menu Button (Create if it doesn't exist, style if it does) */
+  .mobile-menu-btn,
+  .hamburger-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  /* 4. Grids & Columns (Convert to 1 column) */
+  .dashboard-grid,
+  .grid,
+  .product-grid,
+  .bento-grid,
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr !important; /* Force 1 column */
+    gap: 16px !important;
+    width: 100%;
+  }
+
+  /* Exception for very small stats cards - try 2 columns if space permits */
+  .stats-row,
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  /* 5. Stat Cards (Compact) */
+  .stat-card,
+  .metric-card,
+  .saas-stat-card {
+    width: 100% !important;
+    padding: 16px !important;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* 6. Product Cards & Listings */
+  .product-card,
+  .crop-card,
+  .marketplace-item,
+  .inventory-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-card img,
+  .product-card .image-wrapper,
+  .crop-card img,
+  .marketplace-item img {
+    width: 100% !important;
+    height: 180px !important;
+    object-fit: cover !important;
+  }
+  
+  .card-actions,
+  .product-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .card-actions button,
+  .product-actions button {
+    flex: 1;
+    min-width: calc(50% - 8px);
+    white-space: normal; /* Allow text to wrap */
+    padding: 10px !important;
+    min-height: 44px;
+  }
+
+  /* 7. Tables (Horizontal Scroll or Card layout) */
+  .table-container,
+  .data-table-wrapper,
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto !important; /* Enable horizontal scroll for tables */
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  table {
+    width: 100%;
+    min-width: max-content; /* Ensure table cells don't squish too much */
+  }
+
+  /* 8. Forms & Inputs */
+  form {
+    width: 100%;
+  }
+
+  .form-row,
+  .form-group.row {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  input, select, textarea, .form-control {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 48px !important; /* Touch target size */
+  }
+
+  button[type="submit"],
+  .btn-primary,
+  .btn-full {
+    width: 100% !important;
+    min-height: 48px !important;
+    white-space: normal !important;
+    height: auto !important;
+  }
+
+  /* 9. Consumer Traceability / Wizard Steps */
+  .timeline,
+  .trace-timeline {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  
+  .timeline-item {
+    width: 100% !important;
+    margin-bottom: 16px;
+  }
+
+  .wizard-steps,
+  .stepper {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  /* 10. Maps & Canvas (Charts) */
+  #map, .map-container, 
+  canvas, .chart-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .map-container {
+    height: 300px !important;
+  }
+
+  /* 11. Modals & Drawers */
+  .modal-content,
+  .modal-dialog,
+  .dialog {
+    width: calc(100% - 32px) !important;
+    max-width: 500px !important;
+    margin: 16px auto !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    border-radius: var(--radius-lg) !important;
+  }
+
+  /* 12. Camera UI */
+  #camera-preview,
+  video {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 55vh !important;
+    object-fit: cover !important;
+  }
+
+  /* 13. Images */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* 14. Chat / Assistant */
+  .chat-container,
+  .assistant-ui {
+    height: calc(100dvh - 120px) !important;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chat-input-area {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    background: var(--surface);
+    padding: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+  
+  /* Landing page mobile fixes */
+  .hero-section {
+    flex-direction: column !important;
+    text-align: center;
+    padding: 32px 16px !important;
+  }
+  
+  .hero-content, .hero-visual {
+    width: 100% !important;
+  }
+  
+  .auth-card,
+  .login-card {
+    width: 100% !important;
+    padding: 24px 16px !important;
+  }
+
+  /* Role Selection Cards */
+  .role-cards,
+  .role-selection-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .role-card {
+    width: 100% !important;
+    padding: 16px !important;
+  }
+  
+  /* Filter drawer */
+  .filter-sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    background: var(--surface);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    border-radius: 20px 20px 0 0;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  
+  .filter-sidebar.active {
+    transform: translateY(0);
+  }
+  
+  /* Typography limits */
+  h1 { font-size: 1.8rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  h3 { font-size: 1.25rem !important; }
+}
+
+  /* Invoice Fixes */
+  .invoice-document, #invoice-content { padding: 12px !important; overflow-x: auto; width: 100% !important; }
+  .invoice-document > div { flex-wrap: wrap; }
+  .invoice-document > div > div { width: 100% !important; max-width: 100% !important; margin-bottom: 12px; }

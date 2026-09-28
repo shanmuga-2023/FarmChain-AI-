@@ -10,6 +10,7 @@ import { seedData } from './data/seed.js';
 import { destroyAllCharts } from './components/charts.js';
 import { showToast } from './utils/helpers.js';
 import { initTheme } from './utils/theme.js';
+import { initMobileUI } from './utils/mobile.js';
 
 // Pages
 import { renderLanding } from './pages/landing.js';
@@ -159,6 +160,7 @@ router.register('/admin/invoices', render(renderInvoicePage));
 // Initialize the application
 async function init() {
   initTheme();
+  initMobileUI();
   showLoading();
 
   try {
