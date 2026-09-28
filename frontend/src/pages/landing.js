@@ -488,7 +488,8 @@ export function renderLanding(container) {
     
     <!-- Cinematic Intro Section -->
     <div class="cinematic-intro" id="cinematic-container">
-      <div id="intro-video-container">`n        <button id="skip-intro-btn" style="position:absolute; bottom:40px; right:40px; z-index:99; background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.4); padding:8px 16px; border-radius:20px; font-size:0.85rem; font-weight:600; cursor:pointer; backdrop-filter:blur(10px);">Skip Intro >></button>
+      <div id="intro-video-container">
+        <button id="skip-intro-btn" style="position:absolute; bottom:40px; right:40px; z-index:99; background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.4); padding:8px 16px; border-radius:20px; font-size:0.85rem; font-weight:600; cursor:pointer; backdrop-filter:blur(10px);">Skip Intro &gt;&gt;</button>
         <video id="intro-video" muted playsinline preload="auto">
           <source src="/tomato_supply_chain.mp4" type="video/mp4" />
         </video>
