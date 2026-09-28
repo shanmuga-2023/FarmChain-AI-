@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
 // Root status endpoint
 app.get('/', (req, res) => {
   res.json({
-    name: '🌾 FarmChain AI 2.0 Backend Server',
+    name: '🌾 FarmChain Backend Server',
     status: 'online',
     timestamp: new Date().toISOString(),
     endpoints: {
@@ -86,7 +86,7 @@ app.use('/api', apiRouter);
 const PORT = process.env.PORT || 4000;
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n🌾 FarmChain AI 2.0 Real-Time Server running on http://0.0.0.0:${PORT}`);
+  console.log(`\n🌾 FarmChain Real-Time Server running on http://0.0.0.0:${PORT}`);
   console.log(`🔗 REST API: http://0.0.0.0:${PORT}/api/health`);
   console.log(`⚡ WebSocket sync enabled for multi-client concurrency\n`);
 });

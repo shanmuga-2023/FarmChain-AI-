@@ -103,7 +103,7 @@ const enExt = {
     },
     how: {
       eyebrow: "From Soil to Plate",
-      title: "How FarmChain AI Protects Every Stakeholder",
+      title: "How FarmChain Protects Every Stakeholder",
       subtitle: "Four immutable checkpoints eliminating middleman exploitation and counterfeit produce.",
       step1Title: "Farmer Harvest & AI Grading",
       step1Desc: "Farmers capture crop photos with GPS watermark. AI instantly scores grade, Brix index, and moisture.",
@@ -148,7 +148,7 @@ const enExt = {
       col2Title: "Technology",
       escrowContracts: "Escrow Smart Contracts",
       cloneDetection: "Anti-Counterfeit Protection",
-      bottom1: "FarmChain AI — Transparent Soil-to-Plate Custody",
+      bottom1: "FarmChain — Transparent Soil-to-Plate Custody",
       bottom2: "Solid Proofs · Fair Pricing · QR Verification",
     },
     pricing: {
@@ -382,11 +382,11 @@ const enExt = {
       loginSuccess: "Signed in successfully! Redirecting...",
       loginFailed: "Login failed. Please verify credentials.",
       roleChanged: "Switched to {role} portal",
-      accountCreated: "Account created successfully! Welcome to FarmChain AI.",
+      accountCreated: "Account created successfully! Welcome to FarmChain.",
       regFailed: "Registration failed. Please check required fields.",
       fillRequired: "Please fill in all required fields",
       walletConnected: "Digital identity linked to session",
-      registered: "{role} account created for {name}! Welcome to FarmChain AI.",
+      registered: "{role} account created for {name}! Welcome to FarmChain.",
       loggedIn: "Signed in as {role}! Loading portal...",
       emailInUse: "An account with this email already exists.",
       invalidCreds: "Invalid email or password. Please try again.",
@@ -2532,7 +2532,7 @@ for (const [k, obj] of Object.entries(flatKeyMapping)) {
 
 // Generate the output JS file
 const fileContent = `// ============================================
-// FarmChain AI — Multilingual Translation Dictionary
+// FarmChain — Multilingual Translation Dictionary
 // Supported: English (en), Hindi (hi), Tamil (ta), Telugu (te)
 // 100% 1:1 Key Parity across all namespaces
 // ============================================

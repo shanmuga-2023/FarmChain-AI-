@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Retailer Source Products Page
+// FarmChain — Retailer Source Products Page
 // Browse and order available products with supplier info
 // Fully Localized (en, hi, ta, te)
 // ============================================

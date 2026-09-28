@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Fair Price Predictor
+// FarmChain — Fair Price Predictor
 // Uses seasonal curves, MSP data, and supply/demand
 // ============================================
 

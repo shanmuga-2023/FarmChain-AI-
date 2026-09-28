@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Farmer Products Management
+// FarmChain — Farmer Products Management
 // Dual-Mode (Voice + Manual) Guided Wizard Integration
 // Multilingual Regional Support (Tamil, Hindi, Telugu, English)
 // Zero Blockchain Terminology Exposed to Farmers

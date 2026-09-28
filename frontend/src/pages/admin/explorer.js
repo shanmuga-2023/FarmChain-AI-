@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Blockchain Explorer (Admin)
+// FarmChain — Blockchain Explorer (Admin)
 // Full chain visualization
 // Fully Localized (en, hi, ta, te)
 // ============================================

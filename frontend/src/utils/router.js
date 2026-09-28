@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — SPA Client-Side Router
+// FarmChain — SPA Client-Side Router
 // Hash-based routing for simplicity
 // ============================================
 

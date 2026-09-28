@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Intermediary Dashboard
+// FarmChain — Intermediary Dashboard
 // ============================================
 
 import { store } from '../../data/store.js';

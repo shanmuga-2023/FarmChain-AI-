@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Intermediary Inventory Page
+// FarmChain — Intermediary Inventory Page
 // Shows sourced products and stock levels
 // ============================================
 

@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Dual-Mode (Voice + Manual) Product Listing Wizard
+// FarmChain — Dual-Mode (Voice + Manual) Product Listing Wizard
 // 4-Step Guided Flow: (Speak or Type) → (Photo or Upload) → Confirm → Sell
 // Multilingual: Tamil, Hindi, Telugu, English
 // High-Contrast Editorial Styling & Guaranteed Visible Sticky Navigation

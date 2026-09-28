@@ -1,12 +1,12 @@
-# 🌾 FarmChain AI — Comprehensive Project & Problem Detail Specification
+# 🌾 FarmChain — Comprehensive Project & Problem Detail Specification
 
 ---
 
 ## 📌 Executive Summary
 
-**FarmChain AI 2.0** is an enterprise-grade, decentralized agricultural marketplace and supply chain intelligence platform designed to eliminate opaque middleman exploitation, guarantee equitable farmer compensation, enforce transparent consumer pricing, and provide cryptographic harvest-to-fork traceability.
+**FarmChain** is an enterprise-grade, decentralized agricultural marketplace and supply chain intelligence platform designed to eliminate opaque middleman exploitation, guarantee equitable farmer compensation, enforce transparent consumer pricing, and provide cryptographic harvest-to-fork traceability.
 
-By synthesizing **EVM Solidity Smart Contracts**, **AI Visual Quality Oracle (TensorFlow.js MobileNet v2)**, **Spatial-Temporal QR Anti-Cloning via Haversine Velocity Checking**, **ERC-4337 Account Abstraction with Paymaster Gas Sponsoring**, **zk-SNARK Volume Privacy**, **Vernacular Voice Registration in Hindi/Tamil/English**, **Dynamic AI-Quality-Based Payment Splits**, **Live APMC/eNAM Mandi Oracle with Offline Resilience**, and **Sybil QR Attack Detection with Automatic Escrow Freeze**, FarmChain AI establishes a tamper-proof digital trust protocol for the agricultural ecosystem — bridging the gap between physical-world crop reality and on-chain digital identity.
+By synthesizing **EVM Solidity Smart Contracts**, **AI Visual Quality Oracle (TensorFlow.js MobileNet v2)**, **Spatial-Temporal QR Anti-Cloning via Haversine Velocity Checking**, **ERC-4337 Account Abstraction with Paymaster Gas Sponsoring**, **zk-SNARK Volume Privacy**, **Vernacular Voice Registration in Hindi/Tamil/English**, **Dynamic AI-Quality-Based Payment Splits**, **Live APMC/eNAM Mandi Oracle with Offline Resilience**, and **Sybil QR Attack Detection with Automatic Escrow Freeze**, FarmChain establishes a tamper-proof digital trust protocol for the agricultural ecosystem — bridging the gap between physical-world crop reality and on-chain digital identity.
 
 ---
 
@@ -50,11 +50,11 @@ By synthesizing **EVM Solidity Smart Contracts**, **AI Visual Quality Oracle (Te
 
 ---
 
-## 💡 The FarmChain AI Solution
+## 💡 The FarmChain Solution
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                    FARMCHAIN AI 2.0 TRUST PROTOCOL                                     │
+│                                    FarmChain TRUST PROTOCOL                                     │
 │                                                                                                         │
 │  [🌾 Farmer] ──► [📱 Phone OTP Login] ──► [🎙️ Voice NLP Registration] ──► [📸 Crop Photo Upload]       │
 │       │             (ERC-4337)                                                      │                   │
@@ -73,7 +73,7 @@ By synthesizing **EVM Solidity Smart Contracts**, **AI Visual Quality Oracle (Te
 
 ## 🗺️ Role-Based Workflows & User Journeys
 
-FarmChain AI features tailored, authenticated dashboards for **5 distinct ecosystem stakeholders**:
+FarmChain features tailored, authenticated dashboards for **5 distinct ecosystem stakeholders**:
 
 ### 1. 🌾 Farmer Module
 * **📱 Phone OTP Login (ERC-4337)**: Farmers log in with their phone number. A smart contract wallet is auto-created — no MetaMask, no seed phrase. All gas fees sponsored by the FarmChain Paymaster (₹0 cost).
@@ -197,7 +197,7 @@ FarmChain AI features tailored, authenticated dashboards for **5 distinct ecosys
 - **Input Validation & Sanitization**: Rejects negative prices, zero quantities, and strips malicious HTML characters.
 
 ### 3. Database & Persistence Layer
-FarmChain AI utilizes a **multi-persistence synchronization strategy**:
+FarmChain utilizes a **multi-persistence synchronization strategy**:
 1. **Client-Side Reactive Store (`src/data/store.js`)**: Backed by `localStorage` for sub-millisecond UI rendering and offline resilience.
 2. **Cloud Firestore (`src/firebase/firestore.js`)**: Real-time cloud document sync for multi-user, cross-device persistence.
 3. **Backend File DB (`server/db.js`)**: Server-side JSON persistence with automatic read/write flushing.
@@ -251,6 +251,6 @@ Written in **Solidity 0.8.20** and compiled via **Hardhat**:
 
 ## 🏁 Conclusion
 
-**FarmChain AI 2.0** doesn't just put data on a blockchain — it **bridges physical agricultural reality with digital trust**. By verifying crop quality with edge AI before immutable recording, detecting QR photocopy attacks through spatial-temporal physics, eliminating onboarding friction with gasless phone-based wallets, and providing privacy-preserving volume shielding, it establishes an undeniable, production-grade protocol that addresses every critical vulnerability judges will look for.
+**FarmChain** doesn't just put data on a blockchain — it **bridges physical agricultural reality with digital trust**. By verifying crop quality with edge AI before immutable recording, detecting QR photocopy attacks through spatial-temporal physics, eliminating onboarding friction with gasless phone-based wallets, and providing privacy-preserving volume shielding, it establishes an undeniable, production-grade protocol that addresses every critical vulnerability judges will look for.
 
 > *"If a batch of Organic Rice travels faster than the speed of sound, it's not produce — it's a photocopy."*

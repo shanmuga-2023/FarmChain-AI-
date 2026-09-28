@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — i18n Parity & Completeness Checker
+// FarmChain — i18n Parity & Completeness Checker
 // Verifies en, hi, ta, te have 1:1 key parity and no empty strings
 // ============================================
 
@@ -21,7 +21,7 @@ function getAllKeys(obj, prefix = '') {
   return keys;
 }
 
-console.log('🔍 Checking FarmChain AI i18n dictionaries...\n');
+console.log('🔍 Checking FarmChain i18n dictionaries...\n');
 
 const dicts = {};
 const keySets = {};

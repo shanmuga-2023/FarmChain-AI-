@@ -67,7 +67,7 @@ function buildSystemPrompt(lang = 'en') {
   const langNames = { en: 'English', hi: 'Hindi', ta: 'Tamil', te: 'Telugu' };
   const langName = langNames[lang] || 'English';
 
-  return `You are FarmChain AI Assistant, a helpful farming assistant for Indian farmers using the FarmChain platform.
+  return `You are FarmChain Assistant, a helpful farming assistant for Indian farmers using the FarmChain platform.
 
 IMPORTANT RULES:
 1. Respond in ${langName} (${lang}).
@@ -81,7 +81,7 @@ IMPORTANT RULES:
 9. CRITICAL RESTRICTION: You MUST ONLY answer questions related to farming, crops, agriculture, weather, market prices, and the FarmChain project/platform. If the user asks about anything else (e.g., general knowledge, programming, unrelated topics), politely refuse and say you can only help with FarmChain and farming-related questions.
 
 PLATFORM CONTEXT:
-- FarmChain AI connects farmers directly to consumers
+- FarmChain connects farmers directly to consumers
 - Products are quality-graded by AI
 - Deliveries are tracked in real-time
 - Payments are transparent with farmer getting 60% minimum
@@ -217,9 +217,9 @@ function getLocalizedResponse(key, lang, data = {}) {
       mandiPrices: `📊 Current mandi rates are updated live on FarmChain. Popular crops:\n\n• Tomatoes: ₹25-45/kg\n• Onions: ₹18-35/kg\n• Rice (Basmati): ₹42-65/kg\n• Wheat: ₹22-30/kg\n\nPrices vary by region. Check the AI Pricing tool for personalized recommendations!`,
       cropDisease: `🌿 For crop health concerns, here are some common steps:\n\n1. **Photograph** the affected leaves/stems clearly\n2. **Note** when symptoms first appeared\n3. **Check** if nearby plants are also affected\n4. **Look** for insects or unusual spots\n\n⚠️ *Important: AI analysis is for guidance only. Please consult your local agricultural officer or Krishi Vigyan Kendra for confirmed diagnosis and treatment.*`,
       weather: `🌤️ Weather affects farming decisions significantly. For accurate local forecasts:\n\n• Check the IMD (India Meteorological Department) app\n• Plan irrigation based on expected rainfall\n• Protect crops during expected heavy rain or frost\n\nFarmChain integrates weather data to help with optimal harvest timing!`,
-      quality: `⭐ FarmChain AI grades produce quality automatically:\n\n• **A Grade (Premium)**: Score 85-100 — Excellent quality\n• **B Grade (Good)**: Score 70-84 — Good quality\n• **C Grade (Fair)**: Score 50-69 — Acceptable quality\n\nThe grade affects pricing recommendations. Upload a clear photo during product listing for accurate grading.`,
+      quality: `⭐ FarmChain grades produce quality automatically:\n\n• **A Grade (Premium)**: Score 85-100 — Excellent quality\n• **B Grade (Good)**: Score 70-84 — Good quality\n• **C Grade (Fair)**: Score 50-69 — Acceptable quality\n\nThe grade affects pricing recommendations. Upload a clear photo during product listing for accurate grading.`,
       listing: `📦 To list your produce on FarmChain:\n\n1. Go to **My Products** → **Add New Product**\n2. Enter crop details (name, quantity, unit)\n3. Upload a clear photo for AI quality grading\n4. Set your price or use AI-suggested pricing\n5. Submit — your product will be visible to buyers!\n\nNeed help with any step?`,
-      default: `👋 Hello! I'm your FarmChain AI assistant. I can help you with:\n\n• 🌾 Crop health and disease guidance\n• 📊 Market prices and trends\n• 📦 Product listing help\n• 📋 Order status\n• 🚚 Delivery tracking\n• 💰 Payment information\n• ⭐ Quality grade explanation\n\nWhat would you like to know?`
+      default: `👋 Hello! I'm your FarmChain assistant. I can help you with:\n\n• 🌾 Crop health and disease guidance\n• 📊 Market prices and trends\n• 📦 Product listing help\n• 📋 Order status\n• 🚚 Delivery tracking\n• 💰 Payment information\n• ⭐ Quality grade explanation\n\nWhat would you like to know?`
     },
     hi: {
       orders: `📋 आपके ${data.count || 0} ऑर्डर हैं। नवीनतम:\n\n${data.orderList || 'विवरण उपलब्ध नहीं।'}\n\nकिसी विशिष्ट ऑर्डर में मदद चाहिए?`,

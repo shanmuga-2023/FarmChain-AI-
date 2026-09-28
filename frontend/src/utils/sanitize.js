@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — HTML Sanitizer
+// FarmChain — HTML Sanitizer
 // Prevents XSS via innerHTML injection
 // ============================================
 

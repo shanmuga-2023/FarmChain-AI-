@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Main Entry Point
+// FarmChain — Main Entry Point
 // Wires up router, seeds data, initializes app
 // ============================================
 
@@ -63,7 +63,7 @@ function showLoading() {
       <div style="text-align: center;">
         <div style="font-size: 3rem; margin-bottom: 16px; animation: float 2s ease-in-out infinite;">⛓️</div>
         <h2 style="font-family: var(--font-display); margin-bottom: 8px;">
-          FarmChain <span class="text-gradient">AI</span>
+          Farm<span class="text-gradient">Chain</span>
         </h2>
         <div class="spinner" style="margin: 16px auto;"></div>
         <p class="loading-text">Initializing blockchain & Firebase sync...</p>
@@ -202,7 +202,7 @@ async function init() {
       router._handleRoute();
     }
 
-    console.log('🌾 FarmChain AI initialized successfully!');
+    console.log('🌾 FarmChain initialized successfully!');
     console.log('⛓️ Blockchain blocks:', blockchain.getBlockCount());
     console.log('📦 Products:', store.get('products').length);
   } catch (error) {

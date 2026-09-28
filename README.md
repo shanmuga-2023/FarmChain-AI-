@@ -1,4 +1,4 @@
-# 🌾 FarmChain AI 2.0
+# 🌾 FarmChain
 
 ### Production-Grade Decentralized Farm-to-Consumer Marketplace & Agritech Trust Protocol
 
@@ -45,7 +45,7 @@ Indian farmers routinely lose **40–60% of crop value** to opaque intermediary 
 4. **The Input Accessibility Barrier**: A farmer standing in a field with soiled hands needs to speak naturally in their native tongue (Tamil, Hindi, Telugu, English) OR use large tactile touch buttons — both must be equal, first-class listing methods.
 5. **The Photocopy Attack**: QR codes are cryptographic, but what stops an intermediary or retailer from printing 100 copies of a genuine QR code and pasting it on cheap, substandard produce?
 
-**FarmChain AI 2.0** solves all of these through:
+**FarmChain** solves all of these through:
 
 1. **⛓️ Immutable On-Chain Provenance & Stage Lifecycle ([`AgriSupplyChain.sol`](blockchain/contracts/AgriSupplyChain.sol))**:
    - Full supply chain stage lifecycle: **Harvested (0) → In Transit (1) → Quality Checked (2) → At Retailer (3) → Sold (4)**.
@@ -350,7 +350,7 @@ Open **`http://localhost:5173`** in your browser.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│               FarmChain AI 2.0 — 4-Tier Anti-Fraud Architecture        │
+│               FarmChain — 4-Tier Anti-Fraud Architecture        │
 ├────────────────────────────────────────────────────────────────────────┤
 │ TIER 1: CAPTURE & PROOF OF HARVEST                                     │
 │  • Hardware Live Camera Stream (Blocks stock/internet image uploads)   │

@@ -84,7 +84,7 @@ class I18nService {
       // Update document title and meta description if available
       const docTitle = this.t('meta.title') || this.t('appName');
       if (docTitle && docTitle !== 'meta.title') {
-        document.title = `${docTitle} — FarmChain AI`;
+        document.title = `${docTitle} — FarmChain`;
       }
       const metaDesc = document.querySelector('meta[name="description"]');
       const translatedDesc = this.t('meta.description') || this.t('heroSubtitle');

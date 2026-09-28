@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — API Client
+// FarmChain — API Client
 // Connects the SPA to the Express backend
 // Falls back gracefully if server is offline
 // ============================================

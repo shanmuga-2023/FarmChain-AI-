@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Admin Fraud Alerts Page
+// FarmChain — Admin Fraud Alerts Page
 // + Sybil QR Attack Simulation
 // Fully Localized (en, hi, ta, te)
 // ============================================

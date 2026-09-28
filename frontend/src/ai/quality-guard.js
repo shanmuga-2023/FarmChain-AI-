@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Quality Guard (Anti-Fraud Engine)
+// FarmChain — Quality Guard (Anti-Fraud Engine)
 // Prevents farmers from cheating intermediaries,
 // consumers, and retailers with poor/waste products
 // ============================================

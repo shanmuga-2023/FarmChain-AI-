@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Admin Demand Forecast Page
+// FarmChain — Admin Demand Forecast Page
 // Fully Localized (en, hi, ta, te)
 // ============================================
 

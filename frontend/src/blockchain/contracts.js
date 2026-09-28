@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Smart Contract Simulations
+// FarmChain — Smart Contract Simulations
 // 5 contracts: ProductRegistry, Marketplace,
 // PaymentSplitter, QualityCertification, OwnershipTransfer
 // ============================================

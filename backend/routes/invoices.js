@@ -56,7 +56,7 @@ invoiceRouter.get('/:invoiceId/html', (req, res) => {
     <body>
       <div class="invoice-box">
         <div class="header">
-          <div class="title">FARMCHAIN AI</div>
+          <div class="title">FARMCHAIN</div>
           <div style="text-align: right;">
             <strong>INVOICE</strong><br>
             # ${invoice.invoiceId}<br>
@@ -112,7 +112,7 @@ invoiceRouter.get('/:invoiceId/html', (req, res) => {
         
         <div class="footer">
           Thank you for supporting transparent agriculture!<br>
-          FarmChain AI Transparent Escrow System
+          FarmChain Transparent Escrow System
         </div>
       </div>
       <script>

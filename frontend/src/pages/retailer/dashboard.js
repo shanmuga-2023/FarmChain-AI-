@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Retailer Dashboard
+// FarmChain — Retailer Dashboard
 // ============================================
 
 import { store } from '../../data/store.js';

@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Farmer Orders Page
+// FarmChain — Farmer Orders Page
 // ============================================
 
 import { store } from '../../data/store.js';

@@ -1,4 +1,4 @@
-# 🌾 FarmChain AI — Polygon Amoy Blockchain Integration Guide
+# 🌾 FarmChain — Polygon Amoy Blockchain Integration Guide
 
 > **Network**: Polygon Amoy Testnet  
 > **Chain ID**: `80002` (`0x13882`)  
@@ -11,7 +11,7 @@
 
 ## 1. Overview & Hybrid Architecture
 
-FarmChain AI implements an **enterprise hybrid architecture** that balances on-chain cryptographic security with off-chain performance:
+FarmChain implements an **enterprise hybrid architecture** that balances on-chain cryptographic security with off-chain performance:
 
 | Component | Responsibility | Technology |
 |---|---|---|
@@ -49,7 +49,7 @@ If you wish to deploy directly to Polygon Amoy from the CLI using your wallet:
 ```env
 BLOCKCHAIN_PRIVATE_KEY=your_private_key_here
 ```
-*(Note: If no private key is set, FarmChain AI operates in **Resilient Cryptographic Hybrid Mode** with full SHA-256 provenance proofs and seamless MetaMask browser interactions!)*
+*(Note: If no private key is set, FarmChain operates in **Resilient Cryptographic Hybrid Mode** with full SHA-256 provenance proofs and seamless MetaMask browser interactions!)*
 
 ---
 

@@ -17,7 +17,7 @@ export function generateInvoiceHTML(invoice, opts = {}) {
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid ${isPrint ? '#e5e7eb' : 'var(--border)'};">
         <div>
           <h1 style="font-size: 24px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">
-            🌾 FarmChain <span style="color: #0ea5e9;">AI</span>
+            🌾 FarmChain
           </h1>
           <p style="font-size: 12px; color: ${isPrint ? '#6b7280' : 'var(--text-secondary)'}; margin: 4px 0 0;">Blockchain-Verified Agricultural Invoice</p>
         </div>

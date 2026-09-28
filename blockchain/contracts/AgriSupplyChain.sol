@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /**
  * @title AgriSupplyChain
- * @author FarmChain AI
+ * @author FarmChain
  * @notice Manages agricultural produce batch lifecycle on-chain:
  *         batch registration, stage transitions (Harvested -> In Transit -> Quality Checked -> At Retailer -> Sold),
  *         ownership transfers, price tracking, quality certificates, and SHA-256 data hash verification.

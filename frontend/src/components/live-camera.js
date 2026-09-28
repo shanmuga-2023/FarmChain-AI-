@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Live Camera Capture
+// FarmChain — Live Camera Capture
 // GPS Location + Date/Time Stamping
 // Anti-fraud proof-of-capture for crop images
 // ============================================
@@ -375,11 +375,11 @@ export class LiveCamera {
     ctx.fillStyle = '#a3e635';
     ctx.fillText(dateLine, padding, lineY2);
 
-    // FarmChain AI badge on the right
+    // FarmChain badge on the right
     ctx.font = `bold ${fontSize - 2}px ${fontStack}`;
     ctx.fillStyle = 'rgba(168, 85, 247, 0.95)';
     ctx.textAlign = 'right';
-    ctx.fillText(`⛓️ FarmChain AI ${i18n.t('camera.verifiedBadge')}`, w - padding, lineY1);
+    ctx.fillText(`⛓️ FarmChain ${i18n.t('camera.verifiedBadge')}`, w - padding, lineY1);
     ctx.fillStyle = gpsData.isFallback ? '#f59e0b' : '#22c55e';
     ctx.font = `bold ${fontSize - 3}px ${fontStack}`;
     ctx.fillText(gpsData.isFallback ? `⚠️ ${i18n.t('camera.regionalEstimate')}` : `✅ ${i18n.t('camera.exactVerified')}`, w - padding, lineY2);

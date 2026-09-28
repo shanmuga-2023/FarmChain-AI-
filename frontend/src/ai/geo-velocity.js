@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Spatial-Temporal QR Anti-Cloning
+// FarmChain — Spatial-Temporal QR Anti-Cloning
 // Detects physically impossible QR scan patterns
 // Prevents photocopy / clone attacks on QR labels
 // ============================================

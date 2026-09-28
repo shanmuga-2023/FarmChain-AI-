@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Seed Data
+// FarmChain — Seed Data
 // Realistic Indian agricultural demo data
 // ============================================
 
@@ -264,7 +264,7 @@ export async function seedData() {
     return;
   }
 
-  console.log('🌱 Seeding FarmChain AI demo data...');
+  console.log('🌱 Seeding FarmChain demo data...');
 
   // Initialize blockchain
   await blockchain.initialize();

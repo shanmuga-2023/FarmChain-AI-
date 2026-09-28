@@ -1,5 +1,5 @@
 // backend/services/blockchain.js
-// Enterprise Blockchain Service for FarmChain AI — Polygon Amoy Testnet (Chain ID: 80002)
+// Enterprise Blockchain Service for FarmChain — Polygon Amoy Testnet (Chain ID: 80002)
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';

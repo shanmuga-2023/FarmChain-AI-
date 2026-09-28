@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Streamlined 2-Event Notification Engine
+// FarmChain — Streamlined 2-Event Notification Engine
 // Handles: 1. ORDER_PLACED  2. ORDER_STATUS_CHANGED
 // Localized message rendering with parameter interpolation
 // ============================================

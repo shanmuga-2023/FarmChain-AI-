@@ -1,7 +1,7 @@
 {
   "name": "farmchain-ai",
   "version": "1.0.0",
-  "description": "FarmChain AI: Blockchain-Based Transparent Farm-to-Consumer Marketplace",
+  "description": "FarmChain: Blockchain-Based Transparent Farm-to-Consumer Marketplace",
   "type": "module",
   "scripts": {
     "dev": "vite",

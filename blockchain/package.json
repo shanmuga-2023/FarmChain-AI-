@@ -1,7 +1,7 @@
 {
   "name": "farmchain-blockchain",
   "version": "1.0.0",
-  "description": "FarmChain AI Smart Contracts — Polygon Amoy Testnet",
+  "description": "FarmChain Smart Contracts — Polygon Amoy Testnet",
   "scripts": {
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",

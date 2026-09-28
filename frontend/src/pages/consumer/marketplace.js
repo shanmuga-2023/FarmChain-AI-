@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Consumer Marketplace
+// FarmChain — Consumer Marketplace
 // Browse products, view pricing, place orders
 // Fully Localized (en, hi, ta, te)
 // ============================================

@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Admin User Management
+// FarmChain — Admin User Management
 // Cross-role user listing, verification, ban
 // Fully Localized (en, hi, ta, te)
 // ============================================

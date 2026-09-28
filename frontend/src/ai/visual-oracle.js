@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Visual Quality Oracle
+// FarmChain — Visual Quality Oracle
 // TensorFlow.js MobileNet V2 crop quality analysis
 // 3-Class Scoring: Poor × 0 + Average × 50 + Good × 100
 // Prevents GIGO (Garbage In, Garbage Out) attacks

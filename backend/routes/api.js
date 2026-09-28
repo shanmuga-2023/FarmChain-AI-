@@ -64,7 +64,7 @@ function sanitizeBody(body) {
 // ==========================================
 apiRouter.get('/', (req, res) => {
   res.json({
-    name: '🌾 FarmChain AI 2.0 REST API',
+    name: '🌾 FarmChain REST API',
     status: 'online',
     version: '2.0.0-enterprise',
     endpoints: {

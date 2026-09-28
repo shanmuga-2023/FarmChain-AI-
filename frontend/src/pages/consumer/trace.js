@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Product Traceability Page
+// FarmChain — Product Traceability Page
 // Full journey tracking with blockchain verification
 // + Spatial-Temporal QR Anti-Cloning (Cybersecurity)
 // + AI Visual Quality Oracle display
@@ -551,7 +551,7 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
   journeySteps.push({
     title: `📍 ${i18n.t('trace.stepAvailable') || 'Available for Purchase'}`,
     location: 'Consumer Marketplace',
-    actor: 'FarmChain AI',
+    actor: 'FarmChain',
     role: 'Platform',
     date: Date.now(),
     color: 'var(--accent-green)',

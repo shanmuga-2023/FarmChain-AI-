@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — QR Code Utilities
+// FarmChain — QR Code Utilities
 // ============================================
 
 import QRCode from 'qrcode';

@@ -1,5 +1,5 @@
 // src/firebase/auth.js
-// FarmChain AI - Firebase Authentication Service
+// FarmChain - Firebase Authentication Service
 // Supports:
 // - Demo/local accounts
 // - Firebase Email/Password

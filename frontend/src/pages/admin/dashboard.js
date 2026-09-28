@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Admin Dashboard
+// FarmChain — Admin Dashboard
 // Platform analytics, fraud alerts, blockchain
 // Fully Localized (en, hi, ta, te)
 // ============================================

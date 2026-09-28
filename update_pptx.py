@@ -145,7 +145,7 @@ def main():
 
     # Problem Statement ID (Shape 8 / Text 9)
     set_box_content(s1.shapes[8], "PROBLEM STATEMENT NUMBER (PS ID)", 
-                    ["CDT-09 - FarmChain AI: Blockchain-Based Transparent Marketplace"], 
+                    ["CDT-09 - FarmChain: Blockchain-Based Transparent Marketplace"], 
                     header_size=Pt(11), body_size=Pt(11.5))
     s1.shapes[8].text_frame.paragraphs[1].font.bold = True
     s1.shapes[8].text_frame.paragraphs[1].font.color.rgb = RGBColor(255, 255, 255)
@@ -266,7 +266,7 @@ def main():
 
     # Shape 5 (Text 5): Briefly explain proposed solution
     set_box_content(s3.shapes[5], "Briefly explain the proposed solution — what it is and how it works", [
-        "FarmChain AI is a decentralized Web3 agritech trust protocol combining EVM Solidity smart contracts, live eNAM/AgMarkNet Mandi price oracles, vernacular voice crop registration, and cryptographic QR provenance."
+        "FarmChain is a decentralized Web3 agritech trust protocol combining EVM Solidity smart contracts, live eNAM/AgMarkNet Mandi price oracles, vernacular voice crop registration, and cryptographic QR provenance."
     ], header_size=Pt(11.5), body_size=Pt(9.2))
 
     # Shape 7 (Text 7): Describe how it directly addresses the problem
@@ -461,7 +461,7 @@ def main():
 
     p_ty2 = tf_ty.add_paragraph()
     p_ty2.alignment = PP_ALIGN.CENTER
-    p_ty2.text = "PS ID: CDT-09 - FarmChain AI: Blockchain-Based Transparent Marketplace"
+    p_ty2.text = "PS ID: CDT-09 - FarmChain: Blockchain-Based Transparent Marketplace"
     p_ty2.font.bold = True
     p_ty2.font.size = Pt(13)
     p_ty2.font.name = "Calibri"

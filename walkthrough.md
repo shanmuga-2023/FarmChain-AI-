@@ -1,8 +1,8 @@
-# 🌾 FarmChain AI 2.0 — Feature Walkthrough & Judge Defense Guide
+# 🌾 FarmChain — Feature Walkthrough & Judge Defense Guide
 
 ## Executive Summary
 
-This walkthrough documents the technical architecture, mathematical models, hardware integrations, and anti-fraud protocols implemented in **FarmChain AI 2.0** to address the critical question posed by hackathon judges:
+This walkthrough documents the technical architecture, mathematical models, hardware integrations, and anti-fraud protocols implemented in **FarmChain** to address the critical question posed by hackathon judges:
 
 > **Judges' Question:**  
 > *"If a farmer delivers poor quality or waste produce, or cheats the intermediary, retailer, and consumer — what is the solution?"*

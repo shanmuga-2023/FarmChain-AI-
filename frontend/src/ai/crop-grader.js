@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Client-Side Crop Quality Grader
+// FarmChain — Client-Side Crop Quality Grader
 // Edge AI grading running entirely in the browser
 // Resilient design: Grading is a bonus, not a gate!
 // ============================================

@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Fraud Detection Engine
+// FarmChain — Fraud Detection Engine
 // Scores transactions based on anomaly signals
 // + QR Clone Velocity Detection
 // + AI Visual Oracle quality gate

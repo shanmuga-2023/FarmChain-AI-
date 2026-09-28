@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Interactive Notification Center Dropdown
+// FarmChain — Interactive Notification Center Dropdown
 // Displays real-time Order Placed & Order Status notifications (Fully Localized)
 // ============================================
 

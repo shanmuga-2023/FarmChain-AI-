@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Hardcoded String Auditor
+// FarmChain — Hardcoded String Auditor
 // Scans scope files to find potential hardcoded strings
 // ============================================
 

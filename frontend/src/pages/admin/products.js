@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Admin Product Management
+// FarmChain — Admin Product Management
 // View, edit, and delete all products across roles
 // Fully Localized (en, hi, ta, te)
 // ============================================

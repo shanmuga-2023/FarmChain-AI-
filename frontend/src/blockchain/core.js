@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Blockchain Core Engine
+// FarmChain — Blockchain Core Engine
 // SHA-256 based simulated blockchain
 // ============================================
 
@@ -59,7 +59,7 @@ export class Blockchain {
     // Create genesis block
     const genesisBlock = new Block(0, Date.now(), {
       type: 'GENESIS',
-      message: 'FarmChain AI Genesis Block — Empowering Transparent Agriculture',
+      message: 'FarmChain Genesis Block — Empowering Transparent Agriculture',
       version: '1.0.0',
     }, '0');
     genesisBlock.hash = await genesisBlock.calculateHash();

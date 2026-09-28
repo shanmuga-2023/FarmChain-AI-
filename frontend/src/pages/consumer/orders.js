@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Consumer Order History
+// FarmChain — Consumer Order History
 // Shows all orders placed by the current consumer
 // Fully Localized (en, hi, ta, te)
 // ============================================

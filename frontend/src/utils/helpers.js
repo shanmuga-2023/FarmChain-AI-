@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Utility Helpers (Fully Localized)
+// FarmChain — Utility Helpers (Fully Localized)
 // ============================================
 
 import { i18n } from '../i18n/index.js';

@@ -10,7 +10,7 @@ async function main() {
   const chainId = hre.network.config.chainId || "unknown";
 
   console.log("=".repeat(60));
-  console.log("🌾 FarmChain AI — AgriSupplyChain Deployment");
+  console.log("🌾 FarmChain — AgriSupplyChain Deployment");
   console.log("=".repeat(60));
   console.log(`  Network:  ${network}`);
   console.log(`  Chain ID: ${chainId}`);

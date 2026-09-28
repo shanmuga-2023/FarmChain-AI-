@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Vernacular Voice Recognition & Parser
+// FarmChain — Vernacular Voice Recognition & Parser
 // Multi-lingual support: Tamil (ta-IN), Hindi (hi-IN), Telugu (te-IN), English (en-IN)
 // ============================================
 

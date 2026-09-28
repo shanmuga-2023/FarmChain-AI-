@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Central State Management
+// FarmChain — Central State Management
 // localStorage-backed reactive store
 // ============================================
 

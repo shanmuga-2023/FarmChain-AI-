@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Chart Components
+// FarmChain — Chart Components
 // Chart.js wrappers for dashboard analytics
 // ============================================
 

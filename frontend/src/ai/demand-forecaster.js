@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Demand Forecaster
+// FarmChain — Demand Forecaster
 // Time-series projection with seasonal decomposition
 // ============================================
 

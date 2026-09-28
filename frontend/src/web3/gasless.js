@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Gasless Transaction Layer
+// FarmChain — Gasless Transaction Layer
 // ERC-4337 Account Abstraction Simulation
 // Abstracts blockchain complexity from farmers
 // ============================================
