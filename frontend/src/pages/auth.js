@@ -27,62 +27,23 @@ export function renderAuthPage(container) {
     };
 
     container.innerHTML = `
-      <div style="min-height: 100vh; display: flex; background: var(--background);">
-        <!-- LEFT: Visual / Branding Area (Hidden on small screens) -->
-        <div style="flex: 1; display: none; background: url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80') center/cover; position: relative; overflow: hidden; border-right: 1px solid var(--border);" id="auth-visual-panel">
-          <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(7, 26, 18, 0.85) 0%, rgba(14, 165, 233, 0.6) 100%); backdrop-filter: blur(4px);"></div>
-          
-          <div style="position: relative; z-index: 10; padding: 60px; display: flex; flex-direction: column; justify-content: center; height: 100%; color: #FFFFFF;">
-            <div style="margin-bottom: auto;">
-              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
-                <div style="background: rgba(255,255,255,0.2); padding: 12px; border-radius: 12px; backdrop-filter: blur(10px);">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-12.5.5-16.5-5-20"/><path d="M14 20c-5.5-12.5-.5-16.5 5-20"/></svg>
-                </div>
-                <h2 style="font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">FarmChain</h2>
-              </div>
-            </div>
-
-            <div style="max-width: 500px;">
-              <h1 style="font-size: 48px; font-weight: 800; margin: 0 0 24px 0; line-height: 1.1; letter-spacing: -1px;">${i18n.t('auth_new.growTrust')}<br/><span style="color: var(--brand-amber);">${i18n.t('auth_new.earnMore')}</span></h1>
-              
-              <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 32px;">
-                <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
-                  <div style="color: var(--brand-amber);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.292 1.292L3 12l5.8 1.9a2 2 0 0 1 1.292 1.292L12 21l1.9-5.8a2 2 0 0 1 1.292-1.292L21 12l-5.8-1.9a2 2 0 0 1-1.292-1.292Z"/></svg></div>
-                  <div><div style="font-weight: 600; font-size: 1.1rem;">${i18n.t('auth_new.aiGrading')}</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${i18n.t('auth_new.aiGradingDesc')}</div></div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
-                  <div style="color: #38BDF8;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
-                  <div><div style="font-weight: 600; font-size: 1.1rem;">${i18n.t('auth_new.gpsVerification')}</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${i18n.t('auth_new.gpsVerificationDesc')}</div></div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
-                  <div style="color: #4ADE80;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
-                  <div><div style="font-weight: 600; font-size: 1.1rem;">${i18n.t('auth_new.blockchainProvenance')}</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${i18n.t('auth_new.blockchainProvenanceDesc')}</div></div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
-                  <div style="color: #F8FAFC;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-                  <div><div style="font-weight: 600; font-size: 1.1rem;">${i18n.t('auth_new.directPayments')}</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${i18n.t('auth_new.directPaymentsDesc')}</div></div>
-                </div>
-              </div>
-            </div>
-            
-            <div style="margin-top: auto; font-size: 0.8rem; color: rgba(255,255,255,0.5);">
-              ${i18n.t('auth_new.copyright')}
-            </div>
-          </div>
+      <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 48px 16px; background: var(--background); position: relative;">
+        <!-- Top Right Language/Theme Toggle -->
+        <div style="position: absolute; top: 24px; right: 24px;">
+           ${i18n.renderLanguageSelector('auth-header-lang-select', 'padding: 8px 16px; font-size: 14px; font-weight: 600; background: var(--surface); color: var(--text-primary); border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-soft); cursor: pointer;')}
         </div>
 
-        <!-- RIGHT: Clean Authentication Card -->
-        <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; position: relative; background: var(--background);">
-          <!-- Top Right Language/Theme Toggle -->
-          <div style="position: absolute; top: 24px; right: 24px;">
-             ${i18n.renderLanguageSelector('auth-header-lang-select', 'padding: 8px 16px; font-size: 14px; font-weight: 600; background: var(--surface); color: var(--text-primary); border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-soft); cursor: pointer;')}
+        <div class="saas-card" style="width: 100%; max-width: 480px; padding: 40px; border-radius: 24px; box-shadow: var(--shadow-xl); border: 1px solid var(--border);">
+          <div style="text-align: center; margin-bottom: 28px;">
+            <a href="#/" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: 16px;">
+              <div style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-12.5.5-16.5-5-20"/><path d="M14 20c-5.5-12.5-.5-16.5 5-20"/></svg>
+              </div>
+              <span style="font-size: 22px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px;">FarmChain</span>
+            </a>
+            <h2 style="font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0;">${isRegister ? i18n.t('auth_new.createAccountTitle') : i18n.t('auth_new.welcomeBackTitle')}</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">${isRegister ? i18n.t('auth_new.joinRevolution') : i18n.t('auth_new.signInSubtitle')}</p>
           </div>
-
-          <div class="saas-card" style="width: 100%; max-width: 460px; padding: 40px; border-radius: 24px;">
-            <div style="text-align: center; margin-bottom: 32px;">
-              <h2 style="font-size: 28px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0;">${isRegister ? i18n.t('auth_new.createAccountTitle') : i18n.t('auth_new.welcomeBackTitle')}</h2>
-              <p style="font-size: 15px; color: var(--text-secondary); margin: 0;">${isRegister ? i18n.t('auth_new.joinRevolution') : i18n.t('auth_new.signInSubtitle')}</p>
-            </div>
 
             <!-- Role Selection -->
             <div style="margin-bottom: 24px;">
@@ -226,12 +187,8 @@ export function renderAuthPage(container) {
               </div>
             </div>
           </div>
-        </div>
 
         <style>
-          @media (min-width: 900px) {
-            #auth-visual-panel { display: flex !important; }
-          }
           .role-tab { 
             background: transparent; 
             border: none; 
