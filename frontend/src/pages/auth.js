@@ -60,20 +60,29 @@ export function renderAuthPage(container) {
             <div style="margin-bottom: 22px;">
               <div class="role-pill-grid" id="role-tabs">
                 <button type="button" class="role-pill role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer">
-                  <span style="font-size: 14px; display: inline-flex; align-items: center;">${roleIcons.farmer}</span>
-                  <span>${i18n.t('farmerRole')}</span>
+                  <span class="role-pill-icon">${roleIcons.farmer}</span>
+                  <span class="role-pill-label"><span>${i18n.t('farmerRole')}</span></span>
                 </button>
                 <button type="button" class="role-pill role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer">
-                  <span style="font-size: 14px; display: inline-flex; align-items: center;">${roleIcons.retailer}</span>
-                  <span>${i18n.t('retailerRole')}</span>
+                  <span class="role-pill-icon">${roleIcons.retailer}</span>
+                  <span class="role-pill-label"><span>${i18n.t('retailerRole')}</span></span>
                 </button>
                 <button type="button" class="role-pill role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer">
-                  <span style="font-size: 14px; display: inline-flex; align-items: center;">${roleIcons.consumer}</span>
-                  <span>${i18n.t('consumerRole')}</span>
+                  <span class="role-pill-icon">${roleIcons.consumer}</span>
+                  <span class="role-pill-label"><span>${i18n.t('consumerRole')}</span></span>
                 </button>
                 <button type="button" class="role-pill role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary">
-                  <span style="font-size: 14px; display: inline-flex; align-items: center;">${roleIcons.intermediary}</span>
-                  <span>${i18n.t('intermediaryRole')}</span>
+                  <span class="role-pill-icon">${roleIcons.intermediary}</span>
+                  <span class="role-pill-label">
+                    ${(() => {
+                      const raw = i18n.t('intermediaryRole') || 'Intermediary / Trader';
+                      if (raw.includes(' / ')) {
+                        const parts = raw.split(' / ');
+                        return `<span>${parts[0]}</span><span class="role-pill-sub">(${parts[1]})</span>`;
+                      }
+                      return `<span>${raw}</span>`;
+                    })()}
+                  </span>
                 </button>
                 <button type="button" class="tab role-tab ${initialRole === 'admin' ? 'active' : ''}" data-role="admin" style="display:none;"></button>
               </div>
@@ -164,15 +173,22 @@ export function renderAuthPage(container) {
                 </button>
               </div>
               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;" id="demo-quick-buttons">
-                ${DEMO_CREDENTIALS.slice(0, 5).map(demo => `
-                  <button type="button" class="demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}" style="font-size: 12px; padding: 8px 10px; background: #14192e; border: 1px solid #232b49; border-radius: 10px; color: #e2e8f0; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">
-                    <span style="font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
-                      <span style="display: inline-flex; align-items: center; color: #38bdf8;">${roleIcons[demo.role] || roleIcons.consumer}</span>
-                      <span>${demo.name.split(' ')[0]}</span>
-                    </span>
-                    <span style="color: #38bdf8; font-size: 10px; font-weight: 600; text-transform: capitalize;">${i18n.t(`roles.${demo.role}`) || demo.role}</span>
-                  </button>
-                `).join('')}
+                ${DEMO_CREDENTIALS.slice(0, 5).map(demo => {
+                  let roleDisplay = i18n.t(`roles.${demo.role}`) || demo.role;
+                  if (demo.role === 'intermediary') {
+                    const rawIntermediary = i18n.t('roles.intermediary') || 'Trader';
+                    roleDisplay = rawIntermediary.includes(' / ') ? rawIntermediary.split(' / ')[1] : rawIntermediary;
+                  }
+                  return `
+                    <button type="button" class="demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}">
+                      <span class="demo-fill-user">
+                        <span class="demo-fill-icon">${roleIcons[demo.role] || roleIcons.consumer}</span>
+                        <span class="demo-fill-name">${demo.name.split(' ')[0]}</span>
+                      </span>
+                      <span class="demo-fill-role">${roleDisplay}</span>
+                    </button>
+                  `;
+                }).join('')}
               </div>
             </div>
 
@@ -398,19 +414,46 @@ export function renderAuthPage(container) {
             background: #151b31;
             border: 1px solid #232b49;
             border-radius: 10px;
-            padding: 8px 4px;
-            min-height: 48px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 6px 4px;
+            height: 58px;
+            min-height: 58px;
+            box-sizing: border-box;
             color: #8e9cb5;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 3px;
+            gap: 2px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
+            user-select: none;
+          }
+          .role-pill-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 18px;
+            color: inherit;
+            flex-shrink: 0;
+          }
+          .role-pill-label {
+            font-size: 11.5px;
+            font-weight: 600;
+            line-height: 1.15;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 26px;
+            width: 100%;
+          }
+          .role-pill-sub {
+            font-size: 9.5px;
+            font-weight: 500;
+            opacity: 0.85;
+            line-height: 1.1;
           }
           .role-pill:hover {
             border-color: #38bdf8;
@@ -424,6 +467,54 @@ export function renderAuthPage(container) {
             box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
           }
 
+          .demo-fill-btn {
+            font-size: 12px;
+            padding: 8px 12px;
+            background: #14192e;
+            border: 1px solid #232b49;
+            border-radius: 10px;
+            color: #e2e8f0;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            min-width: 0;
+            width: 100%;
+          }
+          .demo-fill-user {
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            overflow: hidden;
+            flex: 1;
+          }
+          .demo-fill-icon {
+            display: inline-flex;
+            align-items: center;
+            color: #38bdf8;
+            flex-shrink: 0;
+          }
+          .demo-fill-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .demo-fill-role {
+            color: #38bdf8;
+            font-size: 10.5px;
+            font-weight: 600;
+            text-transform: capitalize;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-left: auto;
+            text-align: right;
+          }
           .demo-fill-btn:hover {
             border-color: #38bdf8 !important;
             background: #1c2340 !important;
