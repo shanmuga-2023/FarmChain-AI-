@@ -13,7 +13,22 @@ export function initDeliverySocket() {
     const socketUrl = isLocal ? `http://${window.location.hostname}:4000` : 'https://farmchain-ai-1oge.onrender.com';
 
     import('socket.io-client').then(({ io }) => {
-      socket = io(socketUrl, { transports: ['websocket', 'polling'] });
+      socket = io(socketUrl, {
+        transports: ['polling', 'websocket'],
+        reconnectionAttempts: 5,
+        reconnectionDelay: 3000,
+        timeout: 5000,
+        autoConnect: true,
+      });
+
+      socket.on('connect', () => {
+        console.log('[Delivery] Real-time socket connected to', socketUrl);
+      });
+
+      socket.on('connect_error', (err) => {
+        // Silently tolerate backend unavailability in local dev or offline mode
+        console.debug('[Delivery] Backend socket unavailable (running in offline/standalone mode)');
+      });
 
       socket.on('delivery:created', (delivery) => {
         const deliveries = store.get('deliveries') || [];
@@ -48,8 +63,6 @@ export function initDeliverySocket() {
         }
         notifyListeners('invoice:created', invoice);
       });
-
-      console.log('[Delivery] Socket connected');
     }).catch(() => {
       console.warn('Socket.io client not available for delivery events');
     });
