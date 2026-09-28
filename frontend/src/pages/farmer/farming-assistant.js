@@ -35,8 +35,8 @@ export function renderFarmingAssistant(container) {
           <!-- Chat Area -->
           <div id="chat-messages" class="card scroll-hidden" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding: 24px; margin-bottom: 16px; scroll-behavior: smooth;">
             <div style="text-align: center; margin-bottom: 24px;">
-              <div style="width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 14px; background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.25); display: flex; align-items: center; justify-content: center; color: var(--primary);">
-                ${getIcon('bot', 28)}
+              <div style="width: 72px; height: 72px; margin: 0 auto 16px; border-radius: 20px; background: var(--surface); border: 1.5px solid var(--border); box-shadow: var(--shadow-soft); display: flex; align-items: center; justify-content: center; padding: 10px;">
+                <img src="/logo.png" alt="FarmChain AI" style="width: 100%; height: 100%; object-fit: contain;" />
               </div>
               <p style="color: var(--text-secondary); font-size: 0.95rem; max-width: 440px; margin: 0 auto;">${i18n.t('assistant.welcome')}</p>
               <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 14px; padding: 6px 14px; background: var(--surface-secondary); border: 1px solid var(--border); border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
@@ -109,21 +109,71 @@ export function renderFarmingAssistant(container) {
   const stopListeningBtn = container.querySelector('#stop-listening-btn');
 
   function appendMessage(sender, text, isHtml = false) {
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.gap = '10px';
+    row.style.alignItems = 'flex-start';
+    row.style.alignSelf = sender === 'user' ? 'flex-end' : 'flex-start';
+    row.style.maxWidth = '85%';
+
+    if (sender === 'ai') {
+      const avatar = document.createElement('div');
+      avatar.style.width = '32px';
+      avatar.style.height = '32px';
+      avatar.style.flexShrink = '0';
+      avatar.style.borderRadius = '10px';
+      avatar.style.background = 'var(--surface)';
+      avatar.style.border = '1px solid var(--border)';
+      avatar.style.padding = '4px';
+      avatar.style.display = 'flex';
+      avatar.style.alignItems = 'center';
+      avatar.style.justifyContent = 'center';
+      avatar.innerHTML = `<img src="/logo.png" alt="AI" style="width: 100%; height: 100%; object-fit: contain;">`;
+      row.appendChild(avatar);
+    }
+
     const div = document.createElement('div');
     div.className = `chat-bubble ${sender}`;
+    div.style.flex = '1';
     if (isHtml) div.innerHTML = text;
     else div.textContent = text;
-    chatMessages.appendChild(div);
+    row.appendChild(div);
+
+    chatMessages.appendChild(row);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
   function appendTyping() {
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.gap = '10px';
+    row.style.alignItems = 'flex-start';
+    row.style.alignSelf = 'flex-start';
+    row.style.maxWidth = '85%';
+
+    const avatar = document.createElement('div');
+    avatar.style.width = '32px';
+    avatar.style.height = '32px';
+    avatar.style.flexShrink = '0';
+    avatar.style.borderRadius = '10px';
+    avatar.style.background = 'var(--surface)';
+    avatar.style.border = '1px solid var(--border)';
+    avatar.style.padding = '4px';
+    avatar.style.display = 'flex';
+    avatar.style.alignItems = 'center';
+    avatar.style.justifyContent = 'center';
+    avatar.innerHTML = `<img src="/logo.png" alt="AI" style="width: 100%; height: 100%; object-fit: contain;">`;
+    row.appendChild(avatar);
+
     const div = document.createElement('div');
     div.className = 'chat-bubble ai typing';
+    div.style.flex = '1';
     div.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
-    chatMessages.appendChild(div);
+    row.appendChild(div);
+
+    chatMessages.appendChild(row);
     chatMessages.scrollTop = chatMessages.scrollHeight;
-    return div;
+    return row;
   }
 
   async function handleSend(text, imageSrc = null) {

@@ -145,7 +145,7 @@ export function renderSidebar(container) {
     <aside class="saas-sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7a7 7 0 0 1-7 7Z"/><path d="M12 22v-2"/><path d="m9 10 3 3 3-3"/></svg>
+          <img src="/logo.png" alt="FarmChain" style="width: 28px; height: 28px; object-fit: contain; border-radius: 6px;" />
           <span style="font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; font-size: 1.15rem;">Farm<span style="color: var(--primary);">Chain</span></span>
         </div>
       </div>
