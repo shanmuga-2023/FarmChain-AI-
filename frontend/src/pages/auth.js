@@ -47,10 +47,9 @@ export function renderAuthPage(container) {
             <h1 style="font-size: 30px; font-weight: 700; color: #ffffff; margin: 0 0 8px 0; letter-spacing: -0.5px;">
               ${isRegister ? 'Register to system' : 'Login to system'}
             </h1>
-            <p style="font-size: 14px; color: #94a3b8; margin: 0 0 22px 0; line-height: 1.5;">
-              ${isRegister ? 'Please enter your information to register or ' : 'Please enter your login information or '}
-              <a href="#" id="toggle-mode-btn" style="color: #38bdf8; text-decoration: none; font-weight: 600;">
-                ${isRegister ? 'click here to sign in' : 'click here to registration'}
+            <p style="font-size: 14px; margin: 0 0 22px 0; line-height: 1.5;">
+              <a href="#" id="toggle-mode-btn" style="color: #38bdf8; text-decoration: none; font-weight: 600; transition: color 0.2s;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                ${isRegister ? 'Already have an account? Sign in' : 'Create new account'}
               </a>
             </p>
 
