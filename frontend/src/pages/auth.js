@@ -82,24 +82,24 @@ export function renderAuthPage(container) {
               ${isRegister ? `
                 <div class="system-input-group">
                   <label class="system-label">${i18n.t('auth_new.fullName')}</label>
-                  <input type="text" class="system-underline-input" id="auth-name" placeholder="John Doe" required />
+                  <input type="text" class="system-glass-input" id="auth-name" placeholder="John Doe" required />
                 </div>
                 <div class="system-input-group">
                   <label class="system-label">${i18n.t('auth_new.phonePlaceholder')}</label>
-                  <input type="tel" class="system-underline-input" id="auth-phone" placeholder="+91 98765 43210" required />
+                  <input type="tel" class="system-glass-input" id="auth-phone" placeholder="+91 98765 43210" required />
                 </div>
                 <div class="system-input-group">
                   <label class="system-label">${i18n.t('auth_new.locationPlaceholder')}</label>
-                  <input type="text" class="system-underline-input" id="auth-location" placeholder="City, State" required />
+                  <input type="text" class="system-glass-input" id="auth-location" placeholder="City, State" required />
                 </div>
                 ${initialRole === 'farmer' ? `
                   <div class="system-input-group">
                     <label class="system-label">${i18n.t('auth_new.farmSizePlaceholder')}</label>
-                    <input type="text" class="system-underline-input" id="auth-farmsize" placeholder="5 Acres" />
+                    <input type="text" class="system-glass-input" id="auth-farmsize" placeholder="5 Acres" />
                   </div>
                   <div class="system-input-group">
                     <label class="system-label">${i18n.t('auth_new.cropsPlaceholder')}</label>
-                    <input type="text" class="system-underline-input" id="auth-crops" placeholder="Wheat, Rice" />
+                    <input type="text" class="system-glass-input" id="auth-crops" placeholder="Wheat, Rice" />
                   </div>
                 ` : ''}
               ` : ''}
@@ -107,15 +107,15 @@ export function renderAuthPage(container) {
               <!-- Username / Email Field -->
               <div class="system-input-group">
                 <label class="system-label">Username</label>
-                <input type="email" class="system-underline-input" id="auth-email" placeholder="example@farmchain.org" required autocomplete="username" />
+                <input type="email" class="system-glass-input" id="auth-email" placeholder="example@farmchain.org" required autocomplete="username" />
               </div>
 
               <!-- Password Field -->
               <div class="system-input-group">
                 <label class="system-label">Password</label>
                 <div style="position: relative; display: flex; align-items: center; width: 100%;">
-                  <input type="password" class="system-underline-input" id="auth-password" placeholder="••••••••" required autocomplete="current-password" style="padding-right: 36px;" />
-                  <button type="button" id="toggle-password-btn" title="Show or hide password" aria-label="Toggle password visibility" style="position: absolute; right: 0; bottom: 8px; background: none; border: none; cursor: pointer; color: #8e9cb5; display: flex; align-items: center; padding: 4px; transition: color 0.2s;">
+                  <input type="password" class="system-glass-input" id="auth-password" placeholder="••••••••" required autocomplete="current-password" style="padding-right: 48px;" />
+                  <button type="button" id="toggle-password-btn" title="Show or hide password" aria-label="Toggle password visibility" class="system-password-eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                   </button>
                 </div>
@@ -125,8 +125,8 @@ export function renderAuthPage(container) {
                 <div class="system-input-group">
                   <label class="system-label">${i18n.t('auth_new.confirmPassword')}</label>
                   <div style="position: relative; display: flex; align-items: center; width: 100%;">
-                    <input type="password" class="system-underline-input" id="auth-password-confirm" placeholder="••••••••" required style="padding-right: 36px;" />
-                    <button type="button" id="toggle-confirm-password-btn" title="Show or hide password" aria-label="Toggle confirm password visibility" style="position: absolute; right: 0; bottom: 8px; background: none; border: none; cursor: pointer; color: #8e9cb5; display: flex; align-items: center; padding: 4px; transition: color 0.2s;">
+                    <input type="password" class="system-glass-input" id="auth-password-confirm" placeholder="••••••••" required style="padding-right: 48px;" />
+                    <button type="button" id="toggle-confirm-password-btn" title="Show or hide password" aria-label="Toggle confirm password visibility" class="system-password-eye-btn">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
                   </div>
@@ -177,7 +177,7 @@ export function renderAuthPage(container) {
               <div id="otp-phone-step">
                 <div class="system-input-group" style="margin-bottom: 12px;">
                   <label class="system-label">Phone Number (+91)</label>
-                  <input type="tel" class="system-underline-input" id="otp-phone" placeholder="+91 98765 43210" />
+                  <input type="tel" class="system-glass-input" id="otp-phone" placeholder="+91 98765 43210" />
                 </div>
                 <button type="button" id="send-otp-btn" class="system-pill-btn" style="width: 100%; min-width: 0; padding: 10px 16px; font-size: 13px;">
                   📱 ${i18n.t('auth.sendOtpBtn')}
@@ -271,27 +271,71 @@ export function renderAuthPage(container) {
             font-size: 13px;
             font-weight: 500;
             color: #8e9cb5;
-            margin-bottom: 6px;
+            margin-bottom: 7px;
             letter-spacing: 0.2px;
+            display: block;
           }
+          .system-glass-input,
           .system-underline-input {
-            background: transparent !important;
-            border: none !important;
-            border-bottom: 1px solid #283050 !important;
-            border-radius: 0 !important;
-            padding: 8px 0 !important;
+            width: 100% !important;
+            height: 48px !important;
+            background: rgba(22, 28, 54, 0.65) !important;
+            backdrop-filter: blur(14px) !important;
+            -webkit-backdrop-filter: blur(14px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.18) !important;
+            border-radius: 10px !important;
+            padding: 0 16px !important;
             font-size: 15px !important;
             color: #ffffff !important;
             outline: none !important;
-            width: 100% !important;
-            transition: border-color 0.25s ease !important;
+            box-sizing: border-box !important;
+            line-height: normal !important;
+            display: flex !important;
+            align-items: center !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.08) !important;
+            transition: all 0.25s ease !important;
+            font-family: inherit !important;
           }
+          .system-glass-input::placeholder,
           .system-underline-input::placeholder {
-            color: #3b4468 !important;
+            color: #7b88a8 !important;
             font-size: 14px !important;
+            line-height: normal !important;
           }
+          .system-glass-input:hover,
+          .system-underline-input:hover {
+            border-color: rgba(255, 255, 255, 0.28) !important;
+            background: rgba(26, 33, 62, 0.75) !important;
+          }
+          .system-glass-input:focus,
           .system-underline-input:focus {
-            border-bottom: 2px solid #38bdf8 !important;
+            border-color: rgba(56, 189, 248, 0.7) !important;
+            background: rgba(26, 33, 62, 0.85) !important;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18), 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+          }
+
+          .system-password-eye-btn {
+            position: absolute !important;
+            right: 14px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            background: transparent !important;
+            border: none !important;
+            cursor: pointer !important;
+            color: #8e9cb5 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 28px !important;
+            height: 28px !important;
+            padding: 0 !important;
+            border-radius: 6px !important;
+            transition: color 0.2s, background-color 0.2s !important;
+            z-index: 2 !important;
+          }
+          .system-password-eye-btn:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.08) !important;
           }
 
           .system-pill-btn {
