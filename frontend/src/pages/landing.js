@@ -522,48 +522,48 @@ export function renderLanding(container) {
       <!-- Hero Section -->
       <section class="landing-hero">
         <div class="hero-content">
-          <div class="hero-badge">${i18n.t('newHero.badge') || 'Blockchain-Verified Agri Ledger · Polygon Amoy'}</div>
+          <div class="hero-badge">${i18n.t('landing.newHero.badge') || 'Blockchain-Verified Agri Ledger · Polygon Amoy'}</div>
           <h1 class="hero-title">
-            <span class="line1">${i18n.t('newHero.title1') || 'Fair Harvest Prices.'}</span>
-            <span class="line2">${i18n.t('newHero.title2') || 'Zero-Trust Provenance.'}</span>
+            <span class="line1">${i18n.t('landing.newHero.title1') || 'Fair Harvest Prices.'}</span>
+            <span class="line2">${i18n.t('landing.newHero.title2') || 'Zero-Trust Provenance.'}</span>
           </h1>
           <p class="hero-subtitle">
-            ${i18n.t('newHero.subtitle') || "India's premier agricultural marketplace connecting farmers, traders, retailers, and consumers with AI-driven MSP floors, smart escrow contracts, and cryptographic QR traceability."}
+            ${i18n.t('landing.newHero.subtitle') || "India's premier agricultural marketplace connecting farmers, traders, retailers, and consumers with AI-driven MSP floors, smart escrow contracts, and cryptographic QR traceability."}
           </p>
           <div class="hero-actions">
-            <button class="btn-hero-primary" onclick="window.location.hash='/marketplace'">${i18n.t('newHero.primaryBtn') || 'Launch Marketplace →'}</button>
-            <button class="btn-hero-secondary" onclick="window.location.hash='/farmer/assistant'">${i18n.t('newHero.secondaryBtn') || 'AI Price Engine'}</button>
-            <button class="btn-hero-video" onclick="window.scrollTo({top:0, behavior:'smooth'})">${i18n.t('newHero.videoBtn') || '▶ Watch Video'}</button>
+            <button class="btn-hero-primary" onclick="window.location.hash='/marketplace'">${i18n.t('landing.newHero.primaryBtn') || 'Launch Marketplace →'}</button>
+            <button class="btn-hero-secondary" onclick="window.location.hash='/farmer/assistant'">${i18n.t('landing.newHero.secondaryBtn') || 'AI Price Engine'}</button>
+            <button class="btn-hero-video" onclick="window.scrollTo({top:0, behavior:'smooth'})">${i18n.t('landing.newHero.videoBtn') || '▶ Watch Video'}</button>
           </div>
           <div class="hero-trust">
-            <span>${i18n.t('newHero.trust1') || '★ 4.9/5 Farmer Satisfaction'}</span>
-            <span>${i18n.t('newHero.trust2') || '100% Escrow Protected'}</span>
-            <span>${i18n.t('newHero.trust3') || '0.4s Gasless Finality'}</span>
+            <span>${i18n.t('landing.newHero.trust1') || '★ 4.9/5 Farmer Satisfaction'}</span>
+            <span>${i18n.t('landing.newHero.trust2') || '100% Escrow Protected'}</span>
+            <span>${i18n.t('landing.newHero.trust3') || '0.4s Gasless Finality'}</span>
           </div>
         </div>
         
         <div class="hero-visual">
           <div class="verification-card">
             <div class="vc-header">
-              <span class="vc-title">${i18n.t('newHero.cardTitle') || 'ON-CHAIN VERIFIED ESCROW'}</span>
-              <span class="vc-badge-net">${i18n.t('newHero.network') || 'Polygon Amoy'}</span>
+              <span class="vc-title">${i18n.t('landing.newHero.cardTitle') || 'ON-CHAIN VERIFIED ESCROW'}</span>
+              <span class="vc-badge-net">${i18n.t('landing.newHero.network') || 'Polygon Amoy'}</span>
             </div>
             
             <div class="vc-product">
-              <h3>${i18n.t('newHero.product') || 'Alphonso Mangoes · Batch #FC-9482'}</h3>
-              <div class="vc-status">${i18n.t('newHero.status') || 'Grade A+ Certified'}</div>
-              <div class="vc-location">📍 ${i18n.t('newHero.location') || 'Ratnagiri Organic Co-op, Maharashtra'}</div>
+              <h3>${i18n.t('landing.newHero.product') || 'Alphonso Mangoes · Batch #FC-9482'}</h3>
+              <div class="vc-status">${i18n.t('landing.newHero.status') || 'Grade A+ Certified'}</div>
+              <div class="vc-location">📍 ${i18n.t('landing.newHero.location') || 'Ratnagiri Organic Co-op, Maharashtra'}</div>
             </div>
             
             <div class="vc-pricing">
               <div class="vc-price-box">
-                <div class="label">${i18n.t('newHero.aiPriceLabel') || 'AI FAIR PRICE (MSP PROTECTED)'}</div>
-                <div class="val">${i18n.t('newHero.aiPriceValue') || '₹58.50/kg'}</div>
+                <div class="label">${i18n.t('landing.newHero.aiPriceLabel') || 'AI FAIR PRICE (MSP PROTECTED)'}</div>
+                <div class="val">${i18n.t('landing.newHero.aiPriceValue') || '₹58.50/kg'}</div>
               </div>
               <div class="vc-price-box">
-                <div class="label">${i18n.t('newHero.escrowLabel') || 'SMART ESCROW LOCKED'}</div>
-                <div class="val">${i18n.t('newHero.escrowValue') || '₹58,500.00'}</div>
-                <div class="sub">${i18n.t('newHero.autoRelease') || 'Auto-Release on QC Delivery'}</div>
+                <div class="label">${i18n.t('landing.newHero.escrowLabel') || 'SMART ESCROW LOCKED'}</div>
+                <div class="val">${i18n.t('landing.newHero.escrowValue') || '₹58,500.00'}</div>
+                <div class="sub">${i18n.t('landing.newHero.autoRelease') || 'Auto-Release on QC Delivery'}</div>
               </div>
             </div>
             
@@ -575,8 +575,8 @@ export function renderLanding(container) {
             </div>
             
             <div class="vc-footer">
-              <span class="vc-hash">${i18n.t('newHero.hash') || 'Hash: 0x82a...419'}</span>
-              <button class="btn-verify" onclick="window.location.hash='/consumer/trace'">${i18n.t('newHero.verifyBtn') || '✓ Verify Provenance'}</button>
+              <span class="vc-hash">${i18n.t('landing.newHero.hash') || 'Hash: 0x82a...419'}</span>
+              <button class="btn-verify" onclick="window.location.hash='/consumer/trace'">${i18n.t('landing.newHero.verifyBtn') || '✓ Verify Provenance'}</button>
             </div>
           </div>
         </div>
@@ -586,20 +586,20 @@ export function renderLanding(container) {
       <section class="metrics-strip">
         <div class="metrics-container">
           <div class="metric-item">
-            <div class="metric-val">${i18n.t('newHero.stat1Value') || '31'}</div>
-            <div class="metric-label">${i18n.t('newHero.stat1Label') || 'BATCHES SEALED ON LEDGER'}</div>
+            <div class="metric-val">${i18n.t('landing.newHero.stat1Value') || '31'}</div>
+            <div class="metric-label">${i18n.t('landing.newHero.stat1Label') || 'BATCHES SEALED ON LEDGER'}</div>
           </div>
           <div class="metric-item">
-            <div class="metric-val">${i18n.t('newHero.stat2Value') || '₹4.20 Cr'}</div>
-            <div class="metric-label">${i18n.t('newHero.stat2Label') || 'ESCROW PROTECTED'}</div>
+            <div class="metric-val">${i18n.t('landing.newHero.stat2Value') || '₹4.20 Cr'}</div>
+            <div class="metric-label">${i18n.t('landing.newHero.stat2Label') || 'ESCROW PROTECTED'}</div>
           </div>
           <div class="metric-item">
-            <div class="metric-val">${i18n.t('newHero.stat3Value') || '16'}</div>
-            <div class="metric-label">${i18n.t('newHero.stat3Label') || 'ACTIVE FARM PRODUCE'}</div>
+            <div class="metric-val">${i18n.t('landing.newHero.stat3Value') || '16'}</div>
+            <div class="metric-label">${i18n.t('landing.newHero.stat3Label') || 'ACTIVE FARM PRODUCE'}</div>
           </div>
           <div class="metric-item">
-            <div class="metric-val">${i18n.t('newHero.stat4Value') || '9'}</div>
-            <div class="metric-label">${i18n.t('newHero.stat4Label') || 'REGISTERED STAKEHOLDERS'}</div>
+            <div class="metric-val">${i18n.t('landing.newHero.stat4Value') || '9'}</div>
+            <div class="metric-label">${i18n.t('landing.newHero.stat4Label') || 'REGISTERED STAKEHOLDERS'}</div>
           </div>
         </div>
       </section>
@@ -607,31 +607,31 @@ export function renderLanding(container) {
       <!-- How It Works -->
       <section class="how-section" id="how-it-works">
         <div class="how-header">
-          <div class="how-badge">${i18n.t('newHero.howBadge') || 'TRANSPARENT PHYSICAL LEDGER'}</div>
-          <h2 class="how-title">${i18n.t('newHero.howTitle') || 'How FarmChain Works'}</h2>
-          <p class="how-subtitle">${i18n.t('newHero.howSubtitle') || 'From seed sowing to supermarket shelf — every physical handoff is cryptographically sealed on-chain.'}</p>
+          <div class="how-badge">${i18n.t('landing.newHero.howBadge') || 'TRANSPARENT PHYSICAL LEDGER'}</div>
+          <h2 class="how-title">${i18n.t('landing.newHero.howTitle') || 'How FarmChain Works'}</h2>
+          <p class="how-subtitle">${i18n.t('landing.newHero.howSubtitle') || 'From seed sowing to supermarket shelf — every physical handoff is cryptographically sealed on-chain.'}</p>
         </div>
         
         <div class="how-grid">
           <div class="how-card">
             <div class="hc-badge">01</div>
-            <h3 class="hc-title">${i18n.t('newHero.step1Title') || '1. Harvest & AI Pricing'}</h3>
-            <p class="hc-desc">${i18n.t('newHero.step1Desc') || 'Farmer logs produce batch. AI forecast rates and locks an guaranteed MSP floor price directly into a smart escrow contract.'}</p>
+            <h3 class="hc-title">${i18n.t('landing.newHero.step1Title') || '1. Harvest & AI Pricing'}</h3>
+            <p class="hc-desc">${i18n.t('landing.newHero.step1Desc') || 'Farmer logs produce batch. AI forecast rates and locks an guaranteed MSP floor price directly into a smart escrow contract.'}</p>
           </div>
           <div class="how-card">
             <div class="hc-badge">02</div>
-            <h3 class="hc-title">${i18n.t('newHero.step2Title') || '2. Mandi Inspection'}</h3>
-            <p class="hc-desc">${i18n.t('newHero.step2Desc') || 'APMC intermediary verifies produce grade & QR link. Every contract records batch custody and funds the escrow pool.'}</p>
+            <h3 class="hc-title">${i18n.t('landing.newHero.step2Title') || '2. Mandi Inspection'}</h3>
+            <p class="hc-desc">${i18n.t('landing.newHero.step2Desc') || 'APMC intermediary verifies produce grade & QR link. Every contract records batch custody and funds the escrow pool.'}</p>
           </div>
           <div class="how-card">
             <div class="hc-badge">03</div>
-            <h3 class="hc-title">${i18n.t('newHero.step3Title') || '3. Retail Cold Chain'}</h3>
-            <p class="hc-desc">${i18n.t('newHero.step3Desc') || 'Retail supermarket receives authenticated lots. Temperature and transit checkpoints are anchored to immutable Polygon blocks.'}</p>
+            <h3 class="hc-title">${i18n.t('landing.newHero.step3Title') || '3. Retail Cold Chain'}</h3>
+            <p class="hc-desc">${i18n.t('landing.newHero.step3Desc') || 'Retail supermarket receives authenticated lots. Temperature and transit checkpoints are anchored to immutable Polygon blocks.'}</p>
           </div>
           <div class="how-card">
             <div class="hc-badge">04</div>
-            <h3 class="hc-title">${i18n.t('newHero.step4Title') || '4. Consumer QR Trace'}</h3>
-            <p class="hc-desc">${i18n.t('newHero.step4Desc') || 'Consumer scans the unique on-package QR code to view the complete immutable farm journey, certificates, and farmer payouts.'}</p>
+            <h3 class="hc-title">${i18n.t('landing.newHero.step4Title') || '4. Consumer QR Trace'}</h3>
+            <p class="hc-desc">${i18n.t('landing.newHero.step4Desc') || 'Consumer scans the unique on-package QR code to view the complete immutable farm journey, certificates, and farmer payouts.'}</p>
           </div>
         </div>
       </section>
