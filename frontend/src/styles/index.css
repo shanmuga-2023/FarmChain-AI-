@@ -3,9 +3,98 @@
    White + Sky Blue Theme
    ============================================ */
 
-@import './tokens.css';
+/* --- CSS Custom Properties (Design Tokens — The Trusted Ledger) --- */
+:root {
+  /* Warm Parchment Base */
+  --parchment: #EDE6D3;
+  --parchment-warm: #E4DCCB;
+  --parchment-deep: #D9CFBA;
+  --parchment-card: #FAF6ED;
+  --parchment-card-alt: #F1ECE0;
+  --parchment-card-hover: #FFFFFF;
 
+  /* Primary Ink / Text — Deep Loam (WCAG AA & AAA compliant: >= 5.5:1 on parchment) */
+  --loam: #1E170F;
+  --loam-light: #3D3325;
+  --loam-faded: #4E4436;
 
+  /* High-Contrast Tokens for Dark Navy / Glass Cards */
+  --text-on-dark-primary: #F8FAFC;
+  --text-on-dark-secondary: #E2E8F0;
+  --text-on-dark-muted: #CBD5E1;
+  --text-on-dark-faded: #94A3B8;
+
+  /* Trust & Verification Accent — Deep Botanical Green */
+  --ledger-ink: #2C4A3E;
+  --ledger-ink-light: #3D6B5A;
+  --ledger-ink-dim: rgba(44, 74, 62, 0.12);
+  --ledger-ink-border: rgba(44, 74, 62, 0.35);
+
+  /* Primary Accent Alias */
+  --accent: var(--ledger-ink);
+  --accent-dim: var(--ledger-ink-dim);
+  --accent-hover: var(--ledger-ink-light);
+  --accent-muted: #243D33;
+
+  /* Role Colors */
+  --role-farmer: #4A7C59;
+  --role-farmer-bg: rgba(74, 124, 89, 0.12);
+  --role-intermediary: #B8963E;
+  --role-intermediary-bg: rgba(184, 150, 62, 0.12);
+  --role-retailer: #8B5E3C;
+  --role-retailer-bg: rgba(139, 94, 60, 0.12);
+  --role-consumer: #6B5B7B;
+  --role-consumer-bg: rgba(107, 91, 123, 0.12);
+  --role-admin: #A04040;
+  --role-admin-bg: rgba(160, 64, 64, 0.12);
+
+  /* Semantic */
+  --semantic-success: #4A7C59;
+  --semantic-success-dim: rgba(74, 124, 89, 0.12);
+  --semantic-green: #4A7C59;
+  --semantic-green-dim: rgba(74, 124, 89, 0.12);
+  --semantic-warning: #B8963E;
+  --semantic-warning-dim: rgba(184, 150, 62, 0.12);
+  --semantic-amber: #B8963E;
+  --semantic-amber-dim: rgba(184, 150, 62, 0.12);
+  --semantic-error: #A04040;
+  --semantic-error-dim: rgba(160, 64, 64, 0.12);
+  --semantic-red: #A04040;
+  --semantic-red-dim: rgba(160, 64, 64, 0.12);
+  --semantic-blue: #3A6987;
+  --semantic-blue-dim: rgba(58, 105, 135, 0.12);
+
+  /* Hairline and Ledger Borders */
+  --border-hairline: rgba(43, 36, 26, 0.12);
+  --border-rule: rgba(43, 36, 26, 0.22);
+  --border-strong: rgba(43, 36, 26, 0.40);
+  --border-1: var(--border-hairline);
+  --border-2: var(--border-rule);
+  --border-3: var(--border-strong);
+  --border-subtle: var(--border-hairline);
+  --border-medium: var(--border-rule);
+  --border-accent: rgba(44, 74, 62, 0.35);
+
+  /* Surface & Text compatibility aliases */
+  --surface-0: var(--parchment);
+  --surface-1: var(--parchment-warm);
+  --surface-2: var(--parchment-card);
+  --surface-3: var(--parchment-deep);
+  --bg-primary: var(--parchment);
+  --bg-secondary: var(--parchment-warm);
+  --bg-tertiary: var(--parchment-deep);
+  --bg-card: var(--parchment-card);
+  --bg-glass: rgba(237, 230, 211, 0.88);
+  --bg-glass-hover: rgba(247, 243, 234, 0.95);
+
+  --text-1: var(--loam);
+  --text-2: var(--loam-light);
+  --text-3: var(--loam-faded);
+  --text-primary: var(--loam);
+  --text-secondary: var(--loam-light);
+  --text-muted: var(--loam-faded);
+  --text-accent: var(--ledger-ink);
+}
 
 /* Automatic contrast mapping for dark cards, auth panels, and dark surfaces */
 .card-dark,
