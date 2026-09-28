@@ -53,11 +53,12 @@ export function renderLanding(container) {
         object-fit: cover;
       }
       
-      /* --- New Landing Page Styles --- */
+      /* --- New Landing Page Styles (Matching Dark Glassmorphic Login Design) --- */
       .landing-page {
-        background: #ffffff;
-        color: #0f172a;
+        background: radial-gradient(circle at 50% 15%, #2a3462 0%, #151b36 40%, #0a0d1b 100%);
+        color: #ffffff;
         font-family: 'Inter', sans-serif;
+        min-height: 100vh;
       }
       
       /* Navigation */
@@ -65,12 +66,15 @@ export function renderLanding(container) {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 20px 48px;
-        background: #ffffff;
-        border-bottom: 1px solid #f1f5f9;
+        padding: 18px 48px;
+        background: rgba(10, 13, 27, 0.75);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         position: sticky;
         top: 0;
         z-index: 100;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       }
       .nav-left {
         display: flex;
@@ -79,25 +83,80 @@ export function renderLanding(container) {
       }
       .nav-logo {
         height: 32px;
+        filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4));
+      }
+      .nav-brand-text {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.5px;
+        display: flex;
+        align-items: center;
+      }
+      .nav-brand-text span {
+        color: #38bdf8;
       }
       .nav-links {
         display: flex;
         gap: 24px;
       }
       .nav-links a {
-        color: #475569;
+        color: #8e9cb5;
         text-decoration: none;
         font-weight: 500;
         font-size: 0.95rem;
         transition: color 0.2s;
       }
       .nav-links a:hover {
-        color: #0ea5e9;
+        color: #38bdf8;
       }
       .nav-right {
         display: flex;
         align-items: center;
         gap: 16px;
+      }
+      .landing-lang-select {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        background: rgba(18, 23, 44, 0.85);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        color: #cbd5e1;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        outline: none;
+        transition: all 0.2s ease;
+      }
+      .landing-lang-select:hover {
+        border-color: rgba(56, 189, 248, 0.5);
+      }
+      .landing-lang-select option {
+        background: #161c36;
+        color: #ffffff;
+      }
+      .landing-nav-btn {
+        background: linear-gradient(90deg, #6b21a8 0%, #4338ca 50%, #3b82f6 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 9999px;
+        padding: 9px 24px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        cursor: pointer;
+        box-shadow: 0 8px 22px -3px rgba(99, 102, 241, 0.55);
+        transition: all 0.25s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+      }
+      .landing-nav-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px -4px rgba(99, 102, 241, 0.75);
+        filter: brightness(1.1);
       }
       
       /* Hero Section */
@@ -107,269 +166,123 @@ export function renderLanding(container) {
         align-items: center;
         text-align: center;
         padding: 100px 48px;
-        max-width: 900px;
+        max-width: 960px;
         margin: 0 auto;
+        position: relative;
       }
       .hero-content {
         flex: 1;
       }
       .hero-badge {
         display: inline-block;
-        padding: 6px 12px;
-        background: #f0f9ff;
-        color: #0ea5e9;
+        padding: 6px 16px;
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
         border-radius: 20px;
         font-size: 0.85rem;
         font-weight: 600;
         margin-bottom: 24px;
-        border: 1px solid #bae6fd;
+        border: 1px solid rgba(56, 189, 248, 0.28);
       }
       .hero-title {
-        font-size: 4rem;
+        font-size: 4.2rem;
         font-weight: 800;
-        line-height: 1.1;
+        line-height: 1.12;
         margin-bottom: 24px;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.025em;
       }
-      .hero-title .line1 { color: #0f172a; display: block; }
-      .hero-title .line2 { color: #f59e0b; display: block; } /* FarmChain Orange/Gold */
+      .hero-title .line1 {
+        color: #ffffff;
+        display: block;
+        text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+      }
+      .hero-title .line2 {
+        color: #f59e0b;
+        display: block;
+        text-shadow: 0 0 40px rgba(245, 158, 11, 0.35);
+      }
       
       .hero-subtitle {
-        font-size: 1.15rem;
-        color: #475569;
-        line-height: 1.6;
+        font-size: 1.18rem;
+        color: #94a3b8;
+        line-height: 1.65;
         margin-bottom: 40px;
-        max-width: 700px;
+        max-width: 740px;
       }
       
       .hero-actions {
         display: flex;
         gap: 16px;
         align-items: center;
-        margin-bottom: 32px;
+        justify-content: center;
+        margin-bottom: 36px;
         flex-wrap: wrap;
       }
       
       .btn-hero-primary {
-        background: #f59e0b;
-        color: white;
-        padding: 14px 28px;
-        border-radius: 8px;
-        font-weight: 600;
+        background: linear-gradient(90deg, #6b21a8 0%, #4338ca 50%, #3b82f6 100%);
+        color: #ffffff;
+        padding: 15px 36px;
+        border-radius: 9999px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: 0.3px;
         text-decoration: none;
-        transition: background 0.2s;
+        transition: all 0.25s ease;
         border: none;
         cursor: pointer;
+        box-shadow: 0 12px 30px -4px rgba(99, 102, 241, 0.55);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
       }
       .btn-hero-primary:hover {
-        background: #d97706;
+        transform: translateY(-2px);
+        box-shadow: 0 16px 36px -4px rgba(99, 102, 241, 0.75);
+        filter: brightness(1.1);
       }
       .btn-hero-secondary {
-        background: #ffffff;
-        color: #0f172a;
-        padding: 14px 28px;
-        border-radius: 8px;
+        background: rgba(22, 28, 54, 0.65);
+        color: #ffffff;
+        padding: 15px 32px;
+        border-radius: 9999px;
         font-weight: 600;
         text-decoration: none;
-        border: 1px solid #cbd5e1;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
         transition: all 0.2s;
         cursor: pointer;
       }
       .btn-hero-secondary:hover {
-        background: #f8fafc;
-        border-color: #94a3b8;
-      }
-      .btn-hero-video {
-        background: transparent;
-        color: #475569;
-        padding: 14px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .btn-hero-video:hover {
-        color: #0ea5e9;
+        background: rgba(26, 33, 62, 0.85);
+        border-color: rgba(56, 189, 248, 0.5);
       }
       
       .hero-trust {
         display: flex;
-        gap: 24px;
-        font-size: 0.85rem;
-        color: #64748b;
+        gap: 28px;
+        font-size: 0.88rem;
+        color: #8e9cb5;
         font-weight: 500;
         flex-wrap: wrap;
         justify-content: center;
       }
-      
-      /* Hero Card (Right) */
-      .hero-visual {
-        flex: 1;
-        display: flex;
-        justify-content: flex-end;
-      }
-      .verification-card {
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid #e2e8f0;
-        border-radius: 24px;
-        padding: 32px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        width: 100%;
-        max-width: 480px;
-        backdrop-filter: blur(10px);
-      }
-      .vc-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-      .vc-title {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #0f172a;
-        letter-spacing: 0.5px;
-      }
-      .vc-badge-net {
-        background: #f1f5f9;
-        color: #475569;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
-      }
-      
-      .vc-product {
-        margin-bottom: 24px;
-      }
-      .vc-product h3 {
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin: 0 0 8px 0;
-        color: #0f172a;
-      }
-      .vc-status {
-        display: inline-block;
-        background: #dcfce7;
-        color: #166534;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
-      .vc-location {
-        font-size: 0.9rem;
-        color: #64748b;
-        display: flex;
+      .hero-trust span {
+        display: inline-flex;
         align-items: center;
         gap: 6px;
       }
       
-      .vc-pricing {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 24px;
-        padding: 20px;
-        background: #f8fafc;
-        border-radius: 16px;
-        border: 1px solid #e2e8f0;
-      }
-      .vc-price-box {
-        flex: 1;
-      }
-      .vc-price-box .label {
-        font-size: 0.7rem;
-        color: #64748b;
-        font-weight: 700;
-        margin-bottom: 4px;
-      }
-      .vc-price-box .val {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: #0f172a;
-      }
-      .vc-price-box .sub {
-        font-size: 0.75rem;
-        color: #0ea5e9;
-        font-weight: 600;
-        margin-top: 4px;
-      }
-      
-      .vc-timeline {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-        position: relative;
-      }
-      .vc-timeline::before {
-        content: '';
-        position: absolute;
-        top: 12px;
-        left: 10px;
-        right: 10px;
-        height: 2px;
-        background: #e2e8f0;
-        z-index: 1;
-      }
-      .vc-node {
-        position: relative;
-        z-index: 2;
-        background: #fff;
-        padding: 0 4px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-      }
-      .vc-dot {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: #0ea5e9;
-        border: 4px solid #bae6fd;
-      }
-      .vc-node:last-child .vc-dot { background: #cbd5e1; border-color: #f1f5f9; }
-      .vc-node span {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: #475569;
-      }
-      
-      .vc-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-top: 1px solid #e2e8f0;
-        padding-top: 20px;
-      }
-      .vc-hash {
-        font-family: monospace;
-        font-size: 0.8rem;
-        color: #94a3b8;
-      }
-      .btn-verify {
-        background: #10b981;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        cursor: pointer;
-      }
-      
       /* Metrics Strip */
       .metrics-strip {
-        background: #f8fafc;
-        border-top: 1px solid #e2e8f0;
-        border-bottom: 1px solid #e2e8f0;
-        padding: 40px 48px;
+        background: rgba(14, 18, 38, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 44px 48px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
       .metrics-container {
         max-width: 1400px;
@@ -380,57 +293,62 @@ export function renderLanding(container) {
       .metric-item {
         flex: 1;
         text-align: center;
-        border-right: 1px solid #e2e8f0;
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 0 16px;
       }
       .metric-item:last-child {
         border-right: none;
       }
       .metric-val {
-        font-size: 2.5rem;
+        font-size: 2.7rem;
         font-weight: 800;
-        color: #f59e0b;
+        color: #fbbf24;
+        text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
         margin-bottom: 8px;
+        letter-spacing: -0.02em;
       }
       .metric-label {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         font-weight: 700;
-        color: #64748b;
-        letter-spacing: 0.5px;
+        color: #8e9cb5;
+        letter-spacing: 0.8px;
       }
       
       /* How It Works */
       .how-section {
-        padding: 100px 48px;
+        padding: 100px 48px 120px;
         max-width: 1400px;
         margin: 0 auto;
       }
       .how-header {
         text-align: center;
-        margin-bottom: 60px;
+        margin-bottom: 64px;
       }
       .how-badge {
         display: inline-block;
-        padding: 6px 12px;
-        background: #f1f5f9;
-        color: #64748b;
+        padding: 6px 16px;
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.28);
         border-radius: 20px;
         font-size: 0.8rem;
         font-weight: 700;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
         letter-spacing: 1px;
       }
       .how-title {
-        font-size: 2.5rem;
+        font-size: 2.75rem;
         font-weight: 800;
-        color: #0f172a;
+        color: #ffffff;
         margin-bottom: 16px;
+        letter-spacing: -0.02em;
       }
       .how-subtitle {
-        font-size: 1.1rem;
-        color: #475569;
-        max-width: 600px;
+        font-size: 1.12rem;
+        color: #94a3b8;
+        max-width: 650px;
         margin: 0 auto;
-        line-height: 1.6;
+        line-height: 1.65;
       }
       
       .how-grid {
@@ -439,40 +357,48 @@ export function renderLanding(container) {
         gap: 24px;
       }
       .how-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 20px;
-        padding: 32px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        transition: transform 0.2s;
+        background: rgba(18, 24, 48, 0.75);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 22px;
+        padding: 34px 28px;
+        box-shadow: 0 14px 34px -4px rgba(0, 0, 0, 0.45);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
       }
       .how-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        transform: translateY(-8px);
+        border-color: rgba(56, 189, 248, 0.4);
+        box-shadow: 0 22px 45px -8px rgba(14, 165, 233, 0.25), 0 0 24px rgba(99, 102, 241, 0.2);
+        background: rgba(22, 30, 58, 0.85);
       }
       .hc-badge {
         display: inline-block;
-        background: #f0f9ff;
-        color: #0ea5e9;
-        width: 32px;
-        height: 32px;
-        line-height: 32px;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(56, 189, 248, 0.25));
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        width: 36px;
+        height: 36px;
+        line-height: 34px;
         text-align: center;
-        border-radius: 8px;
+        border-radius: 10px;
         font-weight: 700;
-        font-size: 0.9rem;
-        margin-bottom: 20px;
+        font-size: 0.95rem;
+        margin-bottom: 22px;
+        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
       }
       .hc-title {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
         font-weight: 700;
-        color: #0f172a;
+        color: #ffffff;
         margin-bottom: 12px;
       }
       .hc-desc {
-        font-size: 0.95rem;
-        color: #475569;
-        line-height: 1.6;
+        font-size: 0.92rem;
+        color: #94a3b8;
+        line-height: 1.65;
       }
       
       /* Responsive */
@@ -481,14 +407,12 @@ export function renderLanding(container) {
         .hero-title { font-size: 3rem; }
       }
       @media (max-width: 768px) {
-        .landing-hero { flex-direction: column; padding: 40px 24px; text-align: center; gap: 40px; }
+        .landing-hero { padding: 60px 24px; }
         .hero-actions { justify-content: center; }
         .hero-trust { justify-content: center; }
-        .hero-visual { justify-content: center; }
         .landing-nav { padding: 16px 24px; }
-        .nav-links { display: none; } /* Hide on mobile to keep compact */
         .metrics-container { flex-wrap: wrap; gap: 24px 0; }
-        .metric-item { flex: 0 0 50%; border-right: none; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; }
+        .metric-item { flex: 0 0 50%; border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 16px; }
         .how-grid { grid-template-columns: 1fr; }
         .how-section { padding: 60px 24px; }
         .hero-title { font-size: 2.5rem; }
@@ -513,16 +437,19 @@ export function renderLanding(container) {
       <!-- Navigation -->
       <nav class="landing-nav">
         <div class="nav-left">
-          <img src="/logo.png" alt="FarmChain" class="nav-logo" style="filter: brightness(0); height: 28px;" />
+          <div style="display: flex; align-items: center; gap: 12px; text-decoration: none; cursor: pointer;" onclick="window.location.hash='/'">
+            <img src="/logo.png" alt="FarmChain" class="nav-logo" />
+            <span class="nav-brand-text">Farm<span>Chain</span></span>
+          </div>
         </div>
         <div class="nav-right">
-          <select id="lang-switch-landing" class="farmchain-lang-select" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; font-size: 0.85rem; font-weight: 500; color: #475569; cursor: pointer;">
+          <select id="lang-switch-landing" class="landing-lang-select">
             <option value="en" ${i18n.currentLocale === 'en' ? 'selected' : ''}>EN | English</option>
             <option value="hi" ${i18n.currentLocale === 'hi' ? 'selected' : ''}>HI | हिन्दी</option>
             <option value="ta" ${i18n.currentLocale === 'ta' ? 'selected' : ''}>TA | தமிழ்</option>
             <option value="te" ${i18n.currentLocale === 'te' ? 'selected' : ''}>TE | తెలుగు</option>
           </select>
-          <button id="login-btn" class="btn btn-primary" onclick="window.location.hash='/login'" style="padding: 8px 16px; border-radius: 8px; font-weight: 600;">${i18n.t('landing.hero.enterBtn') || 'Explore Platform'}</button>
+          <button id="login-btn" class="landing-nav-btn">${i18n.t('landing.hero.enterBtn') || 'Explore Platform'}</button>
         </div>
       </nav>
       
