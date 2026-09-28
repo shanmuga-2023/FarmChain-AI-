@@ -5,82 +5,95 @@
 
 /* --- CSS Custom Properties (Design Tokens — The Trusted Ledger) --- */
 :root {
-  /* Dark Navy Background */
-  --bg-primary: #0a0f1e;
-  --bg-secondary: #0f1629;
-  --bg-tertiary: #151e32;
-  
-  /* Glassmorphism Surfaces */
-  --surface-0: #0a0f1e;
-  --surface-1: rgba(255, 255, 255, 0.03);
-  --surface-2: rgba(255, 255, 255, 0.05);
-  --surface-3: rgba(255, 255, 255, 0.08);
-  --bg-card: rgba(255, 255, 255, 0.05);
-  --bg-glass: rgba(255, 255, 255, 0.05);
-  --bg-glass-hover: rgba(255, 255, 255, 0.08);
+  /* Warm Parchment Base */
+  --parchment: #EDE6D3;
+  --parchment-warm: #E4DCCB;
+  --parchment-deep: #D9CFBA;
+  --parchment-card: #FAF6ED;
+  --parchment-card-alt: #F1ECE0;
+  --parchment-card-hover: #FFFFFF;
 
-  /* Primary Brand Colors */
-  --brand-green: #10b981;
-  --brand-violet: #7c3aed;
-  --brand-amber: #f59e0b;
+  /* Primary Ink / Text — Deep Loam (WCAG AA & AAA compliant: >= 5.5:1 on parchment) */
+  --loam: #1E170F;
+  --loam-light: #3D3325;
+  --loam-faded: #4E4436;
 
-  /* Accent Aliases */
-  --accent: var(--brand-green);
-  --accent-dim: rgba(16, 185, 129, 0.15);
-  --accent-hover: #059669;
-  --accent-muted: rgba(16, 185, 129, 0.4);
+  /* High-Contrast Tokens for Dark Navy / Glass Cards */
+  --text-on-dark-primary: #F8FAFC;
+  --text-on-dark-secondary: #E2E8F0;
+  --text-on-dark-muted: #CBD5E1;
+  --text-on-dark-faded: #94A3B8;
+
+  /* Trust & Verification Accent — Deep Botanical Green */
+  --ledger-ink: #2C4A3E;
+  --ledger-ink-light: #3D6B5A;
+  --ledger-ink-dim: rgba(44, 74, 62, 0.12);
+  --ledger-ink-border: rgba(44, 74, 62, 0.35);
+
+  /* Primary Accent Alias */
+  --accent: var(--ledger-ink);
+  --accent-dim: var(--ledger-ink-dim);
+  --accent-hover: var(--ledger-ink-light);
+  --accent-muted: #243D33;
 
   /* Role Colors */
-  --role-farmer: var(--brand-green);
-  --role-farmer-bg: rgba(16, 185, 129, 0.12);
-  --role-intermediary: var(--brand-violet);
-  --role-intermediary-bg: rgba(124, 58, 237, 0.12);
-  --role-retailer: var(--brand-amber);
-  --role-retailer-bg: rgba(245, 158, 11, 0.12);
-  --role-consumer: #3b82f6;
-  --role-consumer-bg: rgba(59, 130, 246, 0.12);
-  --role-admin: #ef4444;
-  --role-admin-bg: rgba(239, 68, 68, 0.12);
+  --role-farmer: #4A7C59;
+  --role-farmer-bg: rgba(74, 124, 89, 0.12);
+  --role-intermediary: #B8963E;
+  --role-intermediary-bg: rgba(184, 150, 62, 0.12);
+  --role-retailer: #8B5E3C;
+  --role-retailer-bg: rgba(139, 94, 60, 0.12);
+  --role-consumer: #6B5B7B;
+  --role-consumer-bg: rgba(107, 91, 123, 0.12);
+  --role-admin: #A04040;
+  --role-admin-bg: rgba(160, 64, 64, 0.12);
 
   /* Semantic */
-  --semantic-success: #10b981;
-  --semantic-success-dim: rgba(16, 185, 129, 0.12);
-  --semantic-green: #10b981;
-  --semantic-green-dim: rgba(16, 185, 129, 0.12);
-  --semantic-warning: #f59e0b;
-  --semantic-warning-dim: rgba(245, 158, 11, 0.12);
-  --semantic-amber: #f59e0b;
-  --semantic-amber-dim: rgba(245, 158, 11, 0.12);
-  --semantic-error: #ef4444;
-  --semantic-error-dim: rgba(239, 68, 68, 0.12);
-  --semantic-red: #ef4444;
-  --semantic-red-dim: rgba(239, 68, 68, 0.12);
-  --semantic-blue: #3b82f6;
-  --semantic-blue-dim: rgba(59, 130, 246, 0.12);
+  --semantic-success: #4A7C59;
+  --semantic-success-dim: rgba(74, 124, 89, 0.12);
+  --semantic-green: #4A7C59;
+  --semantic-green-dim: rgba(74, 124, 89, 0.12);
+  --semantic-warning: #B8963E;
+  --semantic-warning-dim: rgba(184, 150, 62, 0.12);
+  --semantic-amber: #B8963E;
+  --semantic-amber-dim: rgba(184, 150, 62, 0.12);
+  --semantic-error: #A04040;
+  --semantic-error-dim: rgba(160, 64, 64, 0.12);
+  --semantic-red: #A04040;
+  --semantic-red-dim: rgba(160, 64, 64, 0.12);
+  --semantic-blue: #3A6987;
+  --semantic-blue-dim: rgba(58, 105, 135, 0.12);
 
-  /* Borders */
-  --border-hairline: rgba(255, 255, 255, 0.05);
-  --border-rule: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.15);
+  /* Hairline and Ledger Borders */
+  --border-hairline: rgba(43, 36, 26, 0.12);
+  --border-rule: rgba(43, 36, 26, 0.22);
+  --border-strong: rgba(43, 36, 26, 0.40);
   --border-1: var(--border-hairline);
   --border-2: var(--border-rule);
   --border-3: var(--border-strong);
   --border-subtle: var(--border-hairline);
   --border-medium: var(--border-rule);
-  --border-accent: rgba(16, 185, 129, 0.35);
+  --border-accent: rgba(44, 74, 62, 0.35);
 
-  /* Text Colors */
-  --text-1: #f1f5f9;
-  --text-2: #cbd5e1;
-  --text-3: #94a3b8;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-accent: var(--brand-green);
-  
-  --font-base: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Surface & Text compatibility aliases */
+  --surface-0: var(--parchment);
+  --surface-1: var(--parchment-warm);
+  --surface-2: var(--parchment-card);
+  --surface-3: var(--parchment-deep);
+  --bg-primary: var(--parchment);
+  --bg-secondary: var(--parchment-warm);
+  --bg-tertiary: var(--parchment-deep);
+  --bg-card: var(--parchment-card);
+  --bg-glass: rgba(237, 230, 211, 0.88);
+  --bg-glass-hover: rgba(247, 243, 234, 0.95);
+
+  --text-1: var(--loam);
+  --text-2: var(--loam-light);
+  --text-3: var(--loam-faded);
+  --text-primary: var(--loam);
+  --text-secondary: var(--loam-light);
+  --text-muted: var(--loam-faded);
+  --text-accent: var(--ledger-ink);
 }
 
 /* Automatic contrast mapping for dark cards, auth panels, and dark surfaces */
