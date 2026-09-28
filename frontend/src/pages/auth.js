@@ -38,7 +38,7 @@ export function renderAuthPage(container) {
                 <div style="background: rgba(255,255,255,0.2); padding: 12px; border-radius: 12px; backdrop-filter: blur(10px);">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-12.5.5-16.5-5-20"/><path d="M14 20c-5.5-12.5-.5-16.5 5-20"/></svg>
                 </div>
-                <h2 style="font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">FarmChain AI 2.0</h2>
+                <h2 style="font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">FarmChain</h2>
               </div>
             </div>
 

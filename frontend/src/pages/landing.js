@@ -513,7 +513,7 @@ export function renderLanding(container) {
       <!-- Navigation -->
       <nav class="landing-nav">
         <div class="nav-left">
-          <img src="/logo.png" alt="FarmChain AI" class="nav-logo" style="filter: brightness(0); height: 28px;" />
+          <img src="/logo.png" alt="FarmChain" class="nav-logo" style="filter: brightness(0); height: 28px;" />
         </div>
         <div class="nav-right">
           <select id="lang-switch-landing" class="farmchain-lang-select" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; font-size: 0.85rem; font-weight: 500; color: #475569; cursor: pointer;">

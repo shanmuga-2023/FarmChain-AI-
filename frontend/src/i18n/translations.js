@@ -1,5 +1,5 @@
 // ============================================
-// FarmChain AI — Multilingual Translation Dictionary
+// FarmChain — Multilingual Translation Dictionary
 // Supported: English (en), Hindi (hi), Tamil (ta), Telugu (te)
 // 100% 1:1 Key Parity across all namespaces
 // ============================================
@@ -26,7 +26,7 @@ export const translations = {
       "myPayments": "My Payments",
       "batchVerify": "Batch Verify",
       "qualityHelp": "Quality Help",
-      "welcome": "Hello! I am your FarmChain AI assistant. How can I help you today?",
+      "welcome": "Hello! I am your FarmChain assistant. How can I help you today?",
       "disclaimer": "AI suggestions are for guidance only. Please consult a qualified agricultural expert for critical decisions.",
       "imageAnalysis": "Analyzing image...",
       "voiceNotSupported": "Voice input is not supported in this browser",
@@ -139,7 +139,7 @@ export const translations = {
       "blockchainProvenanceDesc": "Immutable supply-chain records on Polygon",
       "directPayments": "Direct Farmer Payments",
       "directPaymentsDesc": "Transparent smart-contract settlements",
-      "copyright": "© 2026 FarmChain AI. All rights reserved.",
+      "copyright": "© 2026 FarmChain. All rights reserved.",
       "createAccountTitle": "Create an Account",
       "welcomeBackTitle": "Welcome back",
       "joinRevolution": "Join the agricultural revolution",
@@ -161,10 +161,10 @@ export const translations = {
       "quickDemo": "Quick Demo Access"
 },
     "meta": {
-      "title": "FarmChain AI",
+      "title": "FarmChain",
       "description": "Transparent, blockchain-powered agricultural marketplace."
     },
-    "appName": "FarmChain AI",
+    "appName": "FarmChain",
     "tagline": "Transparent Agricultural Marketplace",
     "heroTitle1": "Transparent Farming.",
     "heroTitle2": "Fair Pricing.",
@@ -176,7 +176,7 @@ export const translations = {
     "txRecorded": "Sales Recorded",
     "productsListed": "Products Listed",
     "activeUsers": "Active Farmers & Buyers",
-    "howItWorks": "How FarmChain AI Works",
+    "howItWorks": "How FarmChain Works",
     "howItWorksSub": "From farm to fork, every step is verified and transparent",
     "step1Title": "Farmer Lists Produce",
     "step1Desc": "Farmer lists crops with origin, photos, and AI-suggested fair pricing",
@@ -308,7 +308,7 @@ export const translations = {
       "demandForecast": "Demand Forecast"
     },
     "auth": {
-      "title": "Sign in to FarmChain AI",
+      "title": "Sign in to FarmChain",
       "subtitle": "Select your role to access your personalized workspace",
       "welcomeBack": "Welcome Back",
       "loginAs": "Sign in as {role}",
@@ -373,11 +373,11 @@ export const translations = {
         "loginSuccess": "Signed in successfully! Redirecting...",
         "loginFailed": "Login failed. Please verify credentials.",
         "roleChanged": "Switched to {role} portal",
-        "accountCreated": "Account created successfully! Welcome to FarmChain AI.",
+        "accountCreated": "Account created successfully! Welcome to FarmChain.",
         "regFailed": "Registration failed. Please check required fields.",
         "fillRequired": "Please fill in all required fields",
         "walletConnected": "Digital identity linked to session",
-        "registered": "{role} account created for {name}! Welcome to FarmChain AI.",
+        "registered": "{role} account created for {name}! Welcome to FarmChain.",
         "loggedIn": "Signed in as {role}! Loading portal...",
         "emailInUse": "An account with this email already exists.",
         "invalidCreds": "Invalid email or password. Please try again.",
@@ -1377,7 +1377,7 @@ export const translations = {
       },
       "how": {
         "eyebrow": "From Soil to Plate",
-        "title": "How FarmChain AI Protects Every Stakeholder",
+        "title": "How FarmChain Protects Every Stakeholder",
         "subtitle": "Four immutable checkpoints eliminating middleman exploitation and counterfeit produce.",
         "step1Title": "Farmer Harvest & AI Grading",
         "step1Desc": "Farmers capture crop photos with GPS watermark. AI instantly scores grade, Brix index, and moisture.",
@@ -1422,7 +1422,7 @@ export const translations = {
         "col2Title": "Technology",
         "escrowContracts": "Escrow Smart Contracts",
         "cloneDetection": "Anti-Counterfeit Protection",
-        "bottom1": "FarmChain AI — Transparent Soil-to-Plate Custody",
+        "bottom1": "FarmChain — Transparent Soil-to-Plate Custody",
         "bottom2": "Solid Proofs · Fair Pricing · QR Verification"
       },
       "pricing": {
@@ -1685,7 +1685,7 @@ export const translations = {
       "title": "फार्मचेन एआई",
       "description": "पारदर्शी, ब्लॉकचेन-संचालित कृषि बाज़ार।"
     },
-    "appName": "FarmChain AI",
+    "appName": "FarmChain",
     "tagline": "पारदर्शी कृषि बाज़ार",
     "heroTitle1": "पारदर्शी खेती।",
     "heroTitle2": "उचित मूल्य।",
@@ -1697,7 +1697,7 @@ export const translations = {
     "txRecorded": "दर्ज की गई बिक्री",
     "productsListed": "सूचीबद्ध उत्पाद",
     "activeUsers": "सक्रिय किसान और खरीदार",
-    "howItWorks": "FarmChain AI कैसे काम करता है",
+    "howItWorks": "FarmChain कैसे काम करता है",
     "howItWorksSub": "खेत से थाली तक, हर कदम सत्यापित और पारदर्शी है",
     "step1Title": "किसान फसल सूचीबद्ध करते हैं",
     "step1Desc": "किसान मूल स्थान, फोटो और AI द्वारा सुझाए गए उचित मूल्य के साथ फसल जोड़ते हैं",
@@ -1829,7 +1829,7 @@ export const translations = {
       "demandForecast": "मांग पूर्वानुमान"
     },
     "auth": {
-      "title": "FarmChain AI में साइन इन करें",
+      "title": "FarmChain में साइन इन करें",
       "subtitle": "अपने कार्यक्षेत्र तक पहुंचने के लिए अपनी भूमिका चुनें",
       "welcomeBack": "वापसी पर स्वागत है",
       "loginAs": "{role} के रूप में साइन इन करें",
@@ -3154,7 +3154,7 @@ export const translations = {
       "title": "ஃபார்ம்செயின் ஏஐ",
       "description": "வெளிப்படையான, பிளாக்செயின் மூலம் இயங்கும் விவசாய சந்தை."
     },
-    "appName": "FarmChain AI",
+    "appName": "FarmChain",
     "tagline": "வெளிப்படையான விவசாய சந்தை",
     "heroTitle1": "நேர்மையான விவசாயம்.",
     "heroTitle2": "நியாயமான விலை.",
@@ -3166,7 +3166,7 @@ export const translations = {
     "txRecorded": "பதிவு செய்யப்பட்ட விற்பனை",
     "productsListed": "பட்டியலிடப்பட்ட விளைபொருட்கள்",
     "activeUsers": "செயலில் உள்ள விவசாயிகள் & வாங்குவோர்",
-    "howItWorks": "FarmChain AI எவ்வாறு செயல்படுகிறது",
+    "howItWorks": "FarmChain எவ்வாறு செயல்படுகிறது",
     "howItWorksSub": "பண்ணையிலிருந்து தட்டு வரை, ஒவ்வொரு அடியும் சரிபார்க்கப்பட்டு வெளிப்படையானது",
     "step1Title": "விவசாயி விளைபொருட்களைப் பட்டியலிடுகிறார்",
     "step1Desc": "விவசாயி இருப்பிடம், புகைப்படங்கள் மற்றும் AI பரிந்துரைத்த நியாய விலையுடன் பயிர்களைச் சேர்க்கிறார்",
@@ -3298,7 +3298,7 @@ export const translations = {
       "demandForecast": "தேவை முன்னறிவிப்பு"
     },
     "auth": {
-      "title": "FarmChain AI-ல் உள்நுழையவும்",
+      "title": "FarmChain-ல் உள்நுழையவும்",
       "subtitle": "உங்கள் பணியிடத்தை அணுக உங்கள் பங்கைத் தேர்ந்தெடுக்கவும்",
       "welcomeBack": "மீண்டும் வருக",
       "loginAs": "{role} ஆக உள்நுழைக",
@@ -4675,7 +4675,7 @@ export const translations = {
       "title": "ఫార్మ్‌చైన్ ఏఐ",
       "description": "పారదర్శకమైన, బ్లాక్‌చెయిన్-ఆధారిత వ్యవసాయ మార్కెట్."
     },
-    "appName": "FarmChain AI",
+    "appName": "FarmChain",
     "tagline": "పారదర్శక వ్యవసాయ మార్కెట్",
     "heroTitle1": "పారదర్శక వ్యవసాయం.",
     "heroTitle2": "న్యాయమైన ధర.",
@@ -4687,7 +4687,7 @@ export const translations = {
     "txRecorded": "నమోదైన అమ్మకాలు",
     "productsListed": "జాబితా చేసిన ఉత్పత్తులు",
     "activeUsers": "క్రియాశీల రైతులు & కొనుగోలుదారులు",
-    "howItWorks": "FarmChain AI ఎలా పనిచేస్తుంది",
+    "howItWorks": "FarmChain ఎలా పనిచేస్తుంది",
     "howItWorksSub": "పొలం నుండి ప్లేట్ వరకు, ప్రతి అడుగు ధృవీకరించబడింది మరియు పారదర్శకమైనది",
     "step1Title": "రైతు ఉత్పత్తులను జాబితా చేస్తారు",
     "step1Desc": "రైతులు మూలం, ఫోటోలు మరియు AI సూచించిన న్యాయమైన ధరతో పంటలను నమోదు చేస్తారు",
@@ -4819,7 +4819,7 @@ export const translations = {
       "demandForecast": "డిమాండ్ అంచనా"
     },
     "auth": {
-      "title": "FarmChain AI లోకి సైన్ ఇన్ చేయండి",
+      "title": "FarmChain లోకి సైన్ ఇన్ చేయండి",
       "subtitle": "మీ కార్యస్థలాన్ని యాక్సెస్ చేయడానికి మీ పాత్రను ఎంచుకోండి",
       "welcomeBack": "స్వాగతం",
       "loginAs": "{role} గా సైన్ ఇన్ చేయండి",
