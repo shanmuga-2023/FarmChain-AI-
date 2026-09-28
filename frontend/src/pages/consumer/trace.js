@@ -234,21 +234,21 @@ export async function renderConsumerTrace(container) {
         const contract = getAgriSupplyChainContract();
         if (contract) {
           const onChain = await contract.getBatchDetails(productId);
-          if (onChain && onChain.exists) {
+          if (onChain && onChain.batchId_ !== "") {
             const STAGES = ['Harvested', 'InTransit', 'QualityChecked', 'AtRetailer', 'Sold'];
             product = {
-              productId: onChain.batchId || productId,
+              productId: onChain.batchId_ || productId,
               name: onChain.cropName,
               quantity: Number(onChain.quantity),
               unit: 'kg',
-              pricePerUnit: Number(onChain.currentPrice || 0),
-              farmerName: `Producer (${onChain.currentOwner.slice(0, 6)}...${onChain.currentOwner.slice(-4)})`,
+              pricePerUnit: Number(onChain.pricePerUnit || 0),
+              farmerName: `Producer (${String(onChain.currentOwner).slice(0, 6)}...${String(onChain.currentOwner).slice(-4)})`,
               origin: 'Verified Polygon Amoy Origin',
               emoji: getCropEmoji(onChain.cropName),
               status: 'available',
               blockchainVerified: true,
               onChainBatchId: productId,
-              currentStage: STAGES[Number(onChain.stage)] || 'Harvested',
+              currentStage: STAGES[Number(onChain.currentStage)] || 'Harvested',
               dataHash: onChain.dataHash,
               createdAt: Number(onChain.createdAt) * 1000 || Date.now()
             };
