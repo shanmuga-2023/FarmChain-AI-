@@ -14,7 +14,7 @@ const USERS = {
     role: 'farmer',
     location: 'Nashik, Maharashtra',
     email: 'rajesh@farm.in',
-    avatar: '👨‍🌾',
+    avatar: '',
     joinedAt: Date.now() - 180 * 86400000,
     rating: 4.8,
     verified: true,
@@ -25,7 +25,7 @@ const USERS = {
     role: 'farmer',
     location: 'Thanjavur, Tamil Nadu',
     email: 'lakshmi@farm.in',
-    avatar: '👩‍🌾',
+    avatar: '',
     joinedAt: Date.now() - 240 * 86400000,
     rating: 4.9,
     verified: true,
@@ -36,7 +36,7 @@ const USERS = {
     role: 'farmer',
     location: 'Ludhiana, Punjab',
     email: 'arjun@farm.in',
-    avatar: '👨‍🌾',
+    avatar: '',
     joinedAt: Date.now() - 120 * 86400000,
     rating: 4.6,
     verified: true,
@@ -47,7 +47,7 @@ const USERS = {
     role: 'intermediary',
     location: 'Mumbai, Maharashtra',
     email: 'info@agritraders.in',
-    avatar: '🏢',
+    avatar: '',
     joinedAt: Date.now() - 365 * 86400000,
     rating: 4.5,
     verified: true,
@@ -58,7 +58,7 @@ const USERS = {
     role: 'intermediary',
     location: 'Chennai, Tamil Nadu',
     email: 'contact@greenpath.in',
-    avatar: '🏪',
+    avatar: '',
     joinedAt: Date.now() - 200 * 86400000,
     rating: 4.3,
     verified: true,
@@ -69,7 +69,7 @@ const USERS = {
     role: 'retailer',
     location: 'Bangalore, Karnataka',
     email: 'orders@freshmart.in',
-    avatar: '🛒',
+    avatar: '',
     joinedAt: Date.now() - 300 * 86400000,
     rating: 4.7,
     verified: true,
@@ -80,7 +80,7 @@ const USERS = {
     role: 'retailer',
     location: 'Delhi, NCR',
     email: 'store@naturesbasket.in',
-    avatar: '🏬',
+    avatar: '',
     joinedAt: Date.now() - 500 * 86400000,
     rating: 4.6,
     verified: true,
@@ -91,7 +91,7 @@ const USERS = {
     role: 'consumer',
     location: 'Bangalore, Karnataka',
     email: 'priya@email.in',
-    avatar: '👤',
+    avatar: '',
     joinedAt: Date.now() - 60 * 86400000,
     rating: 4.2,
     verified: true,
@@ -102,7 +102,7 @@ const USERS = {
     role: 'admin',
     location: 'Platform HQ',
     email: 'admin@farmchain.ai',
-    avatar: '🔧',
+    avatar: '',
     joinedAt: Date.now() - 500 * 86400000,
     rating: 5.0,
     verified: true,
@@ -122,7 +122,7 @@ const PRODUCTS = [
     harvestDate: '2024-10-15',
     isOrganic: true,
     description: 'Premium aged Basmati rice, organically grown using traditional methods. No pesticides or chemical fertilizers.',
-    emoji: '🌾',
+    emoji: '',
   },
   {
     name: 'Fresh Nashik Onions',
@@ -136,7 +136,7 @@ const PRODUCTS = [
     harvestDate: '2024-11-20',
     isOrganic: false,
     description: 'Premium quality red onions from Nashik. Fresh harvest, well-sorted and graded.',
-    emoji: '🧅',
+    emoji: '',
   },
   {
     name: 'Punjab Premium Wheat',
@@ -150,7 +150,7 @@ const PRODUCTS = [
     harvestDate: '2024-04-10',
     isOrganic: false,
     description: 'High-quality wheat grain, sun-dried and cleaned. Ideal for premium flour production.',
-    emoji: '🌿',
+    emoji: '',
   },
   {
     name: 'Alphonso Mangoes',
@@ -164,7 +164,7 @@ const PRODUCTS = [
     harvestDate: '2024-05-01',
     isOrganic: true,
     description: 'GI-tagged Ratnagiri Alphonso mangoes. Naturally ripened, premium export quality.',
-    emoji: '🥭',
+    emoji: '',
   },
   {
     name: 'Organic Turmeric',
@@ -178,7 +178,7 @@ const PRODUCTS = [
     harvestDate: '2024-02-10',
     isOrganic: true,
     description: 'High-curcumin Erode turmeric. Organically cultivated, sun-dried and polished.',
-    emoji: '🟡',
+    emoji: '',
   },
   {
     name: 'Fresh Tomatoes',
@@ -192,7 +192,7 @@ const PRODUCTS = [
     harvestDate: '2024-12-01',
     isOrganic: false,
     description: 'Farm-fresh, vine-ripened tomatoes. Sorted by size, packed in ventilated crates.',
-    emoji: '🍅',
+    emoji: '',
   },
   {
     name: 'Organic Bananas',
@@ -206,7 +206,7 @@ const PRODUCTS = [
     harvestDate: '2024-11-25',
     isOrganic: true,
     description: 'Naturally ripened Robusta bananas. Chemical-free cultivation, packed fresh.',
-    emoji: '🍌',
+    emoji: '',
   },
   {
     name: 'Green Chillies',
@@ -220,7 +220,7 @@ const PRODUCTS = [
     harvestDate: '2024-11-15',
     isOrganic: false,
     description: 'Guntur green chillies. Medium spice level, vibrant green color, freshly picked.',
-    emoji: '🌶️',
+    emoji: '',
   },
 ];
 
@@ -264,7 +264,7 @@ export async function seedData() {
     return;
   }
 
-  console.log('🌱 Seeding FarmChain demo data...');
+  console.log('[Seed] Seeding FarmChain demo data...');
 
   // Initialize blockchain
   await blockchain.initialize();
@@ -497,10 +497,10 @@ export async function seedData() {
   }
   store.set('transfers', transfers);
 
-  console.log('✅ Seed data loaded successfully!');
-  console.log(`   📦 ${registeredProducts.length} products registered`);
-  console.log(`   📋 ${listings.length} listings created`);
-  console.log(`   📑 ${certs.length} certificates issued`);
-  console.log(`   🛍️ ${orders.length} demo orders created`);
-  console.log(`   🔗 ${blockchain.getBlockCount()} blocks in chain`);
+  console.log('[Seed] Data loaded successfully');
+  console.log(`   [Seed] ${registeredProducts.length} products registered`);
+  console.log(`   [Seed] ${listings.length} listings created`);
+  console.log(`   [Seed] ${certs.length} certificates issued`);
+  console.log(`   [Seed] ${orders.length} demo orders created`);
+  console.log(`   [Seed] ${blockchain.getBlockCount()} blocks in chain`);
 }

@@ -74,10 +74,10 @@ export class DemandForecaster {
         trend: trendDirection,
         trendPercentage,
         recommendation: trendDirection === 'increasing'
-          ? `📈 Demand is trending up by ${trendPercentage}% monthly. Consider increasing production.`
+          ? `Demand is trending up by ${trendPercentage}% monthly. Consider increasing production.`
           : trendDirection === 'decreasing'
-            ? `📉 Demand is declining by ${trendPercentage}% monthly. Consider diversifying crops.`
-            : `📊 Demand is stable. Maintain current production levels.`,
+            ? `Demand is declining by ${trendPercentage}% monthly. Consider diversifying crops.`
+            : `Demand is stable. Maintain current production levels.`,
       },
     };
   }

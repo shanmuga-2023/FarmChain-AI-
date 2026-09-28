@@ -9,8 +9,8 @@ import { renderSidebar } from '../../components/sidebar.js';
 import { formatCurrency, getCropEmoji, showToast, createModal, closeModal, getStatusBadge, timeAgo, localizeCropName, localizeUnit, localizeCategory } from '../../utils/helpers.js';
 import { escapeHtml, validateProductInput } from '../../utils/sanitize.js';
 import { updateProduct, deleteProduct } from '../../utils/api.js';
-import { updateFirestoreProduct, deleteFirestoreProduct } from '../../firebase/firestore.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderAdminProducts(container) {
   const products = store.get('products') || [];
@@ -64,7 +64,7 @@ export function renderAdminProducts(container) {
               <div class="stat-card-label">${i18n.t('admin.statCategories') || 'Categories'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">🌿</div>
+              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">${getIcon('sprout', 22)}</div>
               <div class="stat-card-value">${products.filter(p => p.isOrganic).length}</div>
               <div class="stat-card-label">${i18n.t('admin.statOrganicProducts') || 'Organic Products'}</div>
             </div>
@@ -107,7 +107,9 @@ export function renderAdminProducts(container) {
                       <tr class="admin-product-row" data-category="${p.category}" data-name="${escapeHtml((p.name || '').toLowerCase())}">
                         <td>
                           <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 1.3rem;">${p.emoji || getCropEmoji(p.name)}</span>
+                            <div style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.06); color: var(--text-primary);">
+                              ${getCropEmoji(p.name)}
+                            </div>
                             <div>
                               <div style="font-weight: 600;">${escapeHtml(locCrop)}</div>
                               <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">${escapeHtml((p.productId || '').slice(0, 16))}</div>
@@ -116,7 +118,10 @@ export function renderAdminProducts(container) {
                         </td>
                         <td>
                           <div style="font-weight: 500;">${escapeHtml(p.farmerName || 'N/A')}</div>
-                          <div style="font-size: 0.72rem; color: var(--text-muted);">📍 ${escapeHtml(p.origin || 'N/A')}</div>
+                          <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+                            ${getIcon('mapPin', 12)}
+                            <span>${escapeHtml(p.origin || 'N/A')}</span>
+                          </div>
                         </td>
                         <td><span class="badge badge-info">${escapeHtml(locCat || 'N/A')}</span></td>
                         <td style="font-weight: 600;">${p.quantity || 0} ${escapeHtml(locUnit)}</td>
@@ -124,9 +129,14 @@ export function renderAdminProducts(container) {
                         <td><span class="badge ${badge.class}">${badge.icon} ${badge.label}</span></td>
                         <td style="font-size: 0.8rem; color: var(--text-muted);">${p.createdAt ? timeAgo(p.createdAt) : 'N/A'}</td>
                         <td>
-                          <div style="display: flex; gap: 4px;">
-                            <button class="btn btn-secondary btn-sm admin-edit-btn" data-product-id="${p.productId}" style="font-size: 0.7rem; padding: 4px 8px;">✏️ ${i18n.t('common.edit') || 'Edit'}</button>
-                            <button class="btn btn-secondary btn-sm admin-delete-btn" data-product-id="${p.productId}" style="font-size: 0.7rem; padding: 4px 8px; color: var(--accent-red); border-color: rgba(239,68,68,0.3);">🗑️</button>
+                          <div style="display: flex; gap: 6px;">
+                            <button class="btn btn-secondary btn-sm admin-edit-btn" data-product-id="${p.productId}" style="font-size: 0.75rem; padding: 5px 10px; display: inline-flex; align-items: center; gap: 4px;">
+                              ${getIcon('edit', 12)}
+                              <span>${i18n.t('common.edit') || 'Edit'}</span>
+                            </button>
+                            <button class="btn btn-secondary btn-sm admin-delete-btn" data-product-id="${p.productId}" style="font-size: 0.75rem; padding: 5px 8px; color: var(--accent-red); border-color: rgba(239,68,68,0.3); display: inline-flex; align-items: center; justify-content: center;" title="${i18n.t('common.delete') || 'Delete'}">
+                              ${getIcon('trash', 13)}
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -135,10 +145,10 @@ export function renderAdminProducts(container) {
                 </tbody>
               </table>
             ` : `
-              <div class="empty-state">
-                <div class="empty-state-icon">📦</div>
+              <div class="empty-state" style="padding: 48px 24px; text-align: center;">
+                <div class="empty-state-icon" style="display: flex; justify-content: center; margin-bottom: 12px; color: var(--text-muted);">${getIcon('package', 44)}</div>
                 <h3>${i18n.t('admin.noProductsOnPlatform') || 'No products on platform'}</h3>
-                <p>${i18n.t('admin.noProductsDesc') || 'Products will appear here when farmers register them.'}</p>
+                <p style="color: var(--text-muted);">${i18n.t('admin.noProductsDesc') || 'Products will appear here when farmers register them.'}</p>
               </div>
             `}
           </div>
@@ -192,7 +202,7 @@ export function renderAdminProducts(container) {
         store.removeItem('listings', l => l.productId === productId);
         deleteProduct(productId).catch(err => console.warn('Backend delete sync:', err));
         deleteFirestoreProduct(productId).catch(err => console.warn('Firestore delete sync:', err));
-        showToast(i18n.t('admin.productDeletedToast', { name: product.name }) || `Product "${product.name}" deleted by admin 🗑️`, 'success');
+        showToast(i18n.t('admin.productDeletedToast', { name: product.name }) || `Product "${product.name}" deleted by admin`, 'success');
         renderAdminProducts(container);
       } catch (err) {
         showToast('Delete failed: ' + err.message, 'error');
@@ -205,7 +215,7 @@ export function renderAdminProducts(container) {
 function showAdminEditModal(container, product) {
   createModal(i18n.t('admin.editProductModalTitle') || 'Admin: Edit Product', `
     <div style="background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 16px;">
-      <div style="font-size: 0.8rem; color: var(--accent-red); font-weight: 600;">${i18n.t('admin.editModeNotice') || '⚠️ Admin Edit Mode'}</div>
+      <div style="font-size: 0.8rem; color: var(--accent-red); font-weight: 600; display: flex; align-items: center; gap: 6px;">${getIcon('alert', 14, '', 'color: var(--accent-red);')} ${i18n.t('admin.editModeNotice') || 'Admin Edit Mode'}</div>
       <div style="font-size: 0.75rem; color: var(--text-muted);">${i18n.t('admin.editingItem', { name: escapeHtml(product.name), farmer: escapeHtml(product.farmerName) }) || `Editing: ${escapeHtml(product.name)} by ${escapeHtml(product.farmerName)}`}</div>
     </div>
     <div class="form-group">
@@ -247,7 +257,7 @@ function showAdminEditModal(container, product) {
     </div>
   `, `
     <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">${i18n.t('common.cancel') || 'Cancel'}</button>
-    <button class="btn btn-primary btn-sm" id="admin-save-edit-btn">💾 ${i18n.t('admin.saveChangesBtn') || 'Save Changes (Admin)'}</button>
+    <button class="btn btn-primary btn-sm" id="admin-save-edit-btn" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('check', 14)} ${i18n.t('admin.saveChangesBtn') || 'Save Changes (Admin)'}</button>
   `);
 
   document.getElementById('admin-save-edit-btn')?.addEventListener('click', async () => {
@@ -287,13 +297,13 @@ function showAdminEditModal(container, product) {
       updateFirestoreProduct(product.productId, updates).catch(err => console.warn('Firestore update sync:', err));
 
       closeModal();
-      showToast(i18n.t('admin.productUpdatedToast', { name }) || `"${name}" updated by admin ✏️`, 'success');
+      showToast(i18n.t('admin.productUpdatedToast', { name }) || `"${name}" updated by admin`, 'success');
       renderAdminProducts(container);
     } catch (err) {
       showToast('Update failed: ' + err.message, 'error');
       if (saveBtn) {
         saveBtn.disabled = false;
-        saveBtn.innerHTML = `💾 ${i18n.t('admin.saveChangesBtn') || 'Save Changes (Admin)'}`;
+        saveBtn.innerHTML = `${getIcon('check', 14)} ${i18n.t('admin.saveChangesBtn') || 'Save Changes (Admin)'}`;
       }
     }
   });

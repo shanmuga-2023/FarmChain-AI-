@@ -7,6 +7,7 @@ import { web3Service } from '../web3/provider.js';
 import { GaslessProvider } from '../web3/gasless.js';
 import { router } from '../utils/router.js';
 import { showToast, getCropEmoji } from '../utils/helpers.js';
+import { getIcon } from '../utils/icons.js';
 import { i18n } from '../i18n/index.js';
 import { store } from '../data/store.js';
 import { verifyBackendToken } from '../utils/api.js';
@@ -59,19 +60,19 @@ export function renderAuthPage(container) {
             <div style="margin-bottom: 22px;">
               <div class="role-pill-grid" id="role-tabs">
                 <button type="button" class="role-pill role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer">
-                  <span style="font-size: 14px;">🌾</span>
+                  <span style="font-size: 14px; display: inline-flex; align-items: center;">${roleIcons.farmer}</span>
                   <span>${i18n.t('farmerRole')}</span>
                 </button>
                 <button type="button" class="role-pill role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer">
-                  <span style="font-size: 14px;">🏪</span>
+                  <span style="font-size: 14px; display: inline-flex; align-items: center;">${roleIcons.retailer}</span>
                   <span>${i18n.t('retailerRole')}</span>
                 </button>
                 <button type="button" class="role-pill role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer">
-                  <span style="font-size: 14px;">🛒</span>
+                  <span style="font-size: 14px; display: inline-flex; align-items: center;">${roleIcons.consumer}</span>
                   <span>${i18n.t('consumerRole')}</span>
                 </button>
                 <button type="button" class="role-pill role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary">
-                  <span style="font-size: 14px;">📦</span>
+                  <span style="font-size: 14px; display: inline-flex; align-items: center;">${roleIcons.intermediary}</span>
                   <span>${i18n.t('intermediaryRole')}</span>
                 </button>
                 <button type="button" class="tab role-tab ${initialRole === 'admin' ? 'active' : ''}" data-role="admin" style="display:none;"></button>
@@ -157,12 +158,18 @@ export function renderAuthPage(container) {
             <div style="margin-top: 26px; padding-top: 18px; border-top: 1px solid #1c233c; ${isRegister ? 'display: none;' : ''}">
               <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.6px; display: flex; align-items: center; justify-content: space-between;">
                 <span>${i18n.t('auth_new.quickDemo')}</span>
-                <button type="button" id="toggle-otp-modal-btn" style="background: none; border: none; color: #38bdf8; font-size: 11px; cursor: pointer; font-weight: 600; padding: 0;">📱 Phone OTP</button>
+                <button type="button" id="toggle-otp-modal-btn" style="background: none; border: none; color: #38bdf8; font-size: 11px; cursor: pointer; font-weight: 600; padding: 0; display: inline-flex; align-items: center; gap: 4px;">
+                  ${getIcon('phone', 12)}
+                  <span>Phone OTP</span>
+                </button>
               </div>
               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;" id="demo-quick-buttons">
                 ${DEMO_CREDENTIALS.slice(0, 5).map(demo => `
                   <button type="button" class="demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}" style="font-size: 12px; padding: 8px 10px; background: #14192e; border: 1px solid #232b49; border-radius: 10px; color: #e2e8f0; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">
-                    <span style="font-weight: 500;">${demo.avatar} ${demo.name.split(' ')[0]}</span>
+                    <span style="font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+                      <span style="display: inline-flex; align-items: center; color: #38bdf8;">${roleIcons[demo.role] || roleIcons.consumer}</span>
+                      <span>${demo.name.split(' ')[0]}</span>
+                    </span>
                     <span style="color: #38bdf8; font-size: 10px; font-weight: 600; text-transform: capitalize;">${i18n.t(`roles.${demo.role}`) || demo.role}</span>
                   </button>
                 `).join('')}
@@ -172,16 +179,20 @@ export function renderAuthPage(container) {
             <!-- Phone OTP Section (Collapsible) -->
             <div id="otp-container-section" style="display: none; margin-top: 18px; padding: 18px; background: #14192e; border: 1px solid #2a3458; border-radius: 14px;">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                <div style="font-weight: 700; font-size: 13px; color: #ffffff;">📱 Phone OTP (Smart Account)</div>
-                <button type="button" id="close-otp-section" style="background: none; border: none; color: #8e9cb5; cursor: pointer; font-size: 14px;">✕</button>
+                <div style="font-weight: 700; font-size: 13px; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('phone', 14)}
+                  <span>Phone OTP (Smart Account)</span>
+                </div>
+                <button type="button" id="close-otp-section" style="background: none; border: none; color: #8e9cb5; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center;">${getIcon('x', 14)}</button>
               </div>
               <div id="otp-phone-step">
                 <div class="system-input-group" style="margin-bottom: 12px;">
                   <label class="system-label">Phone Number (+91)</label>
                   <input type="tel" class="system-glass-input" id="otp-phone" placeholder="+91 98765 43210" />
                 </div>
-                <button type="button" id="send-otp-btn" class="system-pill-btn" style="width: 100%; min-width: 0; padding: 10px 16px; font-size: 13px;">
-                  📱 ${i18n.t('auth.sendOtpBtn')}
+                <button type="button" id="send-otp-btn" class="system-pill-btn" style="width: 100%; min-width: 0; padding: 10px 16px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                  ${getIcon('phone', 14)}
+                  <span>${i18n.t('auth.sendOtpBtn')}</span>
                 </button>
                 <div id="recaptcha-container"></div>
               </div>
@@ -198,8 +209,9 @@ export function renderAuthPage(container) {
                   <input type="text" maxlength="1" class="otp-digit-input" style="width: 36px; height: 40px; text-align: center; font-size: 16px; font-weight: 700; background: #0f1325; border: 1px solid #2b3558; border-radius: 8px; color: #ffffff;" />
                   <input type="text" maxlength="1" class="otp-digit-input" style="width: 36px; height: 40px; text-align: center; font-size: 16px; font-weight: 700; background: #0f1325; border: 1px solid #2b3558; border-radius: 8px; color: #ffffff;" />
                 </div>
-                <button type="button" id="verify-otp-btn" class="system-pill-btn" style="width: 100%; min-width: 0; padding: 10px 16px; font-size: 13px;">
-                  ✅ ${i18n.t('auth.verifyOtpBtn')}
+                <button type="button" id="verify-otp-btn" class="system-pill-btn" style="width: 100%; min-width: 0; padding: 10px 16px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                  ${getIcon('checkCircle', 14)}
+                  <span>${i18n.t('auth.verifyOtpBtn')}</span>
                 </button>
                 <div style="text-align: center; margin-top: 8px;">
                   <button type="button" id="resend-otp-btn" style="background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer;">Resend code in 30s</button>
@@ -651,7 +663,7 @@ export function renderAuthPage(container) {
       const sendBtn = container.querySelector('#send-otp-btn');
       if (sendBtn) {
         sendBtn.disabled = true;
-        sendBtn.textContent = `⏳ ${i18n.t('auth.toasts.sendingOtp')}`;
+        sendBtn.innerHTML = `<span class="spinner" style="width: 14px; height: 14px; margin-right: 6px;"></span> ${i18n.t('auth.toasts.sendingOtp')}`;
       }
 
       try {
@@ -692,24 +704,24 @@ export function renderAuthPage(container) {
           if (err.message && err.message.toLowerCase().includes('billing')) {
             errorBanner.innerHTML = `
               <div style="display: flex; gap: 10px; align-items: flex-start;">
-                <span style="font-size: 1.2rem; line-height: 1;">💳</span>
+                <span style="display: inline-flex; align-items: center; color: #f87171; margin-top: 2px;">${getIcon('creditCard', 18)}</span>
                 <div>
                   <strong style="color: #F87171; display: block; margin-bottom: 4px;">Firebase Cloud Billing Required</strong>
                   <span>${err.message}</span>
                   <div style="margin-top: 8px; font-size: 0.74rem; color: #E2E8F0; background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 6px; line-height: 1.4;">
-                    🔧 <strong>Manual Firebase Console Step:</strong> To send real SMS to mobile phones, upgrade your Firebase project <code>farmchainai</code> from Spark to the <strong>Blaze (Pay-as-you-go)</strong> plan in <strong>Firebase Console → Project Overview → Upgrade</strong>.
+                    <strong>Manual Firebase Console Step:</strong> To send real SMS to mobile phones, upgrade your Firebase project <code>farmchainai</code> from Spark to the <strong>Blaze (Pay-as-you-go)</strong> plan in <strong>Firebase Console → Project Overview → Upgrade</strong>.
                   </div>
                 </div>
               </div>
             `;
           } else {
-            errorBanner.textContent = `⚠️ ${err.message || 'Failed to send OTP. Please try again.'}`;
+            errorBanner.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('alert', 14, '', 'color: #f87171;')} ${err.message || 'Failed to send OTP. Please try again.'}</span>`;
           }
         }
         showToast(err.message || i18n.t('auth.toasts.otpSendFailed', { error: 'Service error' }), 'error');
         if (sendBtn) {
           sendBtn.disabled = false;
-          sendBtn.textContent = `📱 ${i18n.t('auth.sendOtpBtn')}`;
+          sendBtn.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('phone', 14)} ${i18n.t('auth.sendOtpBtn')}</span>`;
         }
       }
     }
@@ -728,7 +740,7 @@ export function renderAuthPage(container) {
       if (errorBanner) errorBanner.style.display = 'none';
       if (sendBtn) {
         sendBtn.disabled = false;
-        sendBtn.textContent = `📱 ${i18n.t('auth.sendOtpBtn')}`;
+        sendBtn.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('phone', 14)} ${i18n.t('auth.sendOtpBtn')}</span>`;
       }
 
       clearRecaptchaVerifier('recaptcha-container');
@@ -800,7 +812,7 @@ export function renderAuthPage(container) {
       const verifyBtn = container.querySelector('#verify-otp-btn');
       if (verifyBtn) {
         verifyBtn.disabled = true;
-        verifyBtn.textContent = `⏳ ${i18n.t('common.loading')}`;
+        verifyBtn.innerHTML = `<span class="spinner" style="width: 14px; height: 14px; margin-right: 6px;"></span> ${i18n.t('common.loading')}`;
       }
 
       try {
@@ -825,7 +837,7 @@ export function renderAuthPage(container) {
         if (successSection) {
           successSection.style.display = 'block';
           successSection.innerHTML = `
-            <div style="font-size: 1.6rem; margin-bottom: 4px;">🎉</div>
+            <div style="display: flex; justify-content: center; margin-bottom: 8px; color: var(--accent-green);">${getIcon('checkCircle', 28)}</div>
             <div style="font-weight: 800; font-size: 0.9rem; color: var(--accent-green);">${i18n.t('auth.smartWalletDeployed')}</div>
             <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
               ${i18n.t('auth.zeroSeedPhrase')}
@@ -899,7 +911,7 @@ export function renderAuthPage(container) {
         showToast(err.message || i18n.t('errors.otpFailed'), 'error');
         if (verifyBtn) {
           verifyBtn.disabled = false;
-          verifyBtn.textContent = `✅ ${i18n.t('auth.verifyOtpBtn')}`;
+          verifyBtn.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('checkCircle', 14)} ${i18n.t('auth.verifyOtpBtn')}</span>`;
         }
         // Clear inputs and refocus first digit on failure
         digitInputs.forEach(d => { d.value = ''; d.classList.remove('filled'); });

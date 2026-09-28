@@ -90,7 +90,7 @@ export class FraudDetector {
         type: 'QR_CLONE_VELOCITY',
         severity: 'high',
         message: i18n.t('ai.flagQrCloneVelocity', { velocity: transaction.qrCloneVelocity.toLocaleString() }) ||
-          `🚨 QR scanned at ${transaction.qrCloneVelocity.toLocaleString()} km/h — physically impossible velocity detected`,
+          `QR scanned at ${transaction.qrCloneVelocity.toLocaleString()} km/h — physically impossible velocity detected`,
       });
     } else if (transaction.qrCloneVelocity && transaction.qrCloneVelocity > 120) {
       riskScore += 20;
@@ -130,7 +130,7 @@ export class FraudDetector {
         type: 'QUALITY_MISMATCH',
         severity: 'high',
         message: i18n.t('ai.flagQualityMismatch', { mismatch: transaction.qualityMismatch, stage: transaction.mismatchStage || 'checkpoint', original: transaction.originalScore, reverify: transaction.reVerifyScore }) ||
-          `🚨 Quality mismatch: Score dropped ${transaction.qualityMismatch}% at ${transaction.mismatchStage || 'checkpoint'} (${transaction.originalScore}% → ${transaction.reVerifyScore}%)`,
+          `Quality mismatch: Score dropped ${transaction.qualityMismatch}% at ${transaction.mismatchStage || 'checkpoint'} (${transaction.originalScore}% → ${transaction.reVerifyScore}%)`,
       });
     }
 
@@ -141,7 +141,7 @@ export class FraudDetector {
         type: 'REPEAT_QUALITY_OFFENDER',
         severity: 'high',
         message: i18n.t('ai.flagRepeatOffender', { strikes: transaction.qualityStrikes, reputation: transaction.farmerReputation || 'N/A' }) ||
-          `⛔ Repeat offender: ${transaction.qualityStrikes} quality strikes. Farmer reputation: ${transaction.farmerReputation || 'N/A'}%`,
+          `Repeat offender: ${transaction.qualityStrikes} quality strikes. Farmer reputation: ${transaction.farmerReputation || 'N/A'}%`,
       });
     } else if (transaction.qualityStrikes && transaction.qualityStrikes >= 1) {
       riskScore += 15;
@@ -149,7 +149,7 @@ export class FraudDetector {
         type: 'QUALITY_STRIKE_WARNING',
         severity: 'medium',
         message: i18n.t('ai.flagQualityStrikeWarning', { strikes: transaction.qualityStrikes }) ||
-          `⚠️ Farmer has ${transaction.qualityStrikes} quality strike(s). Under monitoring.`,
+          `Farmer has ${transaction.qualityStrikes} quality strike(s). Under monitoring.`,
       });
     }
 
@@ -160,7 +160,7 @@ export class FraudDetector {
         type: 'WASTE_PRODUCT_ATTEMPT',
         severity: 'high',
         message: i18n.t('ai.flagWasteAttempt', { score: transaction.wasteProductScore || '<20' }) ||
-          `🚨 Waste product registration attempt! AI score: ${transaction.wasteProductScore || '<20'}% — deliberately submitting waste/rotten produce`,
+          `Waste product registration attempt! AI score: ${transaction.wasteProductScore || '<20'}% — deliberately submitting waste/rotten produce`,
       });
     }
 
@@ -171,7 +171,7 @@ export class FraudDetector {
         type: 'GPS_LOCATION_MISMATCH',
         severity: 'high',
         message: i18n.t('ai.flagGpsMismatch', { captured: transaction.capturedLocation || 'unknown', registered: transaction.registeredLocation || 'unknown', dist: transaction.gpsDistance || '?' }) ||
-          `📍 Camera GPS (${transaction.capturedLocation || 'unknown'}) doesn't match registered farm (${transaction.registeredLocation || 'unknown'}) — ${transaction.gpsDistance || '?'} km away`,
+          `Camera GPS (${transaction.capturedLocation || 'unknown'}) doesn't match registered farm (${transaction.registeredLocation || 'unknown'}) — ${transaction.gpsDistance || '?'} km away`,
       });
     }
 
@@ -181,7 +181,7 @@ export class FraudDetector {
       flags.push({
         type: 'NO_LIVE_VERIFICATION',
         severity: 'low',
-        message: i18n.t('ai.flagNoLive') || '📁 Product registered via file upload — no live camera GPS/timestamp verification',
+        message: i18n.t('ai.flagNoLive') || 'Product registered via file upload — no live camera GPS/timestamp verification',
       });
     }
 
@@ -201,12 +201,12 @@ export class FraudDetector {
       flags,
       isApproved: riskScore < 70,
       recommendation: riskScore >= 70
-        ? (i18n.t('ai.recBlock') || '🚨 Block transaction — manual review required')
+        ? (i18n.t('ai.recBlock') || 'Block transaction — manual review required')
         : riskScore >= 40
-          ? (i18n.t('ai.recFlag') || '⚠️ Flag for review — proceed with caution')
+          ? (i18n.t('ai.recFlag') || 'Flag for review — proceed with caution')
           : riskScore >= 20
-            ? (i18n.t('ai.recMinor') || 'ℹ️ Minor flags — monitor activity')
-            : (i18n.t('ai.recLegit') || '✅ Transaction appears legitimate'),
+            ? (i18n.t('ai.recMinor') || 'Minor flags — monitor activity')
+            : (i18n.t('ai.recLegit') || 'Transaction appears legitimate'),
     };
   }
 
@@ -236,12 +236,12 @@ export class FraudDetector {
       { productName: 'Alphonso Mangoes', quantity: 200, unit: 'kg', priceDeviation: 10, accountAge: 120 },
       { productName: 'Raw Cotton', quantity: 6000, unit: 'kg', priceDeviation: 25, accountAge: 5, transferCount: 4 },
       // QR Clone demo alert
-      { productName: '🚨 Cloned QR — Organic Rice Batch', quantity: 500, unit: 'kg', priceDeviation: 0, qrCloneVelocity: 12500, accountAge: 45 },
+      { productName: 'Cloned QR — Organic Rice Batch', quantity: 500, unit: 'kg', priceDeviation: 0, qrCloneVelocity: 12500, accountAge: 45 },
       // No AI verification demo
       { productName: 'Unverified Wheat Batch', quantity: 1000, unit: 'kg', priceDeviation: 15, noAiVerification: true, accountAge: 3 },
       // NEW: Quality mismatch — farmer cheating intermediary
       {
-        productName: '🚨 Quality Fraud — Rotten Tomatoes sold as Premium',
+        productName: 'Quality Fraud — Rotten Tomatoes sold as Premium',
         quantity: 800, unit: 'kg', priceDeviation: 0,
         qualityMismatch: 43, mismatchStage: 'intermediary re-verification',
         originalScore: 78, reVerifyScore: 35,
@@ -249,14 +249,14 @@ export class FraudDetector {
       },
       // NEW: Waste product attempt
       {
-        productName: '🚨 Waste Product — Composted Potatoes',
+        productName: 'Waste Product — Composted Potatoes',
         quantity: 200, unit: 'kg', priceDeviation: -10,
         wasteProductAttempt: true, wasteProductScore: 12,
         qualityStrikes: 1, farmerReputation: 40,
       },
       // NEW: GPS mismatch — photo taken far from farm
       {
-        productName: '📍 GPS Fraud — Rice (photo from warehouse, not farm)',
+        productName: 'GPS Fraud — Rice (photo from warehouse, not farm)',
         quantity: 500, unit: 'kg', priceDeviation: 5,
         gpsLocationMismatch: true, capturedLocation: 'Mumbai Warehouse',
         registeredLocation: 'Nashik Farm', gpsDistance: 180,
@@ -264,7 +264,7 @@ export class FraudDetector {
       },
       // NEW: Repeat offender with multiple strikes
       {
-        productName: '⛔ Suspended Farmer — Repeated Quality Fraud',
+        productName: 'Suspended Farmer — Repeated Quality Fraud',
         quantity: 300, unit: 'kg', priceDeviation: 0,
         qualityStrikes: 3, farmerReputation: 15,
         wasteProductAttempt: true, wasteProductScore: 18,

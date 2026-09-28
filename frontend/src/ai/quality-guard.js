@@ -6,6 +6,7 @@
 
 import { store } from '../data/store.js';
 import { i18n } from '../i18n/index.js';
+import { getIcon } from '../utils/icons.js';
 
 /**
  * QualityGuard — Multi-layer anti-fraud protection system.
@@ -45,7 +46,7 @@ export class QualityGuard {
       return {
         eligible: false,
         reason: i18n.t('ai.accountSuspendedStrikes', { strikes: rep.strikes, max: this.MAX_STRIKES }) ||
-          `🚫 Account suspended — ${rep.strikes} quality strikes (max ${this.MAX_STRIKES})`,
+          `Account suspended — ${rep.strikes} quality strikes (max ${this.MAX_STRIKES})`,
         reputation: rep,
         strikes: rep.strikes,
       };
@@ -55,7 +56,7 @@ export class QualityGuard {
       return {
         eligible: false,
         reason: i18n.t('ai.reputationTooLow') ||
-          '🚫 Reputation too low — quality improvement required before listing',
+          'Reputation too low — quality improvement required before listing',
         reputation: rep,
         strikes: rep.strikes,
       };
@@ -64,8 +65,8 @@ export class QualityGuard {
     return {
       eligible: true,
       reason: rep.strikes > 0
-        ? (i18n.t('ai.strikesWarning', { strikes: rep.strikes }) || `⚠️ ${rep.strikes} strike(s) — maintain quality to avoid suspension`)
-        : (i18n.t('ai.goodStanding') || '✅ Good standing — eligible to list products'),
+        ? (i18n.t('ai.strikesWarning', { strikes: rep.strikes }) || `${rep.strikes} strike(s) — maintain quality to avoid suspension`)
+        : (i18n.t('ai.goodStanding') || 'Good standing — eligible to list products'),
       reputation: rep,
       strikes: rep.strikes,
     };
@@ -232,24 +233,24 @@ export class QualityGuard {
 
     const penalties = {
       low_quality: {
-        1: { action: 'warning', farmerShareReduction: 5, message: '⚠️ Warning: Low quality detected. Farmer share reduced by 5%.' },
-        2: { action: 'delist', farmerShareReduction: 10, message: '🚫 Product delisted. Farmer share reduced by 10%. One more strike → suspension.' },
-        3: { action: 'suspend', farmerShareReduction: 100, message: '⛔ Account SUSPENDED. All pending escrow held for review.' },
+        1: { action: 'warning', farmerShareReduction: 5, message: 'Warning: Low quality detected. Farmer share reduced by 5%.' },
+        2: { action: 'delist', farmerShareReduction: 10, message: 'Product delisted. Farmer share reduced by 10%. One more strike → suspension.' },
+        3: { action: 'suspend', farmerShareReduction: 100, message: 'Account SUSPENDED. All pending escrow held for review.' },
       },
       waste_product: {
-        1: { action: 'delist', farmerShareReduction: 15, message: '🚫 Waste product detected! Product blocked. Farmer share reduced by 15%.' },
-        2: { action: 'suspend', farmerShareReduction: 50, message: '⛔ Repeat waste offense! Account suspended. 50% escrow penalty.' },
-        3: { action: 'permanent_ban', farmerShareReduction: 100, message: '🚨 PERMANENT BAN. Fraudulent activity confirmed. All funds held.' },
+        1: { action: 'delist', farmerShareReduction: 15, message: 'Waste product detected! Product blocked. Farmer share reduced by 15%.' },
+        2: { action: 'suspend', farmerShareReduction: 50, message: 'Repeat waste offense! Account suspended. 50% escrow penalty.' },
+        3: { action: 'permanent_ban', farmerShareReduction: 100, message: 'PERMANENT BAN. Fraudulent activity confirmed. All funds held.' },
       },
       quality_mismatch: {
-        1: { action: 'warning', farmerShareReduction: 5, message: '⚠️ Quality mismatch detected at checkpoint. Investigation initiated.' },
-        2: { action: 'delist', farmerShareReduction: 15, message: '🚫 Repeat quality mismatch. Products under review.' },
-        3: { action: 'suspend', farmerShareReduction: 100, message: '⛔ Systematic quality fraud detected. Account suspended.' },
+        1: { action: 'warning', farmerShareReduction: 5, message: 'Quality mismatch detected at checkpoint. Investigation initiated.' },
+        2: { action: 'delist', farmerShareReduction: 15, message: 'Repeat quality mismatch. Products under review.' },
+        3: { action: 'suspend', farmerShareReduction: 100, message: 'Systematic quality fraud detected. Account suspended.' },
       },
       gps_mismatch: {
-        1: { action: 'flag', farmerShareReduction: 0, message: '🚩 GPS location doesn\'t match registered farm. Flagged for review.' },
-        2: { action: 'warning', farmerShareReduction: 5, message: '⚠️ Repeated GPS mismatch. Possible location fraud.' },
-        3: { action: 'suspend', farmerShareReduction: 20, message: '⛔ Location fraud confirmed. Account suspended.' },
+        1: { action: 'flag', farmerShareReduction: 0, message: 'GPS location doesn\'t match registered farm. Flagged for review.' },
+        2: { action: 'warning', farmerShareReduction: 5, message: 'Repeated GPS mismatch. Possible location fraud.' },
+        3: { action: 'suspend', farmerShareReduction: 20, message: 'Location fraud confirmed. Account suspended.' },
       },
     };
 
@@ -413,29 +414,34 @@ export class QualityGuard {
       rep.reputationScore >= 60 ? '#f59e0b' :
       rep.reputationScore >= 40 ? '#f97316' : '#ef4444';
 
-    const strikeIcons = '🔴'.repeat(rep.strikes) + '⚪'.repeat(Math.max(0, this.MAX_STRIKES - rep.strikes));
+    const strikeDots = Array.from({ length: this.MAX_STRIKES }).map((_, i) => `
+      <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${i < rep.strikes ? '#ef4444' : 'var(--border)'}; margin: 0 2px;"></span>
+    `).join('');
 
     return `
-      <div style="background: rgba(0,0,0,0.25); border: 1px solid ${scoreColor}33; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary, #fff);">${i18n.t('ai.farmerTrustScore') || '🛡️ Farmer Trust Score'}</div>
-          <div style="font-size: 1.2rem; font-weight: 800; color: ${scoreColor};">${rep.reputationScore}%</div>
+      <div class="saas-card" style="padding: 16px 20px; border-left: 4px solid ${scoreColor}; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+            <span style="color: ${scoreColor};">${getIcon('shieldCheck', 18)}</span>
+            <span>${i18n.t('ai.farmerTrustScore') || 'Farmer Trust Score'}</span>
+          </div>
+          <div style="font-size: 1.25rem; font-weight: 800; color: ${scoreColor}; font-family: var(--font-mono, monospace);">${rep.reputationScore}%</div>
         </div>
-        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
-          <div style="width: ${rep.reputationScore}%; height: 100%; background: ${scoreColor}; border-radius: 3px; transition: width 0.5s;"></div>
+        <div style="width: 100%; height: 6px; background: var(--surface-secondary); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 10px;">
+          <div style="width: ${rep.reputationScore}%; height: 100%; background: ${scoreColor}; border-radius: 4px; transition: width 0.5s ease;"></div>
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted, rgba(255,255,255,0.5));">
-          <span>${i18n.t('ai.strikesLabel') || 'Strikes:'} ${strikeIcons}</span>
-          <span>${i18n.t('ai.passRateLabel') || 'Pass Rate:'} ${rep.totalChecks > 0 ? Math.round((rep.passedChecks / rep.totalChecks) * 100) : 100}%</span>
-          <span>${i18n.t('ai.checksLabel') || 'Checks:'} ${rep.totalChecks}</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-secondary);">
+          <span style="display: flex; align-items: center; gap: 4px;">${i18n.t('ai.strikesLabel') || 'Strikes:'} ${strikeDots}</span>
+          <span>${i18n.t('ai.passRateLabel') || 'Pass Rate:'} <strong style="color: var(--text-primary);">${rep.totalChecks > 0 ? Math.round((rep.passedChecks / rep.totalChecks) * 100) : 100}%</strong></span>
+          <span>${i18n.t('ai.checksLabel') || 'Total Audits:'} <strong style="color: var(--text-primary);">${rep.totalChecks}</strong></span>
         </div>
         ${rep.strikes >= this.MAX_STRIKES ? `
-          <div style="margin-top: 8px; padding: 6px 10px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); border-radius: 8px; font-size: 0.75rem; color: #ef4444; font-weight: 600;">
-            ${i18n.t('ai.accountSuspendedNotice') || '⛔ ACCOUNT SUSPENDED — Contact admin to resolve quality disputes'}
+          <div style="margin-top: 10px; padding: 8px 12px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 8px; font-size: 0.8rem; color: #ef4444; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            ${getIcon('xCircle', 16)} ${i18n.t('ai.accountSuspendedNotice') || 'Account Suspended — Contact platform administrator to resolve quality disputes'}
           </div>
         ` : rep.strikes > 0 ? `
-          <div style="margin-top: 8px; padding: 6px 10px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; font-size: 0.75rem; color: #f59e0b;">
-            ${i18n.t('ai.strikesRemainingNotice', { count: this.MAX_STRIKES - rep.strikes }) || `⚠️ ${this.MAX_STRIKES - rep.strikes} strike(s) remaining before suspension`}
+          <div style="margin-top: 10px; padding: 8px 12px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 8px; font-size: 0.8rem; color: #f59e0b; display: flex; align-items: center; gap: 8px;">
+            ${getIcon('alert', 16)} ${i18n.t('ai.strikesRemainingNotice', { count: this.MAX_STRIKES - rep.strikes }) || `${this.MAX_STRIKES - rep.strikes} strike(s) remaining before automated account hold`}
           </div>
         ` : ''}
       </div>

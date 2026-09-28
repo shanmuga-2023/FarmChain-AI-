@@ -47,7 +47,7 @@ export const DEMO_CREDENTIALS = [
     email: 'farmer@farmchain.io',
     password: 'farmer123',
     location: 'Nashik, Maharashtra',
-    avatar: '👨‍🌾'
+    avatar: ''
   },
 
   {
@@ -56,7 +56,7 @@ export const DEMO_CREDENTIALS = [
     email: 'trader@farmchain.io',
     password: 'trader123',
     location: 'Mumbai, Maharashtra',
-    avatar: '🏢'
+    avatar: ''
   },
 
   {
@@ -65,7 +65,7 @@ export const DEMO_CREDENTIALS = [
     email: 'retailer@farmchain.io',
     password: 'retail123',
     location: 'Bangalore, Karnataka',
-    avatar: '🛒'
+    avatar: ''
   },
 
   {
@@ -74,7 +74,7 @@ export const DEMO_CREDENTIALS = [
     email: 'consumer@farmchain.io',
     password: 'consumer123',
     location: 'Bangalore, Karnataka',
-    avatar: '👤'
+    avatar: ''
   },
 
   {
@@ -83,7 +83,7 @@ export const DEMO_CREDENTIALS = [
     email: 'admin@farmchain.io',
     password: 'admin123',
     location: 'Platform HQ',
-    avatar: '🔧'
+    avatar: ''
   },
 
   // Secondary demo accounts
@@ -94,7 +94,7 @@ export const DEMO_CREDENTIALS = [
     email: 'rajesh@farmchain.demo',
     password: 'farmer123',
     location: 'Nashik, Maharashtra',
-    avatar: '👨‍🌾'
+    avatar: ''
   },
 
   {
@@ -103,7 +103,7 @@ export const DEMO_CREDENTIALS = [
     email: 'lakshmi@farmchain.demo',
     password: 'farmer123',
     location: 'Thanjavur, Tamil Nadu',
-    avatar: '👩‍🌾'
+    avatar: ''
   },
 
   {
@@ -112,7 +112,7 @@ export const DEMO_CREDENTIALS = [
     email: 'agritraders@farmchain.demo',
     password: 'trader123',
     location: 'Mumbai, Maharashtra',
-    avatar: '🏢'
+    avatar: ''
   },
 
   {
@@ -121,7 +121,7 @@ export const DEMO_CREDENTIALS = [
     email: 'freshmart@farmchain.demo',
     password: 'retail123',
     location: 'Bangalore, Karnataka',
-    avatar: '🛒'
+    avatar: ''
   },
 
   {
@@ -130,7 +130,7 @@ export const DEMO_CREDENTIALS = [
     email: 'priya@farmchain.demo',
     password: 'consumer123',
     location: 'Bangalore, Karnataka',
-    avatar: '👤'
+    avatar: ''
   },
 
   {
@@ -139,7 +139,7 @@ export const DEMO_CREDENTIALS = [
     email: 'admin@farmchain.demo',
     password: 'admin123',
     location: 'Platform HQ',
-    avatar: '🔧'
+    avatar: ''
   }
 ];
 
@@ -573,7 +573,7 @@ export async function loginWithEmail(email, password) {
 
         location: 'India',
 
-        avatar: '👨‍🌾',
+        avatar: '',
 
         verified:
           firebaseUser.emailVerified ?? false
@@ -756,7 +756,7 @@ export async function loginWithGoogle(
 
         avatar:
           firebaseUser.photoURL ||
-          '👤',
+          '',
 
         createdAt: Date.now(),
 
@@ -1364,26 +1364,5 @@ export function onAuthChange(callback) {
 // ============================================================
 
 function getRoleAvatar(role) {
-
-  const map = {
-
-    farmer: '👨‍🌾',
-
-    intermediary: '🏢',
-
-    retailer: '🛒',
-
-    consumer: '👤',
-
-    admin: '🔧'
-
-  };
-
-
-  return (
-    map[
-    String(role || '')
-      .toLowerCase()
-    ] || '👤'
-  );
+  return '';
 }

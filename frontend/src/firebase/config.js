@@ -39,9 +39,9 @@ try {
     }).catch(() => {});
   }
 
-  console.log("🔥 Firebase initialized successfully for farmchainai!");
+  console.log("[Firebase] Initialized successfully for farmchainai!");
 } catch (error) {
-  console.warn("⚠️ Firebase live connection warning:", error.message);
+  console.warn("[Firebase] Live connection warning:", error.message);
 }
 
 export { app, auth, db, analytics, googleProvider };

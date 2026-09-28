@@ -18,6 +18,7 @@ import { postProduct } from '../../utils/api.js';
 import { addFirestoreProduct } from '../../firebase/firestore.js';
 import { LiveCamera } from '../../components/live-camera.js';
 import { createBatchOnChain } from '../../web3/contracts.js';
+import { getIcon } from '../../utils/icons.js';
 
 export class FarmerProductWizard {
   constructor(container, onComplete, initialData = {}) {
@@ -90,7 +91,9 @@ export class FarmerProductWizard {
         <!-- 1. STICKY TOP HEADER -->
         <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 18px 24px 14px; border-bottom: 1px solid var(--border-rule); background: var(--bg-glass); backdrop-filter: blur(20px); z-index: 20;">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 1.8rem;">🌾</span>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(14,165,233,0.12); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+              ${getIcon('sprout', 22)}
+            </div>
             <div>
               <h2 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; margin: 0; color: var(--text-primary); letter-spacing: -0.01em;">
                 ${i18n.t('wizardTitle')}
@@ -102,17 +105,17 @@ export class FarmerProductWizard {
           </div>
           <div style="display: flex; align-items: center; gap: 10px;">
             ${i18n.renderLanguageSelector('wizard-lang-select', 'padding: 6px 12px; font-size: 0.82rem; font-weight: 700; background: var(--surface-1); color: var(--text-primary); border-radius: 20px; border: 1px solid var(--border-rule); cursor: pointer;')}
-            <button type="button" id="wizard-close-btn" style="background: var(--surface-2); border: none; color: var(--text-primary); width: 34px; height: 34px; border-radius: 50%; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">✕</button>
+            <button type="button" id="wizard-close-btn" style="background: var(--surface-2); border: none; color: var(--text-primary); width: 34px; height: 34px; border-radius: 50%; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">${getIcon('x', 16)}</button>
           </div>
         </div>
 
         <!-- 2. STICKY 4-STEP PROGRESS INDICATOR -->
         <div style="flex-shrink: 0; padding: 12px 24px; background: var(--surface-1); border-bottom: 1px solid var(--border-rule); z-index: 15;">
           <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
-            ${this._renderStepIndicator(1, '🌾', i18n.t('step1Tab'))}
-            ${this._renderStepIndicator(2, '📸', i18n.t('step2Tab'))}
-            ${this._renderStepIndicator(3, '📋', i18n.t('step3Tab'))}
-            ${this._renderStepIndicator(4, '🚀', i18n.t('step4Tab'))}
+            ${this._renderStepIndicator(1, 'sprout', i18n.t('step1Tab'))}
+            ${this._renderStepIndicator(2, 'camera', i18n.t('step2Tab'))}
+            ${this._renderStepIndicator(3, 'orders', i18n.t('step3Tab'))}
+            ${this._renderStepIndicator(4, 'checkCircle', i18n.t('step4Tab'))}
           </div>
         </div>
 
@@ -121,16 +124,17 @@ export class FarmerProductWizard {
           <div style="flex-shrink: 0; padding: 12px 24px 10px; background: var(--surface-0); border-bottom: 1px solid var(--border-rule); z-index: 10;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: var(--surface-1); padding: 6px; border-radius: 14px;">
               <button type="button" class="wizard-mode-btn" data-mode="voice" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; font-weight: 800; font-size: 0.95rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; ${this.inputMode === 'voice' ? 'background: rgba(16, 185, 129, 0.2); color: var(--brand-green); border: 1px solid var(--brand-green); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);' : 'background: transparent; color: var(--text-primary); border: 1px solid transparent;'}">
-                <span style="font-size: 1.25rem;">🎤</span>
+                ${getIcon('mic', 18)}
                 <span>${i18n.t('modeSpeak')}</span>
               </button>
               <button type="button" class="wizard-mode-btn" data-mode="manual" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; font-weight: 800; font-size: 0.95rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; ${this.inputMode === 'manual' ? 'background: rgba(124, 58, 237, 0.2); color: var(--brand-violet); border: 1px solid var(--brand-violet); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);' : 'background: transparent; color: var(--text-primary); border: 1px solid transparent;'}">
-                <span style="font-size: 1.25rem;">⌨️</span>
+                ${getIcon('edit', 18)}
                 <span>${i18n.t('modeType')}</span>
               </button>
             </div>
-            <div style="font-size: 0.74rem; color: var(--text-muted); text-align: center; margin-top: 5px; font-weight: 600;">
-              💡 ${i18n.t('switchPrompt')}
+            <div style="font-size: 0.74rem; color: var(--text-muted); text-align: center; margin-top: 5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px;">
+              ${getIcon('info', 13)}
+              <span>${i18n.t('switchPrompt')}</span>
             </div>
           </div>
         ` : ''}
@@ -200,7 +204,7 @@ export class FarmerProductWizard {
 
     return `
       <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 6px 4px; background: ${bg}; border: 1px solid ${border}; border-radius: 10px; transition: all 0.2s;">
-        <span style="font-size: 0.95rem; font-weight: 800;">${isCompleted ? '✓' : icon}</span>
+        <span style="display: flex; align-items: center; justify-content: center; height: 20px; color: ${color};">${isCompleted ? getIcon('check', 14) : getIcon(icon, 14)}</span>
         <span style="font-size: 0.72rem; font-weight: 800; color: ${color}; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">
           ${label}
         </span>
@@ -250,8 +254,8 @@ export class FarmerProductWizard {
       ${this.inputMode === 'voice' ? `
         <div class="voice-assistant-card animate-fade-in" style="background: #F0FDF4; border: 2px dashed #22c55e; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 22px;">
           <div style="margin-bottom: 12px;">
-            <button type="button" id="wizard-mic-btn" style="width: 76px; height: 76px; border-radius: 50%; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 2.2rem; transition: all 0.3s; ${this.isListening ? 'background: #ef4444; box-shadow: 0 0 0 12px rgba(239, 68, 68, 0.25); animation: pulse 1.5s infinite;' : 'background: #16a34a; box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4); color: #fff;'}">
-              <span>${this.isListening ? '⏹️' : '🎙️'}</span>
+            <button type="button" id="wizard-mic-btn" style="width: 76px; height: 76px; border-radius: 50%; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.3s; ${this.isListening ? 'background: #ef4444; box-shadow: 0 0 0 12px rgba(239, 68, 68, 0.25); animation: pulse 1.5s infinite;' : 'background: #16a34a; box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4); color: #fff;'}">
+              <span>${this.isListening ? getIcon('x', 28) : getIcon('mic', 28)}</span>
             </button>
           </div>
 
@@ -271,8 +275,9 @@ export class FarmerProductWizard {
           <!-- Voice Error Box with 1-tap fallback -->
           ${this.voiceError ? `
             <div style="margin-top: 14px; padding: 12px 16px; background: #FEF2F2; border: 2px solid #F87171; border-radius: 12px; text-align: left;">
-              <div style="font-size: 0.84rem; color: #991B1B; font-weight: 700; margin-bottom: 8px;">
-                ⚠️ ${this.voiceError}
+              <div style="font-size: 0.84rem; color: #991B1B; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                ${getIcon('alert', 14)}
+                <span>${this.voiceError}</span>
               </div>
               <button type="button" id="wizard-error-switch-btn" class="btn btn-secondary btn-sm" style="font-size: 0.82rem; font-weight: 800; padding: 8px 16px; background: #FFFFFF; border: 2px solid #DC2626; color: #DC2626; border-radius: 8px; cursor: pointer;">
                 ${i18n.t('switchToManualBtn')}
@@ -285,14 +290,14 @@ export class FarmerProductWizard {
       <!-- REVIEW & EDITABLE FORM FIELDS (Used in both Manual and Voice modes) -->
       <div style="background: #FFFFFF; border: 2px solid #E4DCCB; border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
         <div style="font-size: 0.88rem; font-weight: 800; color: #2C4A3E; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
-          <span>📝</span>
+          <span>${getIcon('edit', 14)}</span>
           <span>${this.inputMode === 'voice' ? i18n.t('farmer.wizard.verifiedFieldsHeader') : i18n.t('farmer.wizard.enterDetailsHeader')}</span>
         </div>
 
         <!-- Crop Name -->
         <div class="form-group" style="margin-bottom: 16px;">
           <label class="form-label" style="font-size: 0.88rem; font-weight: 800; color: #1E170F; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-            <span>🌾</span> <span>${i18n.t('cropNameLabel')}</span> <span style="color: #dc2626;">*</span>
+            <span>${getIcon('sprout', 14)}</span> <span>${i18n.t('cropNameLabel')}</span> <span style="color: #dc2626;">*</span>
           </label>
           <input type="text" class="form-input" id="wizard-crop-name" value="${this.formData.name}" placeholder="${i18n.t('cropNamePlaceholder')}" style="padding: 12px 14px; font-size: 1rem; font-weight: 700; min-height: 48px; border-radius: 10px; background: #FFFFFF; border: 2px solid #CBD5E1; color: #1E170F;" />
         </div>
@@ -304,17 +309,18 @@ export class FarmerProductWizard {
           </div>
           <div style="display: flex; flex-wrap: wrap; gap: 8px;">
             ${[
-              { name: 'Basmati Rice', emoji: '🌾' },
-              { name: 'Desi Tomato', emoji: '🍅' },
-              { name: 'Nashik Red Onion', emoji: '🧅' },
-              { name: 'Sharbati Wheat', emoji: '🌿' },
-              { name: 'Fresh Potato', emoji: '🥔' },
-              { name: 'Salem Turmeric', emoji: '🟡' },
-              { name: 'Green Chilli', emoji: '🌶️' },
-              { name: 'Alphonso Mango', emoji: '🥭' },
+              { name: 'Basmati Rice' },
+              { name: 'Desi Tomato' },
+              { name: 'Nashik Red Onion' },
+              { name: 'Sharbati Wheat' },
+              { name: 'Fresh Potato' },
+              { name: 'Salem Turmeric' },
+              { name: 'Green Chilli' },
+              { name: 'Alphonso Mango' },
             ].map(c => `
-              <button type="button" class="quick-crop-chip" data-crop="${c.name}" style="padding: 8px 14px; background: #F1ECE0; border: 1.5px solid #CBD5E1; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: #1E170F; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                <span>${c.emoji}</span> <span>${c.name}</span>
+              <button type="button" class="quick-crop-chip" data-crop="${c.name}" style="padding: 7px 14px; background: #F1ECE0; border: 1.5px solid #CBD5E1; border-radius: 20px; font-size: 0.82rem; font-weight: 700; color: #1E170F; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                ${getIcon('sprout', 12)}
+                <span>${c.name}</span>
               </button>
             `).join('')}
           </div>
@@ -324,14 +330,14 @@ export class FarmerProductWizard {
         <div class="form-row" style="margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
           <div class="form-group">
             <label class="form-label" style="font-size: 0.88rem; font-weight: 800; color: #1E170F; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-              <span>⚖️</span> <span>${i18n.t('quantityLabel')}</span> <span style="color: #dc2626;">*</span>
+              <span>${getIcon('pricing', 14)}</span> <span>${i18n.t('quantityLabel')}</span> <span style="color: #dc2626;">*</span>
             </label>
             <input type="number" class="form-input" id="wizard-quantity" value="${this.formData.quantity}" placeholder="${i18n.t('quantityPlaceholder')}" min="1" style="padding: 12px 14px; font-size: 1rem; font-weight: 700; min-height: 48px; border-radius: 10px; background: #FFFFFF; border: 2px solid #CBD5E1; color: #1E170F;" />
           </div>
 
           <div class="form-group">
             <label class="form-label" style="font-size: 0.88rem; font-weight: 800; color: #1E170F; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-              <span>📦</span> <span>${i18n.t('unitLabel')}</span>
+              <span>${getIcon('package', 14)}</span> <span>${i18n.t('unitLabel')}</span>
             </label>
             <select class="form-select" id="wizard-unit" style="padding: 12px 38px 12px 14px; font-size: 0.95rem; font-weight: 700; min-height: 48px; border-radius: 10px; background-color: #FFFFFF; border: 2px solid #CBD5E1; color: #1E170F; appearance: none; background-image: url('data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'16\\' height=\\'16\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'%231E170F\\' stroke-width=\\'2.5\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\'%3E%3Cpolyline points=\\'6 9 12 15 18 9\\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: calc(100% - 14px) center; background-size: 14px; cursor: pointer;">
               <option value="kg" ${this.formData.unit === 'kg' ? 'selected' : ''}>${i18n.t('unitKg')}</option>
@@ -346,14 +352,14 @@ export class FarmerProductWizard {
         <div class="form-row" style="margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
           <div class="form-group">
             <label class="form-label" style="font-size: 0.88rem; font-weight: 800; color: #1E170F; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-              <span>💰</span> <span>${i18n.t('priceLabel')}</span> <span style="color: #dc2626;">*</span>
+              <span>${getIcon('dollar', 14)}</span> <span>${i18n.t('priceLabel')}</span> <span style="color: #dc2626;">*</span>
             </label>
             <input type="number" class="form-input" id="wizard-price" value="${this.formData.pricePerUnit}" placeholder="${i18n.t('pricePlaceholder')}" min="1" style="padding: 12px 14px; font-size: 1rem; font-weight: 700; min-height: 48px; border-radius: 10px; background: #FFFFFF; border: 2px solid #CBD5E1; color: #1E170F;" />
           </div>
 
           <div class="form-group">
             <label class="form-label" style="font-size: 0.88rem; font-weight: 800; color: #1E170F; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-              <span>📅</span> <span>${i18n.t('harvestDateLabel')}</span>
+              <span>${getIcon('calendar', 14)}</span> <span>${i18n.t('harvestDateLabel')}</span>
             </label>
             <input type="date" class="form-input" id="wizard-harvest" value="${this.formData.harvestDate}" style="padding: 12px 14px; font-size: 0.95rem; font-weight: 700; min-height: 48px; border-radius: 10px; background: #FFFFFF; border: 2px solid #CBD5E1; color: #1E170F;" />
           </div>
@@ -366,11 +372,11 @@ export class FarmerProductWizard {
               ${i18n.t('categoryLabel')}
             </label>
             <select class="form-select" id="wizard-category" style="padding: 12px 38px 12px 14px; font-size: 0.95rem; font-weight: 700; min-height: 48px; border-radius: 10px; background-color: #FFFFFF; border: 2px solid #CBD5E1; color: #1E170F; appearance: none; background-image: url('data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'16\\' height=\\'16\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'%231E170F\\' stroke-width=\\'2.5\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\'%3E%3Cpolyline points=\\'6 9 12 15 18 9\\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: calc(100% - 14px) center; background-size: 14px; cursor: pointer;">
-              <option value="Grains" ${this.formData.category === 'Grains' ? 'selected' : ''}>🌾 ${i18n.t('catGrains')}</option>
-              <option value="Vegetables" ${this.formData.category === 'Vegetables' ? 'selected' : ''}>🍅 ${i18n.t('catVegetables')}</option>
-              <option value="Fruits" ${this.formData.category === 'Fruits' ? 'selected' : ''}>🍎 ${i18n.t('catFruits')}</option>
-              <option value="Spices" ${this.formData.category === 'Spices' ? 'selected' : ''}>🟡 ${i18n.t('catSpices')}</option>
-              <option value="Cash Crops" ${this.formData.category === 'Cash Crops' ? 'selected' : ''}>🎋 ${i18n.t('catCashCrops')}</option>
+              <option value="Grains" ${this.formData.category === 'Grains' ? 'selected' : ''}>${i18n.t('catGrains')}</option>
+              <option value="Vegetables" ${this.formData.category === 'Vegetables' ? 'selected' : ''}>${i18n.t('catVegetables')}</option>
+              <option value="Fruits" ${this.formData.category === 'Fruits' ? 'selected' : ''}>${i18n.t('catFruits')}</option>
+              <option value="Spices" ${this.formData.category === 'Spices' ? 'selected' : ''}>${i18n.t('catSpices')}</option>
+              <option value="Cash Crops" ${this.formData.category === 'Cash Crops' ? 'selected' : ''}>${i18n.t('catCashCrops')}</option>
             </select>
           </div>
 
@@ -387,8 +393,9 @@ export class FarmerProductWizard {
 
         <!-- AI Fair Price Hint -->
         <div id="wizard-price-hint" style="margin-top: 10px; padding: 12px 16px; background: #ECFDF5; border: 2px solid #6EE7B7; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
-          <div style="font-size: 0.84rem; color: #065F46; font-weight: 800;">
-            🤖 ${i18n.t('aiSuggestedFairPrice')}
+          <div style="font-size: 0.84rem; color: #065F46; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+            ${getIcon('bot', 15)}
+            <span>${i18n.t('aiSuggestedFairPrice')}</span>
           </div>
           <div style="font-size: 1rem; font-weight: 900; color: #047857;" id="wizard-fair-price-val">
             ₹${this.formData.pricePerUnit || 45} / ${this.formData.unit}
@@ -416,12 +423,12 @@ export class FarmerProductWizard {
         <!-- Two Clear Action Options Side-by-Side -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
           <button type="button" class="btn btn-primary" id="wizard-open-camera-btn" style="min-height: 56px; padding: 14px; font-size: 0.95rem; font-weight: 800; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; background: #16a34a; border: 2px solid #15803d; color: #FFFFFF; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35); cursor: pointer;">
-            <span style="font-size: 1.35rem;">📸</span>
+            ${getIcon('camera', 20)}
             <span>${i18n.t('takeLivePhotoBtn')}</span>
           </button>
 
           <label for="wizard-file-input" class="btn btn-secondary" style="min-height: 56px; padding: 14px; font-size: 0.95rem; font-weight: 800; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; margin: 0; background: #FFFFFF; border: 2px solid #CBD5E1; color: #1E170F; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-            <span style="font-size: 1.35rem;">🖼️</span>
+            ${getIcon('upload', 20)}
             <span>${i18n.t('uploadGalleryBtn')}</span>
           </label>
           <input type="file" id="wizard-file-input" accept="image/*" style="display: none;" />
@@ -429,7 +436,7 @@ export class FarmerProductWizard {
 
         <!-- Live Camera Information Notice -->
         <div style="padding: 12px 16px; background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 1.4rem;">🛰️</span>
+          <span style="color: #166534;">${getIcon('mapPin', 20)}</span>
           <div style="font-size: 0.8rem; color: #166534; font-weight: 600; line-height: 1.4;">
             <strong>${i18n.t('farmer.wizard.hardwareVerifiedCapture')}:</strong> ${i18n.t('liveCameraSub')}
           </div>
@@ -447,20 +454,20 @@ export class FarmerProductWizard {
               <div style="margin-top: 16px; padding: 14px 16px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 14px; text-align: left;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                   <span style="font-size: 0.82rem; font-weight: 800; color: #15803D; display: flex; align-items: center; gap: 6px;">
-                    <span>✅</span> <span>${i18n.t('farmer.wizard.sensorVerified')}</span>
+                    <span>${getIcon('checkCircle', 14)}</span> <span>${i18n.t('farmer.wizard.sensorVerified')}</span>
                   </span>
                   <span style="font-size: 0.72rem; padding: 3px 8px; background: #DCFCE7; color: #166534; border-radius: 20px; font-weight: 700;">
                     ±${this.captureProof.location?.accuracy || 15}m ${i18n.t('farmer.wizard.gpsAccuracy')}
                   </span>
                 </div>
                 <div style="font-size: 0.84rem; color: #1E170F; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-                  <span>📍</span> <span>${this.captureProof.location?.address || `${this.captureProof.location?.lat?.toFixed(4)}°N, ${this.captureProof.location?.lng?.toFixed(4)}°E`}</span>
+                  <span>${getIcon('mapPin', 14)}</span> <span>${this.captureProof.location?.address || `${this.captureProof.location?.lat?.toFixed(4)}°N, ${this.captureProof.location?.lng?.toFixed(4)}°E`}</span>
                 </div>
                 <div style="font-size: 0.76rem; color: #475569; font-weight: 600; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                  <span>🛰️</span> <span>${i18n.t('farmer.wizard.gpsCoords')}: ${this.captureProof.location?.lat?.toFixed(4)}°N, ${this.captureProof.location?.lng?.toFixed(4)}°E</span>
+                  <span>${getIcon('mapPin', 14)}</span> <span>${i18n.t('farmer.wizard.gpsCoords')}: ${this.captureProof.location?.lat?.toFixed(4)}°N, ${this.captureProof.location?.lng?.toFixed(4)}°E</span>
                 </div>
                 <div style="font-size: 0.76rem; color: #475569; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                  <span>📅</span> <span>${i18n.t('farmer.wizard.captureTimestamp')}: ${formatDateTime(this.captureProof.timestamp)}</span>
+                  <span>${getIcon('calendar', 14)}</span> <span>${i18n.t('farmer.wizard.captureTimestamp')}: ${formatDateTime(this.captureProof.timestamp)}</span>
                 </div>
               </div>
             ` : ''}
@@ -489,7 +496,9 @@ export class FarmerProductWizard {
         ` : `
           <!-- Placeholder when no photo is taken yet -->
           <div style="border: 2.5px dashed #CBD5E1; border-radius: 16px; padding: 40px 20px; text-align: center; background: #FFFFFF; margin-bottom: 18px;">
-            <div style="font-size: 3.2rem; margin-bottom: 10px;">📸</div>
+            <div style="width: 64px; height: 64px; margin: 0 auto 12px; border-radius: 50%; background: #F1ECE0; display: flex; align-items: center; justify-content: center; color: #64748B;">
+              ${getIcon('camera', 32)}
+            </div>
             <div style="font-size: 1.05rem; font-weight: 800; color: #1E170F; margin-bottom: 4px;">
               ${i18n.t('farmer.wizard.noPhotoYet')}
             </div>
@@ -499,8 +508,9 @@ export class FarmerProductWizard {
           </div>
         `}
 
-        <div style="font-size: 0.78rem; color: #5C4D3C; text-align: center; line-height: 1.4; font-weight: 500;">
-          ℹ️ ${i18n.t('qualityAssessmentNote')}
+        <div style="font-size: 0.78rem; color: #5C4D3C; text-align: center; line-height: 1.4; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          ${getIcon('info', 13)}
+          <span>${i18n.t('qualityAssessmentNote')}</span>
         </div>
       </div>
     `;
@@ -528,7 +538,7 @@ export class FarmerProductWizard {
         <!-- Read Aloud Text-to-Speech Button -->
         <div style="text-align: center; margin-bottom: 18px;">
           <button type="button" class="btn btn-secondary btn-sm" id="wizard-speak-summary-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 20px; font-weight: 800; font-size: 0.88rem; background: #EFF6FF; border: 2px solid #93C5FD; color: #1D4ED8; cursor: pointer; box-shadow: 0 2px 6px rgba(29, 78, 216, 0.1);">
-            <span style="font-size: 1.15rem;">${this.isSpeaking ? '⏹️' : '🔊'}</span>
+            <span>${this.isSpeaking ? getIcon('x', 16) : getIcon('mic', 16)}</span>
             <span>${this.isSpeaking ? i18n.t('stopAudioBtn') : i18n.t('listenSummaryBtn')}</span>
           </button>
         </div>
@@ -536,9 +546,9 @@ export class FarmerProductWizard {
         <!-- Summary Card with Parchment Editorial Styling -->
         <div style="background: #FFFFFF; border: 2px solid #E4DCCB; border-radius: 18px; padding: 22px; margin-bottom: 18px; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
           <div style="display: flex; gap: 18px; align-items: center; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1.5px solid #E4DCCB;">
-            <!-- Crop Photo Thumbnail / Emoji -->
-            <div style="width: 88px; height: 88px; border-radius: 14px; overflow: hidden; background: #F1ECE0; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-              ${this.photoData ? `<img src="${this.photoData}" style="width: 100%; height: 100%; object-fit: cover;" />` : cropEmoji}
+            <!-- Crop Photo Thumbnail -->
+            <div style="width: 88px; height: 88px; border-radius: 14px; overflow: hidden; background: #F1ECE0; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); color: #64748B;">
+              ${this.photoData ? `<img src="${this.photoData}" style="width: 100%; height: 100%; object-fit: cover;" />` : getIcon('sprout', 36)}
             </div>
 
             <div style="flex: 1;">
@@ -546,7 +556,7 @@ export class FarmerProductWizard {
                 <h4 style="font-size: 1.3rem; font-weight: 800; color: #1E170F; margin: 0;">
                   ${this.formData.name || 'Produce Batch'}
                 </h4>
-                ${this.formData.isOrganic ? `<span class="badge" style="background: #DCFCE7; color: #166534; border: 1.5px solid #86EFAC; font-size: 0.76rem; font-weight: 800; padding: 3px 10px; border-radius: 20px;">🌿 ${i18n.t('organicYes')}</span>` : ''}
+                ${this.formData.isOrganic ? `<span class="badge" style="background: #DCFCE7; color: #166534; border: 1.5px solid #86EFAC; font-size: 0.76rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">${getIcon('leaf', 12)} ${i18n.t('organicYes')}</span>` : ''}
               </div>
 
               <div style="font-size: 0.84rem; color: #5C4D3C; margin-top: 4px; font-weight: 600;">
@@ -555,15 +565,15 @@ export class FarmerProductWizard {
 
               ${this.captureProof ? `
                 <div style="margin-top: 6px; font-size: 0.76rem; color: #166534; font-weight: 700; background: #DCFCE7; border: 1px solid #86EFAC; padding: 4px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                  <span>📸 <strong>${i18n.t('farmer.wizard.liveHardwareVerified')}:</strong> ${this.captureProof.location?.address || `${this.captureProof.location?.lat?.toFixed(4)}°N, ${this.captureProof.location?.lng?.toFixed(4)}°E`}</span>
+                  <span>${getIcon('camera', 14)} <strong>${i18n.t('farmer.wizard.liveHardwareVerified')}:</strong> ${this.captureProof.location?.address || `${this.captureProof.location?.lat?.toFixed(4)}°N, ${this.captureProof.location?.lng?.toFixed(4)}°E`}</span>
                   <span>•</span>
-                  <span>📅 ${formatDateTime(this.captureProof.timestamp)}</span>
+                  <span>${getIcon('calendar', 14)} ${formatDateTime(this.captureProof.timestamp)}</span>
                 </div>
               ` : ''}
 
               <!-- AI Quality Badge in Summary -->
               <div style="margin-top: 8px;">
-                ${this.photoGrade ? this.photoGrade.badgeHtml : `<span class="badge" style="background: #DCFCE7; color: #166534; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 20px;">✓ ${i18n.t('farmer.wizard.readyForMarket')}</span>`}
+                ${this.photoGrade ? this.photoGrade.badgeHtml : `<span class="badge" style="background: #DCFCE7; color: #166534; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">${getIcon('checkCircle', 12)} ${i18n.t('farmer.wizard.readyForMarket')}</span>`}
               </div>
             </div>
           </div>
@@ -600,7 +610,7 @@ export class FarmerProductWizard {
           <!-- Polygon Amoy On-Chain Mint Toggle -->
           <div style="margin-top: 14px; background: #FAF5FF; border: 1.5px solid #DDD6FE; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 1.3rem;">⛓️</span>
+              <span style="color: #7C3AED;">${getIcon('blockchain', 20)}</span>
               <div>
                 <div style="font-size: 0.85rem; font-weight: 800; color: #5B21B6;">Mint On-Chain Batch on Polygon Amoy</div>
                 <div style="font-size: 0.74rem; color: #6D28D9;">Chain ID: 80002 · Cryptographic provenance & fair pricing</div>
@@ -646,7 +656,9 @@ export class FarmerProductWizard {
     if (this.isSuccess) {
       return `
         <div style="text-align: center; padding: 36px 16px;" class="animate-scale-up">
-          <div style="font-size: 4.5rem; margin-bottom: 14px; animation: bounce 1.2s ease-in-out;">🎉</div>
+          <div style="width: 72px; height: 72px; margin: 0 auto 16px; border-radius: 50%; background: rgba(34, 197, 94, 0.15); border: 1.5px solid rgba(34, 197, 94, 0.4); display: flex; align-items: center; justify-content: center; color: var(--success);">
+            ${getIcon('checkCircle', 40)}
+          </div>
           <h3 style="font-size: 1.55rem; font-weight: 900; color: #15803D; margin-bottom: 8px;">
             ${i18n.t('listingSuccessTitle')}
           </h3>
@@ -657,13 +669,17 @@ export class FarmerProductWizard {
           <!-- Listing Preview Chip -->
           <div style="background: #FFFFFF; border: 2px solid #E4DCCB; border-radius: 16px; padding: 16px 22px; max-width: 420px; margin: 0 auto 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
             <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
-              <span style="font-size: 2.2rem;">${getCropEmoji(this.formData.name)}</span>
+              <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(14, 165, 233, 0.12); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                ${getIcon('sprout', 24)}
+              </div>
               <div>
                 <div style="font-weight: 800; font-size: 1rem; color: #1E170F;">${this.formData.name}</div>
                 <div style="font-size: 0.82rem; color: #64748B; font-weight: 600;">${this.formData.quantity} ${this.formData.unit} · ₹${this.formData.pricePerUnit}/${this.formData.unit}</div>
               </div>
             </div>
-            <span class="badge" style="background: #DCFCE7; color: #166534; border: 1.5px solid #86EFAC; font-size: 0.78rem; font-weight: 800; padding: 4px 12px; border-radius: 20px;">✓ Active</span>
+            <span class="badge" style="background: #DCFCE7; color: #166534; border: 1.5px solid #86EFAC; font-size: 0.78rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+              ${getIcon('checkCircle', 12)} Active
+            </span>
           </div>
 
           <!-- Post-submission Action Buttons -->
@@ -900,7 +916,7 @@ export class FarmerProductWizard {
         this.isListening = false;
         const micBtn = document.getElementById('wizard-mic-btn');
         if (micBtn && !this.isListening) {
-          micBtn.innerHTML = '<span>🎙️</span>';
+          micBtn.innerHTML = '<span>' + getIcon('mic', 28) + '</span>';
         }
       }
     });
@@ -1134,7 +1150,7 @@ export class FarmerProductWizard {
 
       // Synchronously post to backend API so all clients/consumers can access immediately
       postProduct(productData).then(saved => {
-        console.log('✅ Product synced to backend API:', saved);
+        console.log('[FarmChain] Product synced to backend API:', saved);
       }).catch(err => {
         console.warn('Backend product sync warning:', err);
       });
@@ -1149,7 +1165,7 @@ export class FarmerProductWizard {
           quantity: productData.quantity,
           price: productData.pricePerUnit
         }).then(txResult => {
-          console.log('✅ Batch successfully minted on-chain:', txResult);
+          console.log('[FarmChain] Batch successfully minted on-chain:', txResult);
           productData.onChainBatchId = productData.productId;
           productData.blockchainVerified = true;
           if (txResult?.txHash) productData.txHash = txResult.txHash;

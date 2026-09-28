@@ -16,6 +16,7 @@ import { QualityGuard } from '../../ai/quality-guard.js';
 import { VisualOracle } from '../../ai/visual-oracle.js';
 import { LiveCamera } from '../../components/live-camera.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderIntermediaryDashboard(container) {
   const user = store.get('currentUser') || { name: 'Trader', id: 'trader-001' };
@@ -51,22 +52,22 @@ export function renderIntermediaryDashboard(container) {
         <div class="page-content">
           <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">${getIcon('package', 24)}</div>
               <div class="stat-card-value">${formatNumber(purchased.length)}</div>
               <div class="stat-card-label">${i18n.t('intermediary.dashboard.statProductsSourced')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">${getIcon('creditCard', 24)}</div>
               <div class="stat-card-value">${formatCurrency(revenue)}</div>
               <div class="stat-card-label">${i18n.t('intermediary.dashboard.statRevenue')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">💸</div>
+              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">${getIcon('barChart', 24)}</div>
               <div class="stat-card-value">${formatCurrency(totalInvested)}</div>
               <div class="stat-card-label">${i18n.t('intermediary.dashboard.statTotalInvested')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">🔄</div>
+              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">${getIcon('delivery', 24)}</div>
               <div class="stat-card-value">${formatNumber(transfers.length)}</div>
               <div class="stat-card-label">${i18n.t('intermediary.dashboard.statOwnershipTransfers')}</div>
             </div>
@@ -81,7 +82,7 @@ export function renderIntermediaryDashboard(container) {
                     ${i18n.t('intermediary.dashboard.aggregationMatrix')}
                   </span>
                   <span class="stamp-seal stamp-verified">
-                    ${i18n.t('intermediary.dashboard.originsPreserved')} ✓
+                    ${i18n.t('intermediary.dashboard.originsPreserved')}
                   </span>
                 </div>
                 <div class="card-title" style="margin-top: 8px; font-size: 1.15rem;">
@@ -166,15 +167,22 @@ export function renderIntermediaryDashboard(container) {
           <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.06), rgba(168, 85, 247, 0.06)); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <div>
-                <div style="font-weight: 700; font-size: 0.88rem; color: var(--accent-green);">🔬 ${i18n.t('intermediary.dashboard.qualityReverifyTitle')}</div>
+                <div style="font-weight: 700; font-size: 0.88rem; color: var(--accent-green); display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('bot', 16, '', 'color: var(--accent-green);')}
+                  <span>${i18n.t('intermediary.dashboard.qualityReverifyTitle')}</span>
+                </div>
                 <div style="font-size: 0.72rem; color: var(--text-muted);">${i18n.t('intermediary.dashboard.qualityReverifyDesc')}</div>
               </div>
-              <span class="badge badge-success" style="font-size: 0.7rem;">🛡️ ${i18n.t('intermediary.dashboard.protectedBadge')}</span>
+              <span class="badge badge-success" style="font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;">
+                ${getIcon('shieldCheck', 12)}
+                <span>${i18n.t('intermediary.dashboard.protectedBadge')}</span>
+              </span>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               ${allProducts.filter(p => p.farmerId !== user.id).slice(0, 3).map(p => `
-                <button class="btn btn-secondary btn-sm reverify-btn" data-product-id="${p.productId}" data-farmer-id="${p.farmerId}" data-original-score="${p.aiQualityScore || 80}" data-product-name="${p.name}" style="font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
-                  🔬 ${i18n.t('intermediary.dashboard.reverifyBtn')}: ${localizeCropName(p.name)} (${p.aiQualityScore || '?'}%)
+                <button class="btn btn-secondary btn-sm reverify-btn" data-product-id="${p.productId}" data-farmer-id="${p.farmerId}" data-original-score="${p.aiQualityScore || 80}" data-product-name="${p.name}" style="font-size: 0.75rem; display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('bot', 13)}
+                  <span>${i18n.t('intermediary.dashboard.reverifyBtn')}: ${localizeCropName(p.name)} (${p.aiQualityScore || '?'}%)</span>
                 </button>
               `).join('')}
             </div>
@@ -184,7 +192,7 @@ export function renderIntermediaryDashboard(container) {
           <!-- zk-SNARK Privacy Toggle -->
           <div class="zk-shield-banner" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.06), rgba(59, 130, 246, 0.06)); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 1.3rem;">🔒</span>
+              <span style="color: var(--accent-purple); display: flex; align-items: center;">${getIcon('shieldCheck', 22)}</span>
               <div>
                 <div style="font-size: 0.82rem; font-weight: 700; color: var(--accent-purple);">${i18n.t('intermediary.dashboard.zkPrivacyTitle')}</div>
                 <div style="font-size: 0.72rem; color: var(--text-muted);">${i18n.t('intermediary.dashboard.zkPrivacyDesc')}</div>
@@ -204,7 +212,10 @@ export function renderIntermediaryDashboard(container) {
           <div class="charts-grid">
             <div class="chart-card">
               <div class="chart-card-header">
-                <div class="chart-card-title">📊 ${i18n.t('intermediary.dashboard.txVolumeChartTitle')}</div>
+                <div class="chart-card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('barChart', 16, '', 'color: var(--accent-amber);')}
+                  <span>${i18n.t('intermediary.dashboard.txVolumeChartTitle')}</span>
+                </div>
               </div>
               <div class="chart-wrapper">
                 <canvas id="intermediary-volume-chart"></canvas>
@@ -212,7 +223,10 @@ export function renderIntermediaryDashboard(container) {
             </div>
             <div class="chart-card">
               <div class="chart-card-header">
-                <div class="chart-card-title">💰 ${i18n.t('intermediary.dashboard.marginChartTitle')}</div>
+                <div class="chart-card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('pieChart', 16, '', 'color: var(--accent-green);')}
+                  <span>${i18n.t('intermediary.dashboard.marginChartTitle')}</span>
+                </div>
               </div>
               <div class="chart-wrapper">
                 <canvas id="intermediary-margin-chart"></canvas>
@@ -223,16 +237,24 @@ export function renderIntermediaryDashboard(container) {
           <!-- Available Products to Source -->
           <div class="card" style="margin-top: 20px;">
             <div class="card-header">
-              <div class="card-title">🏪 ${i18n.t('intermediary.dashboard.availableProductsTitle')}</div>
+              <div class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                ${getIcon('store', 16, '', 'color: var(--accent-blue);')}
+                <span>${i18n.t('intermediary.dashboard.availableProductsTitle')}</span>
+              </div>
               <button class="btn btn-primary btn-sm" onclick="window.location.hash='/intermediary/inventory'">${i18n.t('intermediary.dashboard.browseAllBtn')} →</button>
             </div>
             <div class="data-grid" style="margin-top: 16px;">
               ${allProducts.filter(p => p.farmerId !== user.id).slice(0, 4).map(p => `
                 <div class="product-card">
-                  <div class="product-card-image" style="height: 120px;">${p.emoji || getCropEmoji(p.name)}</div>
+                  <div class="product-card-image" style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03);">
+                    ${getCropEmoji(p.name, 40)}
+                  </div>
                   <div class="product-card-body">
                     <div class="product-card-name">${localizeCropName(p.name)}</div>
-                    <div class="product-card-origin">📍 ${localizeLocation(p.origin)}</div>
+                    <div class="product-card-origin" style="display: flex; align-items: center; gap: 4px;">
+                      ${getIcon('mapPin', 12, '', 'color: var(--text-muted);')}
+                      <span>${localizeLocation(p.origin)}</span>
+                    </div>
                     <div class="product-card-price">${formatCurrency(p.pricePerUnit)}<span class="product-card-unit">/${localizeUnit(p.unit)}</span></div>
                     <div style="margin-top: 8px;">
                       <span class="badge badge-success">${formatNumber(p.quantity)} ${localizeUnit(p.unit)} ${i18n.t('farmer.products.available')}</span>
@@ -250,14 +272,19 @@ export function renderIntermediaryDashboard(container) {
           <!-- Recent Orders -->
           <div class="card" style="margin-top: 20px;">
             <div class="card-header">
-              <div class="card-title">📋 ${i18n.t('farmer.dashboard.recentActivityTitle')}</div>
+              <div class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                ${getIcon('fileText', 16, '', 'color: var(--accent-cyan);')}
+                <span>${i18n.t('farmer.dashboard.recentActivityTitle')}</span>
+              </div>
             </div>
             <div class="tx-feed">
               ${orders.slice(-5).reverse().map(o => {
                 const badge = getStatusBadge(o.status);
                 return `
                   <div class="tx-item">
-                    <div class="tx-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">📦</div>
+                    <div class="tx-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber); display: flex; align-items: center; justify-content: center;">
+                      ${getIcon('package', 16)}
+                    </div>
                     <div class="tx-info">
                       <div class="tx-title">${localizeCropName(o.productName)} — ${formatNumber(o.quantity)} ${localizeUnit(o.unit)}</div>
                       <div class="tx-meta">${o.buyerId === user.id ? i18n.t('intermediary.dashboard.boughtFrom', { name: o.sellerName }) : i18n.t('intermediary.dashboard.soldTo', { name: o.buyerName })}</div>
@@ -284,7 +311,9 @@ export function renderIntermediaryDashboard(container) {
       const product = JSON.parse(btn.dataset.product);
       createModal(i18n.t('intermediary.dashboard.orderModalTitle'), `
         <div style="text-align: center; margin-bottom: 16px;">
-          <span style="font-size: 3rem;">${product.emoji || getCropEmoji(product.name)}</span>
+          <div style="display: flex; justify-content: center; margin-bottom: 8px;">
+            ${getCropEmoji(product.name, 48)}
+          </div>
           <h3 style="margin-top: 8px;">${localizeCropName(product.name)}</h3>
           <p style="color: var(--text-muted);">${i18n.t('intermediary.dashboard.fromFarmer', { name: product.farmerName, origin: localizeLocation(product.origin) })}</p>
         </div>
@@ -304,7 +333,7 @@ export function renderIntermediaryDashboard(container) {
         </div>
       `, `
         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">${i18n.t('common.cancel')}</button>
-        <button class="btn btn-primary btn-sm" id="confirm-order-btn">🛍️ ${i18n.t('intermediary.dashboard.orderModalTitle')}</button>
+        <button class="btn btn-primary btn-sm" id="confirm-order-btn" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('shoppingBag', 14)} <span>${i18n.t('intermediary.dashboard.orderModalTitle')}</span></button>
       `);
 
       // Update total on quantity change
@@ -416,7 +445,7 @@ export function renderIntermediaryDashboard(container) {
       if (isShielded) {
         statValues.forEach(el => {
           el.dataset.original = el.textContent;
-          el.textContent = '🔒';
+          el.textContent = '••••••';
           el.style.color = 'var(--accent-purple)';
           el.style.fontSize = '1.6rem';
         });
@@ -433,8 +462,8 @@ export function renderIntermediaryDashboard(container) {
           if (!wrapper.querySelector('.zk-overlay')) {
             const overlay = document.createElement('div');
             overlay.className = 'zk-overlay';
-            overlay.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.85rem; font-weight: 700; color: var(--accent-purple); z-index: 10; text-align: center; background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: var(--radius-sm); backdrop-filter: blur(4px);';
-            overlay.textContent = `🔒 ${i18n.t('intermediary.dashboard.zkShielded')}`;
+            overlay.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.85rem; font-weight: 700; color: var(--accent-purple); z-index: 10; text-align: center; background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: var(--radius-sm); backdrop-filter: blur(4px); display: inline-flex; align-items: center; gap: 6px;';
+            overlay.innerHTML = `${getIcon('shieldCheck', 16)} <span>${i18n.t('intermediary.dashboard.zkShielded')}</span>`;
             wrapper.style.position = 'relative';
             wrapper.appendChild(overlay);
           }
@@ -503,7 +532,7 @@ export function renderIntermediaryDashboard(container) {
       if (isMismatch) {
         resultDiv.innerHTML = `
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <span style="font-size: 1.2rem;">🚨</span>
+            <span style="color: #ef4444; display: flex; align-items: center;">${getIcon('alert', 18)}</span>
             <div>
               <div style="font-weight: 700; color: #ef4444; font-size: 0.85rem;">${i18n.t('intermediary.dashboard.mismatchDetected')}</div>
               <div style="font-size: 0.72rem; color: var(--text-muted);">${i18n.t('intermediary.dashboard.mismatchScores', { original: originalScore, reverify: reVerifyScore, diff: scoreDiff })}</div>
@@ -530,25 +559,25 @@ export function renderIntermediaryDashboard(container) {
       } else {
         resultDiv.innerHTML = `
           <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.2rem;">✅</span>
+            <span style="color: #22c55e; display: flex; align-items: center;">${getIcon('checkCircle', 18)}</span>
             <div>
               <div style="font-weight: 700; color: #22c55e; font-size: 0.85rem;">${i18n.t('intermediary.dashboard.qualityVerifiedOk')}</div>
               <div style="font-size: 0.72rem; color: var(--text-muted);">${i18n.t('intermediary.dashboard.verifiedScores', { original: originalScore, reverify: reVerifyScore, diff: scoreDiff, tol: QualityGuard.MISMATCH_TOLERANCE })}</div>
             </div>
           </div>
         `;
-        showToast(`✅ ${localizeCropName(productName)} ${i18n.t('intermediary.dashboard.qualityVerifiedOk')}`, 'success');
+        showToast(`${localizeCropName(productName)} ${i18n.t('intermediary.dashboard.qualityVerifiedOk')}`, 'success');
       }
 
       btn.disabled = false;
-      btn.innerHTML = `🔬 ${i18n.t('intermediary.dashboard.reverifyBtn')}: ${localizeCropName(productName)} (${originalScore}%)`;
+      btn.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 4px;">${getIcon('bot', 13)} <span>${i18n.t('intermediary.dashboard.reverifyBtn')}: ${localizeCropName(productName)} (${originalScore}%)</span></span>`;
     });
   });
 
   // Batch Merge Hero Button Handler
   const mergeBtn = container.querySelector('#btn-merge-lots');
   mergeBtn?.addEventListener('click', () => {
-    mergeBtn.textContent = `${i18n.t('intermediary.dashboard.batchSealed')} ✓`;
+    mergeBtn.textContent = i18n.t('intermediary.dashboard.batchSealed');
     mergeBtn.classList.add('is-success');
     const hashEl = container.querySelector('#merge-batch-hash');
     if (hashEl) {

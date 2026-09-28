@@ -466,7 +466,7 @@ export function renderLanding(container) {
           <button class="btn-hero-primary" onclick="window.location.hash='/login'">${i18n.t('landing.newHero.primaryBtn') || 'Explore Platform →'}</button>
         </div>
         <div class="hero-trust">
-          <span>${i18n.t('landing.newHero.trust1') || '★ 4.9/5 Farmer Satisfaction'}</span>
+          <span>${i18n.t('landing.newHero.trust1') || '4.9/5 Farmer Satisfaction'}</span>
           <span>${i18n.t('landing.newHero.trust2') || '100% Escrow Protected'}</span>
           <span>${i18n.t('landing.newHero.trust3') || '0.4s Gasless Finality'}</span>
         </div>

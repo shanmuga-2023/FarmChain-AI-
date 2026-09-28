@@ -34,6 +34,7 @@ import { renderAdminFraud } from './pages/admin/fraud.js';
 import { renderAdminForecast } from './pages/admin/forecast.js';
 import { renderAdminUsers } from './pages/admin/users.js';
 import { renderAdminProducts } from './pages/admin/products.js';
+import { getIcon } from './utils/icons.js';
 
 // App container
 const app = document.getElementById('app');
@@ -61,7 +62,9 @@ function showLoading() {
   app.innerHTML = `
     <div class="loading-overlay" id="loading-screen">
       <div style="text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 16px; animation: float 2s ease-in-out infinite;">⛓️</div>
+        <div style="display: flex; justify-content: center; margin-bottom: 16px; color: var(--accent-green); animation: float 2s ease-in-out infinite;">
+          ${getIcon('blockchain', 44)}
+        </div>
         <h2 style="font-family: var(--font-display); margin-bottom: 8px;">
           Farm<span class="text-gradient">Chain</span>
         </h2>
@@ -202,15 +205,15 @@ async function init() {
       router._handleRoute();
     }
 
-    console.log('🌾 FarmChain initialized successfully!');
-    console.log('⛓️ Blockchain blocks:', blockchain.getBlockCount());
-    console.log('📦 Products:', store.get('products').length);
+    console.log('[FarmChain] Initialized successfully');
+    console.log('[Blockchain] Blocks:', blockchain.getBlockCount());
+    console.log('[Products] Total:', store.get('products').length);
   } catch (error) {
     console.error('Failed to initialize:', error);
     app.innerHTML = `
       <div class="loading-overlay">
         <div style="text-align: center;">
-          <div style="font-size: 3rem; margin-bottom: 16px;">⚠️</div>
+          <div style="margin-bottom: 16px; display: flex; justify-content: center;">${getIcon('alert', 44, '', 'color: var(--accent-amber);')}</div>
           <h2>Initialization Error</h2>
           <p style="color: var(--text-secondary); margin: 12px 0;">${error.message}</p>
           <button class="btn btn-primary" onclick="window.location.reload()">Retry</button>
@@ -229,7 +232,7 @@ document.addEventListener('click', async (e) => {
     try {
       const { logoutUser } = await import('./firebase/auth.js');
       await logoutUser();
-      showToast('Logged out successfully 👋', 'info');
+      showToast('Logged out successfully', 'info');
       router.navigate('/login');
     } catch (err) {
       console.error('Logout error:', err);

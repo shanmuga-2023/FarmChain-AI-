@@ -3,6 +3,7 @@
 // ============================================
 
 import { i18n } from '../i18n/index.js';
+import { getIcon } from './icons.js';
 
 export function formatCurrency(amount) {
   const locale = i18n.getLocale();
@@ -69,19 +70,19 @@ export function getStatusBadge(status) {
   const key = (status || '').toLowerCase();
   const label = i18n.t(`status.${key}`) || status;
   const map = {
-    'available': { class: 'badge-success', label: i18n.t('status.available') || 'Available', icon: '✓' },
-    'active': { class: 'badge-success', label: i18n.t('status.active') || 'Active', icon: '●' },
-    'pending': { class: 'badge-warning', label: i18n.t('status.pending') || 'Pending', icon: '◷' },
-    'accepted': { class: 'badge-info', label: i18n.t('status.accepted') || 'Accepted', icon: '✓' },
-    'shipped': { class: 'badge-purple', label: i18n.t('status.shipped') || 'Shipped', icon: '🚚' },
-    'delivered': { class: 'badge-success', label: i18n.t('status.delivered') || 'Delivered', icon: '✓' },
-    'cancelled': { class: 'badge-danger', label: i18n.t('status.cancelled') || 'Cancelled', icon: '✕' },
-    'completed': { class: 'badge-success', label: i18n.t('status.completed') || 'Completed', icon: '✓' },
-    'valid': { class: 'badge-success', label: i18n.t('status.valid') || 'Valid', icon: '✓' },
-    'expired': { class: 'badge-danger', label: i18n.t('status.expired') || 'Expired', icon: '✕' },
-    'confirmed': { class: 'badge-success', label: i18n.t('status.confirmed') || 'Confirmed', icon: '✓' },
+    'available': { class: 'badge-success', label: i18n.t('status.available') || 'Available', icon: getIcon('check', 12) },
+    'active': { class: 'badge-success', label: i18n.t('status.active') || 'Active', icon: getIcon('checkCircle', 12) },
+    'pending': { class: 'badge-warning', label: i18n.t('status.pending') || 'Pending', icon: getIcon('clock', 12) },
+    'accepted': { class: 'badge-info', label: i18n.t('status.accepted') || 'Accepted', icon: getIcon('check', 12) },
+    'shipped': { class: 'badge-purple', label: i18n.t('status.shipped') || 'Shipped', icon: getIcon('delivery', 12) },
+    'delivered': { class: 'badge-success', label: i18n.t('status.delivered') || 'Delivered', icon: getIcon('checkCircle', 12) },
+    'cancelled': { class: 'badge-danger', label: i18n.t('status.cancelled') || 'Cancelled', icon: getIcon('x', 12) },
+    'completed': { class: 'badge-success', label: i18n.t('status.completed') || 'Completed', icon: getIcon('checkCircle', 12) },
+    'valid': { class: 'badge-success', label: i18n.t('status.valid') || 'Valid', icon: getIcon('checkCircle', 12) },
+    'expired': { class: 'badge-danger', label: i18n.t('status.expired') || 'Expired', icon: getIcon('x', 12) },
+    'confirmed': { class: 'badge-success', label: i18n.t('status.confirmed') || 'Confirmed', icon: getIcon('checkCircle', 12) },
   };
-  return map[key] || { class: 'badge-info', label, icon: '●' };
+  return map[key] || { class: 'badge-info', label, icon: getIcon('info', 12) };
 }
 
 export function getRoleConfig(role) {
@@ -89,56 +90,45 @@ export function getRoleConfig(role) {
   const configs = {
     farmer: {
       label: i18n.t('farmerRole') || 'Farmer',
-      icon: '🌾',
-      gradient: 'linear-gradient(135deg, #4A7C59, #386145)',
-      color: 'var(--role-farmer, #4A7C59)',
-      bgColor: 'var(--role-farmer-bg, rgba(74, 124, 89, 0.12))',
+      icon: getIcon('farmer', 18),
+      gradient: 'linear-gradient(135deg, #059669, #047857)',
+      color: '#059669',
+      bgColor: 'rgba(5, 150, 105, 0.12)',
     },
     intermediary: {
       label: i18n.t('intermediaryRole') || 'Intermediary',
-      icon: '🏪',
-      gradient: 'linear-gradient(135deg, #B8963E, #96782E)',
-      color: 'var(--role-intermediary, #B8963E)',
-      bgColor: 'var(--role-intermediary-bg, rgba(184, 150, 62, 0.12))',
+      icon: getIcon('intermediary', 18),
+      gradient: 'linear-gradient(135deg, #D97706, #B45309)',
+      color: '#D97706',
+      bgColor: 'rgba(217, 119, 6, 0.12)',
     },
     retailer: {
       label: i18n.t('retailerRole') || 'Retailer',
-      icon: '🏬',
-      gradient: 'linear-gradient(135deg, #8B5E3C, #70492E)',
-      color: 'var(--role-retailer, #8B5E3C)',
-      bgColor: 'var(--role-retailer-bg, rgba(139, 94, 60, 0.12))',
+      icon: getIcon('retailer', 18),
+      gradient: 'linear-gradient(135deg, #0284C7, #0369A1)',
+      color: '#0284C7',
+      bgColor: 'rgba(2, 132, 199, 0.12)',
     },
     consumer: {
       label: i18n.t('consumerRole') || 'Consumer',
-      icon: '👤',
-      gradient: 'linear-gradient(135deg, #6B5B7B, #534561)',
-      color: 'var(--role-consumer, #6B5B7B)',
-      bgColor: 'var(--role-consumer-bg, rgba(107, 91, 123, 0.12))',
+      icon: getIcon('consumer', 18),
+      gradient: 'linear-gradient(135deg, #7C3AED, #6D28D9)',
+      color: '#7C3AED',
+      bgColor: 'rgba(124, 58, 237, 0.12)',
     },
     admin: {
       label: i18n.t('adminRole') || 'Admin',
-      icon: '🔧',
-      gradient: 'linear-gradient(135deg, #A04040, #803030)',
-      color: 'var(--role-admin, #A04040)',
-      bgColor: 'var(--role-admin-bg, rgba(160, 64, 64, 0.12))',
+      icon: getIcon('admin', 18),
+      gradient: 'linear-gradient(135deg, #DC2626, #B91C1C)',
+      color: '#DC2626',
+      bgColor: 'rgba(220, 38, 38, 0.12)',
     },
   };
   return configs[key] || configs.consumer;
 }
 
 export function getCropEmoji(name) {
-  const emojiMap = {
-    'rice': '🌾', 'wheat': '🌿', 'tomato': '🍅', 'onion': '🧅',
-    'potato': '🥔', 'mango': '🥭', 'banana': '🍌', 'cotton': '🏵️',
-    'sugarcane': '🎋', 'turmeric': '🟡', 'chilli': '🌶️', 'coconut': '🥥',
-    'soybean': '🫘', 'mustard': '🌻', 'maize': '🌽',
-  };
-
-  const lower = (name || '').toLowerCase();
-  for (const [key, emoji] of Object.entries(emojiMap)) {
-    if (lower.includes(key)) return emoji;
-  }
-  return '🌱';
+  return getIcon('sprout', 18);
 }
 
 /**
@@ -270,11 +260,11 @@ export function showToast(message, type = 'info') {
     document.body.appendChild(container);
   }
 
-  const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+  const iconName = type === 'success' ? 'checkCircle' : type === 'error' ? 'xCircle' : type === 'warning' ? 'alert' : 'info';
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
   toast.innerHTML = `
-    <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+    <span class="toast-icon">${getIcon(iconName, 16)}</span>
     <span>${message}</span>
     <button class="toast-close" onclick="this.parentElement.remove()">×</button>
   `;

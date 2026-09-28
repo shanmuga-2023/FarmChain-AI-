@@ -49,7 +49,7 @@ export function initDeliverySocket() {
         notifyListeners('invoice:created', invoice);
       });
 
-      console.log('📡 Delivery socket connected');
+      console.log('[Delivery] Socket connected');
     }).catch(() => {
       console.warn('Socket.io client not available for delivery events');
     });

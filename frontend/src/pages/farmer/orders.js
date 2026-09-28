@@ -8,8 +8,8 @@ import { formatCurrency, formatNumber, timeAgo, getStatusBadge, showToast, local
 import { Marketplace } from '../../blockchain/contracts.js';
 import { patchOrderStatus } from '../../utils/api.js';
 import { updateFirestoreOrderStatus } from '../../firebase/firestore.js';
-import { notifyOrderStatusChanged } from '../../utils/notifications.js';
-import { i18n } from '../../i18n/index.js';
+import { notifyOrderStatusChanged } from '../../utils/notifications.js';import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderFarmerOrders(container) {
   const user = store.get('currentUser') || { name: 'Farmer', id: 'farmer-001' };
@@ -39,26 +39,26 @@ export function renderFarmerOrders(container) {
           <!-- Order Stats -->
           <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">⏳</div>
+              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">${getIcon('clock', 20)}</div>
               <div class="stat-card-value">${formatNumber(orders.filter(o => o.status === 'pending').length)}</div>
               <div class="stat-card-label">${i18n.t('status.pending')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">✅</div>
+              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">${getIcon('check', 20)}</div>
               <div class="stat-card-value">${formatNumber(orders.filter(o => o.status === 'accepted').length)}</div>
               <div class="stat-card-label">${i18n.t('status.accepted')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">${getIcon('delivery', 20)}</div>
               <div class="stat-card-value">${formatNumber(orders.filter(o => o.status === 'shipped').length)}</div>
               <div class="stat-card-label">${i18n.t('status.shipped')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">✓</div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">${getIcon('checkCircle', 20)}</div>
               <div class="stat-card-value">${formatNumber(orders.filter(o => o.status === 'delivered').length)}</div>
               <div class="stat-card-label">${i18n.t('status.delivered')}</div>
             </div>
-          </div>
+          </div>    </div>
 
           <!-- Orders Table -->
           <div class="card">
@@ -113,7 +113,9 @@ export function renderFarmerOrders(container) {
               </table>
             ` : `
               <div class="empty-state">
-                <div class="empty-state-icon">📋</div>
+                <div class="empty-state-icon" style="display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: var(--surface-secondary); margin: 0 auto 16px; color: var(--text-tertiary);">
+                  ${getIcon('orders', 32)}
+                </div>
                 <h3>${i18n.t('farmer.orders.noOrders')}</h3>
                 <p>${i18n.t('farmer.orders.noOrdersDesc')}</p>
               </div>
@@ -134,7 +136,7 @@ export function renderFarmerOrders(container) {
       patchOrderStatus(orderId, { status: 'accepted' });
       updateFirestoreOrderStatus(orderId, 'accepted');
       if (targetOrder) notifyOrderStatusChanged(targetOrder, 'accepted');
-      showToast(`${i18n.t('farmer.orders.acceptedToast')} ✅`, 'success');
+      showToast(i18n.t('farmer.orders.acceptedToast'), 'success');
       renderFarmerOrders(container);
     });
   });
@@ -148,7 +150,7 @@ export function renderFarmerOrders(container) {
       patchOrderStatus(orderId, { status: 'shipped' });
       updateFirestoreOrderStatus(orderId, 'shipped');
       if (targetOrder) notifyOrderStatusChanged(targetOrder, 'shipped');
-      showToast(`${i18n.t('farmer.orders.shippedToast')} 🚚`, 'success');
+      showToast(i18n.t('farmer.orders.shippedToast'), 'success');
       renderFarmerOrders(container);
     });
   });

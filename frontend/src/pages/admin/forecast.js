@@ -6,9 +6,9 @@
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
 import { createLineChart, createBarChart } from '../../components/charts.js';
-import { formatNumber, localizeCropName } from '../../utils/helpers.js';
-import { DemandForecaster } from '../../ai/demand-forecaster.js';
+import { formatNumber, localizeCropName } from '../../utils/helpers.js';import { DemandForecaster } from '../../ai/demand-forecaster.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderAdminForecast(container) {
   const sidebarContainer = document.createElement('div');
@@ -25,7 +25,7 @@ export function renderAdminForecast(container) {
         <header class="glass-header">
           <div class="header-left">
             <div>
-              <h2 class="header-title">${i18n.t('admin.forecastTitle') || 'Demand Forecasting '}</h2>
+              <h2 class="header-title">${i18n.t('admin.forecastTitle') || 'Demand Forecast'}</h2>
               <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.navForecast') || 'Forecast'}</span></div>
             </div>
           </div>
@@ -45,7 +45,10 @@ export function renderAdminForecast(container) {
           <!-- Forecast Chart -->
           <div class="chart-card" style="margin-bottom: 20px;">
             <div class="chart-card-header">
-              <div class="chart-card-title" id="forecast-title">📈 ${i18n.t('admin.cropDemandForecast', { crop: localizeCropName(defaultCrop) }) || `${localizeCropName(defaultCrop)} — Demand Forecast`}</div>
+              <div class="chart-card-title" id="forecast-title" style="display: flex; align-items: center; gap: 6px;">
+                ${getIcon('barChart', 16, '', 'color: var(--accent-cyan);')}
+                <span>${i18n.t('admin.cropDemandForecast', { crop: localizeCropName(defaultCrop) }) || `${localizeCropName(defaultCrop)} — Demand Forecast`}</span>
+              </div>
             </div>
             <div class="chart-wrapper" style="height: 320px;">
               <canvas id="forecast-chart"></canvas>
@@ -56,7 +59,10 @@ export function renderAdminForecast(container) {
             <!-- Summary -->
             <div class="card" id="forecast-summary">
               <div class="card-header">
-                <div class="card-title">${i18n.t('admin.aiAnalysis') || '🤖 AI Analysis'}</div>
+                <div class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('bot', 16, '', 'color: var(--accent-purple);')}
+                  <span>${i18n.t('admin.aiAnalysis') || 'AI Analysis'}</span>
+                </div>
               </div>
               ${renderForecastSummary(defaultForecast)}
             </div>
@@ -64,7 +70,10 @@ export function renderAdminForecast(container) {
             <!-- Forecast Table -->
             <div class="card">
               <div class="card-header">
-                <div class="card-title">${i18n.t('admin.monthlyForecast') || '📊 Monthly Forecast'}</div>
+                <div class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('barChart', 16, '', 'color: var(--accent-green);')}
+                  <span>${i18n.t('admin.monthlyForecast') || 'Monthly Forecast'}</span>
+                </div>
               </div>
               <table class="data-table" id="forecast-table">
                 <thead>
@@ -104,11 +113,14 @@ export function renderAdminForecast(container) {
       const forecast = DemandForecaster.forecast(crop);
       const locCrop = localizeCropName(crop);
 
-      document.getElementById('forecast-title').textContent = `📈 ${i18n.t('admin.cropDemandForecast', { crop: locCrop }) || `${locCrop} — Demand Forecast`}`;
+      const titleEl = document.getElementById('forecast-title');
+      if (titleEl) {
+        titleEl.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('barChart', 16, '', 'color: var(--accent-cyan);')} <span>${i18n.t('admin.cropDemandForecast', { crop: locCrop }) || `${locCrop} — Demand Forecast`}</span></span>`;
+      }
       renderForecastChart(forecast);
 
       document.getElementById('forecast-summary').innerHTML = `
-        <div class="card-header"><div class="card-title">${i18n.t('admin.aiAnalysis') || '🤖 AI Analysis'}</div></div>
+        <div class="card-header"><div class="card-title" style="display: flex; align-items: center; gap: 6px;">${getIcon('bot', 16, '', 'color: var(--accent-purple);')} <span>${i18n.t('admin.aiAnalysis') || 'AI Analysis'}</span></div></div>
         ${renderForecastSummary(forecast)}
       `;
 
@@ -176,17 +188,26 @@ function renderForecastSummary(forecast) {
   return `
     <div style="display: flex; flex-direction: column; gap: 16px;">
       <div class="ai-insight-card" style="background: var(--accent-green-dim); border-color: rgba(34,197,94,0.2);">
-        <div class="ai-insight-title">${i18n.t('admin.trend') || '📊 Trend'}</div>
+        <div class="ai-insight-title" style="display: flex; align-items: center; gap: 6px;">
+          ${getIcon('barChart', 14, '', 'color: var(--accent-green);')}
+          <span>${i18n.t('admin.trend') || 'Trend'}</span>
+        </div>
         <div class="ai-insight-value" style="color: var(--accent-green); text-transform: capitalize;">${s.trend}</div>
         <div class="ai-insight-desc">${i18n.t('admin.monthlyChange', { rate: s.trendPercentage }) || `${s.trendPercentage}% monthly change rate`}</div>
       </div>
       <div class="ai-insight-card" style="background: var(--accent-cyan-dim); border-color: rgba(6,182,212,0.2);">
-        <div class="ai-insight-title">${i18n.t('admin.peakDemand') || '📈 Peak Demand'}</div>
+        <div class="ai-insight-title" style="display: flex; align-items: center; gap: 6px;">
+          ${getIcon('barChart', 14, '', 'color: var(--accent-cyan);')}
+          <span>${i18n.t('admin.peakDemand') || 'Peak Demand'}</span>
+        </div>
         <div class="ai-insight-value" style="color: var(--accent-cyan);">${s.peakMonth}</div>
         <div class="ai-insight-desc">${i18n.t('admin.unitsExpected', { count: formatNumber(s.peakDemand) }) || `${formatNumber(s.peakDemand)} units expected`}</div>
       </div>
       <div class="ai-insight-card" style="background: var(--accent-purple-dim); border-color: rgba(168,85,247,0.2);">
-        <div class="ai-insight-title">${i18n.t('admin.recommendation') || '🤖 Recommendation'}</div>
+        <div class="ai-insight-title" style="display: flex; align-items: center; gap: 6px;">
+          ${getIcon('bot', 14, '', 'color: var(--accent-purple);')}
+          <span>${i18n.t('admin.recommendation') || 'Recommendation'}</span>
+        </div>
         <div class="ai-insight-desc" style="font-size: 0.88rem;">${s.recommendation}</div>
       </div>
     </div>

@@ -93,7 +93,7 @@ export function getLocalizedNotification(n) {
 
   const details = n.details || {};
   if (n.type === 'ORDER_PLACED') {
-    const title = i18n.t('notifications.orderPlacedTitle') || '🛍️ New Order Received!';
+    const title = i18n.t('notifications.orderPlacedTitle') || 'New Order Received!';
     const message = i18n.t('notifications.orderPlacedDesc', {
       buyer: details.buyerName || 'Buyer',
       qty: `${details.rawQuantity || details.quantity || ''} ${details.unit || 'kg'}`,
@@ -131,7 +131,7 @@ export function notifyOrderPlaced(order) {
   const newNotification = {
     id: notificationId,
     type: 'ORDER_PLACED',
-    title: '🛍️ New Order Received!',
+    title: 'New Order Received!',
     message: `${order.buyerName || 'Buyer'} placed an order for ${order.quantity} ${order.unit || 'kg'} of ${order.productName || 'produce'}.`,
     details: {
       orderId: order.orderId,
@@ -156,7 +156,7 @@ export function notifyOrderPlaced(order) {
   saveNotifications(all);
 
   const localized = getLocalizedNotification(newNotification);
-  showToast(localized.message || `🔔 New Order: ${order.quantity} ${order.unit || 'kg'} ${order.productName} (${totalStr})`, 'success');
+  showToast(localized.message || `New Order: ${order.quantity} ${order.unit || 'kg'} ${order.productName} (${totalStr})`, 'success');
 }
 
 // ==========================================
@@ -165,14 +165,13 @@ export function notifyOrderPlaced(order) {
 // ==========================================
 export function notifyOrderStatusChanged(order, newStatus) {
   const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
-  const statusEmoji = newStatus === 'accepted' ? '✅' : newStatus === 'shipped' ? '🚚' : newStatus === 'delivered' ? '🎉' : '📦';
   const statusKey = (newStatus || '').toLowerCase();
   const statusLabel = i18n.t(`status.${statusKey}`) || (newStatus.charAt(0).toUpperCase() + newStatus.slice(1));
 
   const newNotification = {
     id: notificationId,
     type: 'ORDER_STATUS_CHANGED',
-    title: `${statusEmoji} Order ${statusLabel}!`,
+    title: `Order ${statusLabel}!`,
     message: `Order for ${order.productName || 'crop'} has been marked as ${statusLabel} by ${order.sellerName || 'Farmer'}.`,
     details: {
       orderId: order.orderId,

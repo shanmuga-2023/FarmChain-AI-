@@ -89,10 +89,10 @@ export class FairPricePredictor {
       deviation,
       isFairlyPriced,
       recommendation: isFairlyPriced
-        ? 'Price is within fair market range ✓'
+        ? 'Price is within fair market range.'
         : deviation > 0
-          ? '⚠️ Price is above fair market value. Consider negotiating.'
-          : '⚠️ Price is below MSP floor. Farmer may be undercompensated.',
+          ? 'Price is above fair market value. Consider negotiating.'
+          : 'Price is below MSP floor. Farmer may be undercompensated.',
     };
   }
 

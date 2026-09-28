@@ -6,6 +6,7 @@ import { i18n } from '../i18n/index.js';
 import { formatCurrency, showToast } from '../utils/helpers.js';
 import { showInvoicePreview } from './invoice-preview.js';
 import { generateInvoiceHTML } from './invoice-template.js';
+import { getIcon } from '../utils/icons.js';
 
 export function renderInvoicePage(container) {
   const user = store.get('currentUser');
@@ -42,12 +43,12 @@ export function renderInvoicePage(container) {
           <!-- Stats -->
           <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: rgba(14,165,233,0.1); color: #0ea5e9;">📄</div>
+              <div class="stat-card-icon" style="background: rgba(14,165,233,0.1); color: #0ea5e9;">${getIcon('fileText', 22)}</div>
               <div class="stat-card-value">${invoices.length}</div>
               <div class="stat-card-label">${i18n.t('invoice.title')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: rgba(34,197,94,0.1); color: #22c55e;">💰</div>
+              <div class="stat-card-icon" style="background: rgba(34,197,94,0.1); color: #22c55e;">${getIcon('creditCard', 22)}</div>
               <div class="stat-card-value">${formatCurrency(totalRevenue)}</div>
               <div class="stat-card-label">${role === 'farmer' ? i18n.t('invoice.farmerPayout') : i18n.t('invoice.total')}</div>
             </div>
@@ -55,7 +56,7 @@ export function renderInvoicePage(container) {
 
           ${invoices.length === 0 ? `
             <div class="card" style="text-align: center; padding: 60px 24px;">
-              <div style="font-size: 3rem; margin-bottom: 16px;">📄</div>
+              <div style="display: flex; justify-content: center; margin-bottom: 16px; color: var(--text-muted);">${getIcon('fileText', 44)}</div>
               <h3 style="color: var(--text-primary); margin-bottom: 8px;">${i18n.t('invoice.noInvoices')}</h3>
               <p style="color: var(--text-secondary); font-size: 0.9rem;">${i18n.t('invoice.generatedAutomatically')}</p>
             </div>
@@ -84,8 +85,9 @@ export function renderInvoicePage(container) {
                       <td style="font-weight: 600;">${formatCurrency(inv.total || 0)}</td>
                       <td style="font-size: 0.85rem; color: var(--text-secondary);">${inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString(i18n.getLocale()) : '—'}</td>
                       <td>
-                        <button class="btn btn-sm invoice-preview-btn" data-invoice-id="${inv.invoiceId}" style="font-size: 0.8rem; padding: 4px 12px; background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); border-radius: 8px; cursor: pointer;">
-                          👁️ ${i18n.t('invoice.preview')}
+                        <button class="btn btn-sm invoice-preview-btn" data-invoice-id="${inv.invoiceId}" style="font-size: 0.8rem; padding: 6px 12px; background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                          ${getIcon('search', 13)}
+                          <span>${i18n.t('invoice.preview')}</span>
                         </button>
                       </td>
                     </tr>
@@ -116,7 +118,7 @@ export function renderInvoiceVerify(container) {
   const invoiceId = match ? match[1] : null;
 
   if (!invoiceId) {
-    container.innerHTML = `<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--background);"><div class="card" style="max-width: 500px; text-align: center; padding: 40px;"><h2>❌ ${i18n.t('invoice.errors.notFound')}</h2></div></div>`;
+    container.innerHTML = `<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--background);"><div class="card" style="max-width: 500px; text-align: center; padding: 40px;"><div style="display: flex; justify-content: center; margin-bottom: 12px; color: var(--accent-red);">${getIcon('alert', 40)}</div><h2 style="font-size: 1.25rem;">${i18n.t('invoice.errors.notFound')}</h2></div></div>`;
     return;
   }
 
@@ -124,7 +126,7 @@ export function renderInvoiceVerify(container) {
   const invoice = allInvoices.find(inv => inv.invoiceId === invoiceId);
 
   if (!invoice) {
-    container.innerHTML = `<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--background);"><div class="card" style="max-width: 500px; text-align: center; padding: 40px;"><h2>❌ ${i18n.t('invoice.errors.notFound')}</h2><p style="color: var(--text-secondary); margin-top: 8px;">${invoiceId}</p></div></div>`;
+    container.innerHTML = `<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--background);"><div class="card" style="max-width: 500px; text-align: center; padding: 40px;"><div style="display: flex; justify-content: center; margin-bottom: 12px; color: var(--accent-red);">${getIcon('alert', 40)}</div><h2 style="font-size: 1.25rem;">${i18n.t('invoice.errors.notFound')}</h2><p style="color: var(--text-secondary); margin-top: 8px;">${invoiceId}</p></div></div>`;
     return;
   }
 
@@ -132,7 +134,7 @@ export function renderInvoiceVerify(container) {
     <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--background); padding: 24px;">
       <div style="max-width: 600px; width: 100%;">
         <div class="card" style="padding: 40px; text-align: center; margin-bottom: 16px;">
-          <div style="font-size: 3rem; margin-bottom: 16px;">✅</div>
+          <div style="display: flex; justify-content: center; margin-bottom: 16px; color: #22c55e;">${getIcon('checkCircle', 48)}</div>
           <h2 style="font-size: 1.5rem; font-weight: 800; color: #22c55e; margin-bottom: 8px;">${i18n.t('invoice.verified')}</h2>
           <p style="color: var(--text-secondary); margin-bottom: 24px;">${i18n.t('invoice.publicVerification')}</p>
 
@@ -155,11 +157,11 @@ export function renderInvoiceVerify(container) {
             </div>
             <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
               <span style="color: var(--text-secondary);">${i18n.t('invoice.paymentStatus')}</span>
-              <span style="font-weight: 600; color: #22c55e;">✅ ${invoice.paymentStatus || 'Completed'}</span>
+              <span style="font-weight: 600; color: #22c55e; display: inline-flex; align-items: center; gap: 4px;">${getIcon('check', 14)} ${invoice.paymentStatus || 'Completed'}</span>
             </div>
             <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
               <span style="color: var(--text-secondary);">${i18n.t('invoice.blockchainVerification')}</span>
-              <span style="font-weight: 600; color: #0ea5e9;">${invoice.blockchainVerified ? '⛓️ VERIFIED' : '⏳ Pending'}</span>
+              <span style="font-weight: 600; color: #0ea5e9; display: inline-flex; align-items: center; gap: 4px;">${invoice.blockchainVerified ? `${getIcon('blockchain', 14)} VERIFIED` : `${getIcon('clock', 14)} Pending`}</span>
             </div>
           </div>
 

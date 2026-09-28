@@ -2,6 +2,7 @@
 // Full-screen invoice preview modal with print/download
 import { generateInvoiceHTML } from './invoice-template.js';
 import { i18n } from '../i18n/index.js';
+import { getIcon } from '../utils/icons.js';
 
 export function showInvoicePreview(invoice) {
   // Remove existing preview
@@ -18,13 +19,17 @@ export function showInvoicePreview(invoice) {
       <div style="position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: var(--surface); border-bottom: 1px solid var(--border); border-radius: 24px 24px 0 0;">
         <h3 style="font-size: 1rem; font-weight: 700; margin: 0; color: var(--text-primary);">${i18n.t('invoice.preview')}</h3>
         <div style="display: flex; gap: 8px;">
-          <button id="invoice-print-btn" class="btn btn-sm" style="background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 6px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
-            🖨️ ${i18n.t('invoice.print')}
+          <button id="invoice-print-btn" class="btn btn-sm" style="background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 6px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+            ${getIcon('fileText', 14)}
+            <span>${i18n.t('invoice.print')}</span>
           </button>
-          <button id="invoice-download-btn" class="btn btn-primary btn-sm" style="padding: 6px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
-            📥 ${i18n.t('invoice.downloadPdf')}
+          <button id="invoice-download-btn" class="btn btn-primary btn-sm" style="padding: 6px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+            ${getIcon('package', 14)}
+            <span>${i18n.t('invoice.downloadPdf')}</span>
           </button>
-          <button id="invoice-close-btn" style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text-secondary); padding: 4px 8px;">✕</button>
+          <button id="invoice-close-btn" style="background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 6px; display: inline-flex; align-items: center; justify-content: center;">
+            ${getIcon('x', 18)}
+          </button>
         </div>
       </div>
 

@@ -6,6 +6,7 @@
 
 import { i18n } from '../i18n/index.js';
 import { VisualOracle } from './visual-oracle.js';
+import { getIcon } from '../utils/icons.js';
 
 export class CropGrader {
   /**
@@ -149,11 +150,13 @@ export class CropGrader {
       ? '#3b82f6'
       : '#f59e0b';
 
-    const icon = isGradeA ? '🏆' : isGradeB ? '🌿' : '📦';
+    const iconName = isGradeA ? 'checkCircle' : isGradeB ? 'sprout' : 'package';
+    const iconColor = isGradeA ? '#22c55e' : isGradeB ? '#3b82f6' : '#f59e0b';
+    const icon = getIcon(iconName, 18, '', `color: ${iconColor};`);
 
     return `
       <div class="crop-quality-badge animate-fade-in" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: ${bg}; border: 1.5px solid ${border}; border-radius: 9999px; box-shadow: 0 2px 8px rgba(0,0,0,0.12);">
-        <span style="font-size: 1.15rem;">${icon}</span>
+        <span style="display: inline-flex; align-items: center;">${icon}</span>
         <span style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary, #ffffff); letter-spacing: 0.2px;">
           ${label}
         </span>

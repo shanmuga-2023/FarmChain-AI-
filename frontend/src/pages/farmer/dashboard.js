@@ -5,6 +5,7 @@ import { formatCurrency, formatNumber, timeAgo, showToast, localizeCropName, loc
 import { PaymentSplitter } from '../../blockchain/contracts.js';
 import { blockchain } from '../../blockchain/core.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderFarmerDashboard(container) {
   const user = store.get('currentUser') || { name: 'Farmer', id: 'farmer-001', location: 'Nashik, Maharashtra' };
@@ -31,16 +32,16 @@ export function renderFarmerDashboard(container) {
           <div class="header-left">
             <h2 class="header-title">${i18n.t('roles.farmer')} Portal</h2>
             <nav class="header-nav">
-              <a href="#/farmer/dashboard" class="nav-tab active">📊 Dashboard</a>
-              <a href="#/farmer/products" class="nav-tab">🌾 My Products</a>
-              <a href="#/farmer/orders" class="nav-tab">📦 Orders</a>
+              <a href="#/farmer/dashboard" class="nav-tab active">${getIcon('overview', 15)} Dashboard</a>
+              <a href="#/farmer/products" class="nav-tab">${getIcon('package', 15)} My Products</a>
+              <a href="#/farmer/orders" class="nav-tab">${getIcon('orders', 15)} Orders</a>
             </nav>
           </div>
           <div class="header-right">
             ${i18n.renderLanguageSelector('farmer-lang')}
-            <button class="btn-icon bell-btn">🔔<span class="dot-badge"></span></button>
+            <button class="btn-icon bell-btn" title="Notifications">${getIcon('bell', 18)}<span class="dot-badge"></span></button>
             <div class="avatar-dropdown">
-              <div class="avatar-circle">👨🏽‍🌾</div>
+              <div class="avatar-circle" style="background: rgba(14, 165, 233, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center;">${getIcon('farmer', 20)}</div>
             </div>
           </div>
         </header>
@@ -50,44 +51,46 @@ export function renderFarmerDashboard(container) {
           <!-- TOP HERO WELCOME STRIP -->
           <div class="hero-strip glass-card emerald-border-left">
             <div class="hero-content">
-              <h1 class="hero-greeting">Good Morning, ${firstName}! 🌞</h1>
-              <p class="hero-subtitle">Your farm in ${user.location} is performing well today.</p>
+              <h1 class="hero-greeting">Good Morning, ${firstName}!</h1>
+              <p class="hero-subtitle">Your farm in ${user.location} is active and operating smoothly today.</p>
               <div class="quick-stat-pills">
-                <span class="pill pill-green">🌾 ${activeProducts.length} Active Listings</span>
-                <span class="pill pill-green">💰 ${formatCurrency(24800)} This Month</span>
-                <span class="pill pill-emerald">⭐ Grade A Avg</span>
+                <span class="pill pill-green">${getIcon('package', 13)} ${activeProducts.length} Active Listings</span>
+                <span class="pill pill-green">${getIcon('rupee', 13)} ${formatCurrency(24800)} This Month</span>
+                <span class="pill pill-emerald">${getIcon('shieldCheck', 13)} Grade A Avg</span>
               </div>
             </div>
             <div class="hero-illustration">
-              <span style="font-size: 4rem;">🚜</span>
+              <div style="width: 64px; height: 64px; border-radius: 20px; background: rgba(16, 185, 129, 0.12); color: #10b981; display: flex; align-items: center; justify-content: center;">
+                ${getIcon('sprout', 36)}
+              </div>
             </div>
           </div>
 
           <!-- EARNINGS OVERVIEW -->
           <div class="stats-grid">
             <div class="stat-card glass-card">
-              <div class="stat-icon bg-emerald-dim text-emerald">💰</div>
+              <div class="stat-icon bg-emerald-dim text-emerald">${getIcon('rupee', 20)}</div>
               <div class="stat-value">${formatCurrency(revenue || 124800)}</div>
               <div class="stat-label">Total Earnings</div>
-              <div class="stat-trend positive">↑ +18% vs last month</div>
+              <div class="stat-trend positive">${getIcon('trendingUp', 14)} +18% vs last month</div>
             </div>
             <div class="stat-card glass-card">
-              <div class="stat-icon bg-violet-dim text-violet">📦</div>
+              <div class="stat-icon bg-violet-dim text-violet">${getIcon('blockchain', 20)}</div>
               <div class="stat-value">34</div>
               <div class="stat-label">Batches Minted</div>
-              <div class="stat-trend violet-text">⛓️ On Polygon Amoy</div>
+              <div class="stat-trend violet-text">${getIcon('link', 13)} Polygon Amoy</div>
             </div>
             <div class="stat-card glass-card">
-              <div class="stat-icon bg-emerald-dim text-emerald">🔬</div>
+              <div class="stat-icon bg-emerald-dim text-emerald">${getIcon('shieldCheck', 20)}</div>
               <div class="stat-value">87/100</div>
               <div class="stat-label">Avg Quality Score</div>
-              <div class="stat-trend positive">✨ Grade A</div>
+              <div class="stat-trend positive">${getIcon('checkCircle', 13)} Grade A</div>
             </div>
             <div class="stat-card glass-card">
-              <div class="stat-icon bg-amber-dim text-amber">⚡</div>
+              <div class="stat-icon bg-amber-dim text-amber">${getIcon('clock', 20)}</div>
               <div class="stat-value">${formatCurrency(8200)}</div>
               <div class="stat-label">Pending Payouts</div>
-              <div class="stat-trend warning">Processing in 2 hrs</div>
+              <div class="stat-trend warning">${getIcon('refresh', 13)} Processing in 2 hrs</div>
             </div>
           </div>
 
@@ -97,7 +100,7 @@ export function renderFarmerDashboard(container) {
             <!-- EARNINGS CHART -->
             <div class="glass-card chart-section">
               <div class="card-header-flex">
-                <h3 class="card-title">📈 Earnings Trend</h3>
+                <h3 class="card-title">${getIcon('trendingUp', 18)} Earnings Trend</h3>
                 <div class="pill-toggles">
                   <button class="pill-btn">Month</button>
                   <button class="pill-btn active">Quarter</button>
@@ -107,30 +110,32 @@ export function renderFarmerDashboard(container) {
               <div class="chart-container">
                 <canvas id="earnings-chart"></canvas>
               </div>
-              <div class="insight-tooltip text-emerald text-sm mt-2">
-                ✨ AI Grade A months peak earnings by 28%
+              <div class="insight-tooltip text-emerald text-sm mt-2" style="display: flex; align-items: center; gap: 6px;">
+                ${getIcon('sparkles', 15)} AI Grade A months peak earnings by 28%
               </div>
             </div>
 
             <!-- MY ACTIVE LISTINGS -->
             <div class="glass-card listings-section">
               <div class="card-header-flex">
-                <h3 class="card-title">🌾 Active Listings</h3>
+                <h3 class="card-title">${getIcon('package', 18)} Active Listings</h3>
                 <a href="#/farmer/products" class="view-all">View All →</a>
               </div>
               <div class="listings-grid">
                 ${activeProducts.slice(0, 2).map(p => `
                   <div class="product-mini-card glass-panel">
                     <div class="product-img-wrapper">
-                      <div class="placeholder-img bg-dark-dim">📸 ${localizeCropName(p.name)}</div>
-                      <span class="badge badge-emerald absolute top-left">Grade A ✨</span>
-                      <span class="badge badge-violet absolute top-right">⛓️ On-Chain</span>
-                      <div class="gps-watermark absolute bottom-left">📍 ${user.location}</div>
+                      <div class="placeholder-img bg-dark-dim" style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        ${getIcon('camera', 16)} ${localizeCropName(p.name)}
+                      </div>
+                      <span class="badge badge-emerald absolute top-left">${getIcon('checkCircle', 12)} Grade A</span>
+                      <span class="badge badge-violet absolute top-right">${getIcon('link', 12)} On-Chain</span>
+                      <div class="gps-watermark absolute bottom-left">${getIcon('mapPin', 11)} ${user.location}</div>
                     </div>
                     <div class="product-details">
                       <h4>${localizeCropName(p.name)}</h4>
                       <p>${p.quantity} ${localizeUnit(p.unit)} • ${formatCurrency(p.pricePerUnit)}/kg</p>
-                      <span class="stage-badge status-harvested">Harvested 🌾</span>
+                      <span class="stage-badge status-harvested">${getIcon('sprout', 12)} Harvested</span>
                       <div class="action-row">
                         <button class="btn-text">Edit</button>
                         <button class="btn-text">View QR</button>
@@ -145,7 +150,9 @@ export function renderFarmerDashboard(container) {
 
           <!-- RECENT ORDERS -->
           <div class="glass-card mt-4">
-            <h3 class="card-title mb-3">📦 Recent Orders</h3>
+            <h3 class="card-title mb-3" style="display: flex; align-items: center; gap: 8px;">
+              ${getIcon('orders', 18)} Recent Orders
+            </h3>
             <div class="table-responsive">
               <table class="glass-table">
                 <thead>
@@ -163,7 +170,7 @@ export function renderFarmerDashboard(container) {
                   ${orders.slice(0, 3).map(o => `
                     <tr class="clickable-row">
                       <td class="font-mono text-violet">${o.id}</td>
-                      <td>👤 Retailer</td>
+                      <td>Retailer</td>
                       <td>${localizeCropName(o.cropName || 'Tomato')}</td>
                       <td>${o.quantity} kg</td>
                       <td class="text-emerald font-bold">${formatCurrency(o.totalPrice)}</td>
@@ -178,16 +185,16 @@ export function renderFarmerDashboard(container) {
 
           <!-- BLOCKCHAIN ACTIVITY FEED -->
           <div class="activity-feed mt-4">
-            <div class="feed-header">
+            <div class="feed-header" style="display: flex; align-items: center; gap: 8px;">
               <span class="live-dot pulse-green"></span>
               <span class="text-sm text-muted">Live Blockchain Activity (Polygon Amoy)</span>
             </div>
             <div class="feed-scroll">
-              <div class="feed-item">
-                <span class="text-emerald">✅</span> Batch #FC-3847 verified on Polygon Amoy · 2 mins ago
+              <div class="feed-item" style="display: flex; align-items: center; gap: 8px;">
+                <span class="text-emerald">${getIcon('checkCircle', 15)}</span> Batch #FC-3847 verified on Polygon Amoy · 2 mins ago
               </div>
-              <div class="feed-item">
-                <span class="text-violet">⛓️</span> Smart contract payment released for Order #ORD-882 · 15 mins ago
+              <div class="feed-item" style="display: flex; align-items: center; gap: 8px;">
+                <span class="text-violet">${getIcon('link', 15)}</span> Smart contract payment released for Order #ORD-882 · 15 mins ago
               </div>
             </div>
           </div>
@@ -196,8 +203,8 @@ export function renderFarmerDashboard(container) {
 
         <!-- QUICK ACTION FABS -->
         <div class="fab-container">
-          <button class="fab fab-secondary" id="fab-voice" title="Voice List">🎙️</button>
-          <button class="fab fab-primary" id="fab-list" title="List New Produce">➕</button>
+          <button class="fab fab-secondary" id="fab-voice" title="Voice List">${getIcon('mic', 20)}</button>
+          <button class="fab fab-primary" id="fab-list" title="List New Produce">${getIcon('plus', 20)}</button>
         </div>
       </main>
     </div>

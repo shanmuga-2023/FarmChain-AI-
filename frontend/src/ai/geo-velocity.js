@@ -185,7 +185,7 @@ export class GeoVelocityChecker {
       attackCities: results,
       maxVelocity: Math.round(velocity),
       verdict: 'SYBIL_ATTACK_DETECTED',
-      message: `🚨 Sybil Attack: ${cities.length} simultaneous scans across ${cities.join(', ')} within 2 minutes. Escrow funds FROZEN.`,
+      message: `Sybil Attack: ${cities.length} simultaneous scans across ${cities.join(', ')} within 2 minutes. Escrow funds FROZEN.`,
       escrowFrozen: true,
     };
   }
@@ -262,13 +262,13 @@ export class GeoVelocityChecker {
     switch (verdict) {
       case 'CLONE_DETECTED':
         return i18n.t('ai.geoCloneAlert', { velocity: velocity.toLocaleString(), distance: distance.toLocaleString() }) ||
-          `🚨 CYBERSECURITY ALERT: QR Clone Detected! Velocity ${velocity.toLocaleString()} km/h across ${distance.toLocaleString()} km — physically impossible. Produce is likely counterfeit.`;
+          `CYBERSECURITY ALERT: QR Clone Detected! Velocity ${velocity.toLocaleString()} km/h across ${distance.toLocaleString()} km — physically impossible. Produce is likely counterfeit.`;
       case 'SUSPICIOUS':
         return i18n.t('ai.geoSuspicious', { velocity: velocity.toLocaleString() }) ||
-          `⚠️ Suspicious scan pattern detected. Velocity ${velocity.toLocaleString()} km/h suggests possible air transport or QR sharing.`;
+          `Suspicious scan pattern detected. Velocity ${velocity.toLocaleString()} km/h suggests possible air transport or QR sharing.`;
       default:
         return i18n.t('ai.geoSafe', { velocity: velocity.toLocaleString() }) ||
-          `✅ Spatial-Temporal Verified. Scan velocity ${velocity.toLocaleString()} km/h within normal range.`;
+          `Spatial-Temporal Verified. Scan velocity ${velocity.toLocaleString()} km/h within normal range.`;
     }
   }
 

@@ -8,6 +8,7 @@ import { router } from '../utils/router.js';
 import { timeAgo } from '../utils/helpers.js';
 import { escapeHtml } from '../utils/sanitize.js';
 import { i18n } from '../i18n/index.js';
+import { getIcon } from '../utils/icons.js';
 import {
   getUserNotifications,
   getUnreadNotificationCount,
@@ -88,16 +89,16 @@ export function renderNotificationCenter() {
   drawer.innerHTML = `
     <div style="padding: 16px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02);">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 1.2rem;">🔔</span>
+        <span style="display: flex; align-items: center; color: var(--accent-green);">${getIcon('notification', 18)}</span>
         <span style="font-weight: 700; font-size: 0.95rem;">${i18n.t('notifications.centerTitle') || 'Order Notifications'}</span>
         ${unreadCount > 0 ? `<span class="badge badge-success" style="font-size: 0.72rem; padding: 2px 8px;">${unreadCount} ${i18n.t('notifications.new') || 'New'}</span>` : ''}
       </div>
       <div style="display: flex; gap: 8px; align-items: center;">
         ${notifications.length > 0 ? `
-          <button id="notif-mark-read-btn" style="background: none; border: none; color: var(--accent-green, #22c55e); font-size: 0.75rem; font-weight: 600; cursor: pointer;">✓ ${i18n.t('notifications.markRead') || 'Read All'}</button>
+          <button id="notif-mark-read-btn" style="background: none; border: none; color: var(--accent-green, #22c55e); font-size: 0.75rem; font-weight: 600; cursor: pointer;">${i18n.t('notifications.markRead') || 'Read All'}</button>
           <button id="notif-clear-btn" style="background: none; border: none; color: var(--text-muted, #94a3b8); font-size: 0.75rem; cursor: pointer;">${i18n.t('notifications.clear') || 'Clear'}</button>
         ` : ''}
-        <button id="notif-close-btn" style="background: none; border: none; color: var(--text-muted, #94a3b8); font-size: 1rem; cursor: pointer; padding: 0 4px;">✕</button>
+        <button id="notif-close-btn" style="background: none; border: none; color: var(--text-muted, #94a3b8); cursor: pointer; padding: 4px; display: inline-flex; align-items: center;">${getIcon('x', 16)}</button>
       </div>
     </div>
 
@@ -124,16 +125,16 @@ export function renderNotificationCenter() {
           </div>
           ${n.details ? `
             <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 3px;">
-              ${n.details.totalAmount ? `<div>💰 <strong>${i18n.t('notifications.amountLabel') || 'Amount:'}</strong> <span style="color: var(--accent-green);">${n.details.totalAmount}</span></div>` : ''}
-              ${n.details.quantity ? `<div>📦 <strong>${i18n.t('notifications.qtyLabel') || 'Quantity:'}</strong> ${n.details.quantity}</div>` : ''}
-              ${n.details.escrowLocked ? `<div>⛓️ <strong>${i18n.t('notifications.payoutRule') || 'Fair Payout Rule:'}</strong> ${n.details.escrowLocked}</div>` : ''}
+              ${n.details.totalAmount ? `<div><strong>${i18n.t('notifications.amountLabel') || 'Amount:'}</strong> <span style="color: var(--accent-green);">${n.details.totalAmount}</span></div>` : ''}
+              ${n.details.quantity ? `<div><strong>${i18n.t('notifications.qtyLabel') || 'Quantity:'}</strong> ${n.details.quantity}</div>` : ''}
+              ${n.details.escrowLocked ? `<div><strong>${i18n.t('notifications.payoutRule') || 'Fair Payout Rule:'}</strong> ${n.details.escrowLocked}</div>` : ''}
             </div>
           ` : ''}
         </div>
       `;
       }).join('') : `
         <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
-          <div style="font-size: 2.5rem; margin-bottom: 8px;">🔕</div>
+          <div style="display: flex; justify-content: center; margin-bottom: 8px; color: var(--text-muted);">${getIcon('notification', 32)}</div>
           <div style="font-weight: 600; font-size: 0.9rem;">${i18n.t('notifications.emptyTitle') || 'No Notifications Yet'}</div>
           <p style="font-size: 0.75rem; margin-top: 4px;">${i18n.t('notifications.emptySub') || 'Order updates and status changes will appear here in real-time.'}</p>
         </div>

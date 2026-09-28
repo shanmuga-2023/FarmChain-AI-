@@ -4,6 +4,7 @@ import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
 import { i18n } from '../../i18n/index.js';
 import { FarmingAssistant } from '../../ai/farming-assistant.js';
+import { getIcon } from '../../utils/icons.js';
 
 let assistantInstance = null;
 
@@ -34,32 +35,35 @@ export function renderFarmingAssistant(container) {
           <!-- Chat Area -->
           <div id="chat-messages" class="card scroll-hidden" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding: 24px; margin-bottom: 16px; scroll-behavior: smooth;">
             <div style="text-align: center; margin-bottom: 24px;">
-              <div style="font-size: 3rem; margin-bottom: 12px; animation: bounce 2s infinite;">🤖</div>
-              <p style="color: var(--text-secondary); font-size: 0.95rem; max-width: 400px; margin: 0 auto;">${i18n.t('assistant.welcome')}</p>
-              <div style="font-size: 0.75rem; color: var(--accent-amber); margin-top: 12px; padding: 8px; background: rgba(245,158,11,0.1); border-radius: 8px; display: inline-block;">
-                ⚠️ ${i18n.t('assistant.disclaimer')}
+              <div style="width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 14px; background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.25); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                ${getIcon('bot', 28)}
+              </div>
+              <p style="color: var(--text-secondary); font-size: 0.95rem; max-width: 440px; margin: 0 auto;">${i18n.t('assistant.welcome')}</p>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 14px; padding: 6px 14px; background: var(--surface-secondary); border: 1px solid var(--border); border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
+                ${getIcon('info', 13)}
+                <span>${i18n.t('assistant.disclaimer')}</span>
               </div>
             </div>
           </div>
 
           <!-- Quick Actions -->
           <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 4px; scrollbar-width: none;" class="scroll-hidden">
-            <button class="quick-action-btn" data-query="${i18n.t('assistant.cropDisease')}">🌿 ${i18n.t('assistant.cropDisease')}</button>
-            <button class="quick-action-btn" data-query="${i18n.t('assistant.weather')}">🌤️ ${i18n.t('assistant.weather')}</button>
-            <button class="quick-action-btn" data-query="${i18n.t('assistant.mandiPrice')}">📊 ${i18n.t('assistant.mandiPrice')}</button>
-            <button class="quick-action-btn" data-query="${i18n.t('assistant.myOrders')}">📋 ${i18n.t('assistant.myOrders')}</button>
-            <button class="quick-action-btn" data-query="${i18n.t('assistant.delivery')}">🚚 ${i18n.t('assistant.delivery')}</button>
-            <button class="quick-action-btn" data-query="${i18n.t('assistant.qualityHelp')}">⭐ ${i18n.t('assistant.qualityHelp')}</button>
+            <button class="quick-action-btn" data-query="${i18n.t('assistant.cropDisease')}">${getIcon('flask', 14)} <span>${i18n.t('assistant.cropDisease')}</span></button>
+            <button class="quick-action-btn" data-query="${i18n.t('assistant.weather')}">${getIcon('cloudSun', 14)} <span>${i18n.t('assistant.weather')}</span></button>
+            <button class="quick-action-btn" data-query="${i18n.t('assistant.mandiPrice')}">${getIcon('barChart', 14)} <span>${i18n.t('assistant.mandiPrice')}</span></button>
+            <button class="quick-action-btn" data-query="${i18n.t('assistant.myOrders')}">${getIcon('orders', 14)} <span>${i18n.t('assistant.myOrders')}</span></button>
+            <button class="quick-action-btn" data-query="${i18n.t('assistant.delivery')}">${getIcon('delivery', 14)} <span>${i18n.t('assistant.delivery')}</span></button>
+            <button class="quick-action-btn" data-query="${i18n.t('assistant.qualityHelp')}">${getIcon('award', 14)} <span>${i18n.t('assistant.qualityHelp')}</span></button>
           </div>
 
           <!-- Input Area -->
           <div class="card" style="padding: 12px; display: flex; align-items: flex-end; gap: 12px;">
-            <button id="voice-btn" class="btn btn-icon" style="background: var(--surface-secondary); color: var(--text-primary); border-radius: 50%; width: 44px; height: 44px; flex-shrink: 0;" title="${i18n.t('assistant.speak')}">
-              🎤
+            <button id="voice-btn" class="btn btn-icon" style="background: var(--surface-secondary); color: var(--text-primary); border-radius: 50%; width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;" title="${i18n.t('assistant.speak')}">
+              ${getIcon('mic', 18)}
             </button>
             
-            <button id="image-btn" class="btn btn-icon" style="background: var(--surface-secondary); color: var(--text-primary); border-radius: 50%; width: 44px; height: 44px; flex-shrink: 0;" title="${i18n.t('assistant.photo')}">
-              📸
+            <button id="image-btn" class="btn btn-icon" style="background: var(--surface-secondary); color: var(--text-primary); border-radius: 50%; width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;" title="${i18n.t('assistant.photo')}">
+              ${getIcon('camera', 18)}
             </button>
             <input type="file" id="image-upload" accept="image/*" style="display: none;">
 
@@ -68,18 +72,19 @@ export function renderFarmingAssistant(container) {
             </div>
 
             <button id="send-btn" class="btn btn-primary" style="border-radius: 50%; width: 44px; height: 44px; flex-shrink: 0; padding: 0; display: flex; align-items: center; justify-content: center;" title="${i18n.t('assistant.send')}">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              ${getIcon('send', 18)}
             </button>
           </div>
           
-          <div id="recording-indicator" style="display: none; text-align: center; padding: 8px; color: #ef4444; font-size: 0.85rem; font-weight: 600; animation: pulse 1.5s infinite;">
-            🔴 ${i18n.t('assistant.listening')} <span style="text-decoration: underline; cursor: pointer; color: var(--text-secondary); margin-left: 8px;" id="stop-listening-btn">${i18n.t('assistant.stopListening')}</span>
+          <div id="recording-indicator" style="display: none; text-align: center; padding: 8px; color: #ef4444; font-size: 0.85rem; font-weight: 600;">
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ef4444; margin-right: 6px; animation: pulse 1.5s infinite;"></span>
+            ${i18n.t('assistant.listening')} <span style="text-decoration: underline; cursor: pointer; color: var(--text-secondary); margin-left: 8px;" id="stop-listening-btn">${i18n.t('assistant.stopListening')}</span>
           </div>
         </div>
       </main>
     </div>
     <style>
-      .quick-action-btn { background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+      .quick-action-btn { background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
       .quick-action-btn:hover { background: rgba(14,165,233,0.1); border-color: #0ea5e9; color: #0ea5e9; }
       .chat-bubble { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
       .chat-bubble.user { background: var(--primary); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
@@ -138,7 +143,7 @@ export function renderFarmingAssistant(container) {
     typing.remove();
 
     if (result.error) {
-      appendMessage('ai', `❌ ${result.error}`);
+      appendMessage('ai', result.error);
     } else {
       // Format markdown-like bold/lists to simple HTML
       let formattedText = result.response

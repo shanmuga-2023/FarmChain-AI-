@@ -9,6 +9,7 @@ import { formatCurrency, formatNumber, getStatusBadge, showToast, getCropEmoji, 
 import { PaymentSplitter, Marketplace } from '../../blockchain/contracts.js';
 import { generateProductQR, createQRDisplay } from '../../utils/qr.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderRetailerDashboard(container) {
   const user = store.get('currentUser') || { name: 'Retailer', id: 'retailer-001' };
@@ -40,7 +41,7 @@ export function renderRetailerDashboard(container) {
         <div class="page-content">
           <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-blue-dim); color: var(--accent-blue);">🛍️</div>
+              <div class="stat-card-icon" style="background: var(--accent-blue-dim); color: var(--accent-blue);">${getIcon('shoppingBag', 24)}</div>
               <div class="stat-card-value">${formatNumber(orders.length)}</div>
               <div class="stat-card-label">${i18n.t('retailer.dashboard.statSourced')}</div>
             </div>
@@ -70,7 +71,7 @@ export function renderRetailerDashboard(container) {
                     ${i18n.t('retailer.dashboard.authStationBadge')}
                   </span>
                   <span class="stamp-seal stamp-verified">
-                    ${i18n.t('retailer.dashboard.qrImpressionBadge')} ✓
+                    ${i18n.t('retailer.dashboard.qrImpressionBadge')}
                   </span>
                 </div>
                 <div class="card-title" style="margin-top: 8px; font-size: 1.15rem;">
@@ -110,8 +111,8 @@ export function renderRetailerDashboard(container) {
 
               <!-- Stamping visual display -->
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--parchment-warm); border: 1.5px dashed var(--border-rule); border-radius: var(--radius-sm); padding: 20px; min-height: 200px; text-align: center;" id="retailer-stamp-target">
-                <div id="stamp-impression-icon" style="font-size: 3rem; margin-bottom: 8px; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);">
-                  🏷️
+                <div id="stamp-impression-icon" style="display: flex; justify-content: center; margin-bottom: 8px; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                  ${getIcon('tag', 36, '', 'color: var(--role-retailer);')}
                 </div>
                 <div id="stamp-impression-status" style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--loam);">
                   ${i18n.t('retailer.dashboard.readyForStamping')}
@@ -126,7 +127,10 @@ export function renderRetailerDashboard(container) {
           <div class="charts-grid">
             <div class="chart-card">
               <div class="chart-card-header">
-                <div class="chart-card-title">📊 ${i18n.t('retailer.dashboard.salesChartTitle')}</div>
+                <div class="chart-card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('barChart', 16, '', 'color: var(--accent-blue);')}
+                  <span>${i18n.t('retailer.dashboard.salesChartTitle')}</span>
+                </div>
               </div>
               <div class="chart-wrapper">
                 <canvas id="retailer-sales-chart"></canvas>
@@ -134,7 +138,10 @@ export function renderRetailerDashboard(container) {
             </div>
             <div class="chart-card">
               <div class="chart-card-header">
-                <div class="chart-card-title">📦 ${i18n.t('farmer.dashboard.categoriesTitle')}</div>
+                <div class="chart-card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('pieChart', 16, '', 'color: var(--accent-purple);')}
+                  <span>${i18n.t('farmer.dashboard.categoriesTitle')}</span>
+                </div>
               </div>
               <div class="chart-wrapper">
                 <canvas id="retailer-category-chart"></canvas>
@@ -145,24 +152,30 @@ export function renderRetailerDashboard(container) {
           <!-- Storefront Products -->
           <div class="card" style="margin-top: 20px;">
             <div class="card-header">
-              <div class="card-title">🏬 ${i18n.t('retailer.dashboard.storefrontTitle')}</div>
+              <div class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                ${getIcon('store', 16, '', 'color: var(--accent-amber);')}
+                <span>${i18n.t('retailer.dashboard.storefrontTitle')}</span>
+              </div>
               <button class="btn btn-primary btn-sm" onclick="window.location.hash='/retailer/source'">${i18n.t('retailer.dashboard.sourceMore')} →</button>
             </div>
             <div class="data-grid" style="margin-top: 16px;">
               ${allProducts.slice(0, 6).map(p => `
                 <div class="product-card">
-                  <div class="product-card-image" style="height: 120px;">
-                    ${p.emoji || getCropEmoji(p.name)}
-                    ${p.isOrganic ? `<span class="product-card-badge badge-organic">🌿 ${i18n.t('farmer.products.organicBadge')}</span>` : ''}
+                  <div class="product-card-image" style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); position: relative;">
+                    ${getCropEmoji(p.name, 40)}
+                    ${p.isOrganic ? `<span class="product-card-badge badge-organic" style="display: inline-flex; align-items: center; gap: 4px;">${getIcon('sprout', 10)} ${i18n.t('farmer.products.organicBadge')}</span>` : ''}
                   </div>
                   <div class="product-card-body">
                     <div class="product-card-name">${localizeCropName(p.name)}</div>
-                    <div class="product-card-origin">📍 ${localizeLocation(p.origin)}</div>
+                    <div class="product-card-origin" style="display: flex; align-items: center; gap: 4px;">
+                      ${getIcon('mapPin', 12, '', 'color: var(--text-muted);')}
+                      <span>${localizeLocation(p.origin)}</span>
+                    </div>
                     <div class="product-card-price">${formatCurrency(p.pricePerUnit)}<span class="product-card-unit">/${localizeUnit(p.unit)}</span></div>
                   </div>
                   <div class="product-card-footer">
-                    <span class="badge badge-success">⛓️ ${i18n.t('camera.verifiedBadge')}</span>
-                    <button class="btn-icon gen-qr-btn" data-product='${JSON.stringify(p)}' title="${i18n.t('farmer.products.traceQrTitle')}">📱</button>
+                    <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px;">${getIcon('shieldCheck', 12)} ${i18n.t('camera.verifiedBadge')}</span>
+                    <button class="btn-icon gen-qr-btn" data-product='${JSON.stringify(p)}' title="${i18n.t('farmer.products.traceQrTitle')}" style="display: inline-flex; align-items: center; justify-content: center;">${getIcon('qr', 15)}</button>
                   </div>
                 </div>
               `).join('')}
@@ -186,7 +199,7 @@ export function renderRetailerDashboard(container) {
 
     setTimeout(async () => {
       if (icon) icon.style.transform = 'translateY(0) scale(1)';
-      stampToolBtn.textContent = `${i18n.t('retailer.dashboard.inkSealApplied')} ✓`;
+      stampToolBtn.textContent = i18n.t('retailer.dashboard.inkSealApplied');
       stampToolBtn.classList.add('is-success');
 
       // Generate actual QR code on canvas

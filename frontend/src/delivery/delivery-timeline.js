@@ -1,18 +1,23 @@
 // frontend/src/delivery/delivery-timeline.js
 // Delivery event timeline component
 import { i18n } from '../i18n/index.js';
+import { getIcon } from '../utils/icons.js';
 
-const STATUS_ICONS = {
-  ORDER_CREATED: '📝',
-  PICKUP_ASSIGNED: '📌',
-  PICKED_UP: '📦',
-  IN_TRANSIT: '🚚',
-  NEAR_DESTINATION: '📍',
-  OUT_FOR_DELIVERY: '🏃',
-  DELIVERED: '✅',
-  BUYER_CONFIRMED: '🤝',
-  ESCROW_RELEASED: '💰'
-};
+function getStatusTimelineIcon(status, color) {
+  const iconMap = {
+    ORDER_CREATED: 'fileText',
+    PICKUP_ASSIGNED: 'mapPin',
+    PICKED_UP: 'package',
+    IN_TRANSIT: 'delivery',
+    NEAR_DESTINATION: 'mapPin',
+    OUT_FOR_DELIVERY: 'delivery',
+    DELIVERED: 'checkCircle',
+    BUYER_CONFIRMED: 'check',
+    ESCROW_RELEASED: 'shieldCheck'
+  };
+  const iconName = iconMap[status] || 'clock';
+  return getIcon(iconName, 18, '', `color: ${color};`);
+}
 
 const STATUS_COLORS = {
   ORDER_CREATED: '#64748b',
@@ -40,15 +45,15 @@ export function renderDeliveryTimeline(events = [], currentStatus = '') {
     <div class="delivery-timeline" style="position: relative; padding: 16px 0;">
       ${events.map((event, idx) => {
         const isLast = idx === events.length - 1;
-        const icon = STATUS_ICONS[event.status] || '⏺️';
         const color = STATUS_COLORS[event.status] || '#64748b';
+        const icon = getStatusTimelineIcon(event.status, color);
         const label = getStatusLabel(event.status);
         const time = event.timestamp ? new Date(event.timestamp).toLocaleString(i18n.getLocale()) : '';
 
         return `
           <div style="display: flex; gap: 16px; position: relative; padding-bottom: ${isLast ? '0' : '24px'};">
             ${!isLast ? `<div style="position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px; background: ${isLast ? 'transparent' : 'var(--border)'};"></div>` : ''}
-            <div style="width: 40px; height: 40px; border-radius: 50%; background: ${color}20; border: 2px solid ${color}; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; z-index: 1;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: ${color}20; border: 2px solid ${color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1;">
               ${icon}
             </div>
             <div style="flex: 1; padding-top: 4px;">

@@ -1,6 +1,7 @@
 // frontend/src/delivery/delivery-map.js
 // Visual delivery route map (CSS-based, no external map library)
 import { i18n } from '../i18n/index.js';
+import { getIcon } from '../utils/icons.js';
 
 const ROUTE_STEPS = ['farm', 'pickup', 'transit', 'retailer', 'delivered'];
 
@@ -25,7 +26,13 @@ export function renderDeliveryMap(delivery) {
   const currentStep = getStepIndex(delivery.status);
   const progress = Math.min(100, (currentStep / (ROUTE_STEPS.length - 1)) * 100);
 
-  const stepIcons = ['🌾', '📦', '🚚', '🏪', '✅'];
+  const stepIcons = [
+    getIcon('sprout', 20),
+    getIcon('package', 20),
+    getIcon('delivery', 20),
+    getIcon('store', 20),
+    getIcon('checkCircle', 20)
+  ];
   const stepLabels = ROUTE_STEPS.map(s => i18n.t(`delivery.route.${s}`) || s);
 
   return `
@@ -43,7 +50,7 @@ export function renderDeliveryMap(delivery) {
           const isCurrent = idx === currentStep;
           return `
             <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 1; flex: 1;">
-              <div style="width: 48px; height: 48px; border-radius: 50%; background: ${isActive ? (isCurrent ? 'linear-gradient(135deg, #0ea5e9, #22c55e)' : '#22c55e') : 'var(--surface-secondary)'}; border: 3px solid ${isActive ? '#22c55e' : 'var(--border)'}; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; ${isCurrent ? 'box-shadow: 0 0 16px rgba(14, 165, 233, 0.4); animation: pulse 2s infinite;' : ''} transition: all 0.3s ease;">
+              <div style="width: 48px; height: 48px; border-radius: 50%; background: ${isActive ? (isCurrent ? 'linear-gradient(135deg, #0ea5e9, #22c55e)' : '#22c55e') : 'var(--surface-secondary)'}; border: 3px solid ${isActive ? '#22c55e' : 'var(--border)'}; display: flex; align-items: center; justify-content: center; color: ${isActive ? '#ffffff' : 'var(--text-muted)'}; ${isCurrent ? 'box-shadow: 0 0 16px rgba(14, 165, 233, 0.4); animation: pulse 2s infinite;' : ''} transition: all 0.3s ease;">
                 ${stepIcons[idx]}
               </div>
               <span style="font-size: 0.75rem; font-weight: ${isCurrent ? '700' : '500'}; color: ${isActive ? 'var(--text-primary)' : 'var(--text-muted)'}; text-align: center; max-width: 80px;">
@@ -56,7 +63,7 @@ export function renderDeliveryMap(delivery) {
 
       ${delivery.currentLocation ? `
         <div style="margin-top: 20px; padding: 12px 16px; background: var(--surface-secondary); border-radius: 12px; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
-          <span>📍</span>
+          <span style="color: var(--accent-green); display: flex; align-items: center;">${getIcon('mapPin', 16)}</span>
           <span style="color: var(--text-secondary);">${i18n.t('delivery.currentLocation')}: ${delivery.currentLocation.lat?.toFixed(4)}, ${delivery.currentLocation.lng?.toFixed(4)}</span>
         </div>
       ` : ''}

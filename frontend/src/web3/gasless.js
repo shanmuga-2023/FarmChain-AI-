@@ -60,7 +60,7 @@ export class GaslessProvider {
 
     try {
       this.init();
-      console.log(`📱 Initiating Firebase SMS dispatch to ${e164Phone}...`);
+      console.log(`[Gasless] Initiating Firebase SMS dispatch to ${e164Phone}...`);
       const result = await sendPhoneOtp(e164Phone, 'recaptcha-container');
 
       this._confirmationResult = result.confirmationResult;
@@ -70,7 +70,7 @@ export class GaslessProvider {
       };
       this._saveState();
 
-      console.log(`✅ Firebase SMS request accepted for ${e164Phone}`);
+      console.log(`[Gasless] Firebase SMS request accepted for ${e164Phone}`);
       return {
         success: true,
         phone: result.phone,
@@ -100,7 +100,7 @@ export class GaslessProvider {
       const firebaseUser = verifyResult.firebaseUser;
       const idToken = verifyResult.idToken;
 
-      console.log('✅ Firebase Phone Auth verified successfully for UID:', firebaseUser.uid);
+      console.log('[Gasless] Firebase Phone Auth verified successfully for UID:', firebaseUser.uid);
 
       // Create smart account representation linked to Firebase UID
       const smartAccount = this._generateSmartAccount(firebaseUser.uid);
@@ -185,10 +185,10 @@ export class GaslessProvider {
       costSavedEth: gasEstimate.costEth,
       paymasterSignature: paymasterSignature.slice(0, 20) + '...',
       pipeline: [
-        { step: 'UserOp Created', status: 'done', icon: '📝' },
-        { step: 'Paymaster Signed', status: 'done', icon: '💳' },
-        { step: 'Bundler Submitted', status: 'done', icon: '📡' },
-        { step: 'On-Chain Confirmed', status: 'done', icon: '⛓️' },
+        { step: 'UserOp Created', status: 'done', icon: 'fileText' },
+        { step: 'Paymaster Signed', status: 'done', icon: 'creditCard' },
+        { step: 'Bundler Submitted', status: 'done', icon: 'zap' },
+        { step: 'On-Chain Confirmed', status: 'done', icon: 'checkCircle' },
       ],
     };
   }

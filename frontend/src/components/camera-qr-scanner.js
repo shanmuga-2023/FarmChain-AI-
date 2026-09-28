@@ -8,7 +8,7 @@ import { i18n } from '../i18n/index.js';
 export function openCameraScanner() {
   let scannerInstance = null;
 
-  const modal = createModal(`📸 ${i18n.t('scanner.modalTitle')}`, `
+  const modal = createModal(i18n.t('scanner.modalTitle'), `
     <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;">
       <p style="font-size: 0.85rem; color: var(--text-secondary);">
         ${i18n.t('scanner.instructions')}
@@ -48,7 +48,7 @@ export function openCameraScanner() {
         },
         // Success callback — QR code decoded
         (decodedText) => {
-          if (statusEl) statusEl.textContent = `✅ ${i18n.t('scanner.qrDetected')}: ${decodedText.slice(0, 40)}...`;
+          if (statusEl) statusEl.textContent = `${i18n.t('scanner.qrDetected')}: ${decodedText.slice(0, 40)}...`;
 
           // Parse QR data — handle ALL possible formats
           let productId = null;
@@ -93,14 +93,14 @@ export function openCameraScanner() {
             showToast(i18n.t('scanner.scanSuccess'), 'success');
             router.navigate(`/consumer/trace?id=${productId}`);
           } else {
-            if (statusEl) statusEl.textContent = `⚠️ ${i18n.t('scanner.invalidProduct')}`;
+            if (statusEl) statusEl.textContent = i18n.t('scanner.invalidProduct');
           }
         },
         // Error callback — ignored (fires on every non-QR frame)
         () => {}
       );
 
-      if (statusEl) statusEl.textContent = `🔍 ${i18n.t('scanner.scanningPrompt')}`;
+      if (statusEl) statusEl.textContent = i18n.t('scanner.scanningPrompt');
     } catch (err) {
       console.warn('QR Scanner init error:', err);
       if (statusEl) {

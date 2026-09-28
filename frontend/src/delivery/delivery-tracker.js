@@ -7,6 +7,7 @@ import { formatCurrency, showToast } from '../utils/helpers.js';
 import { renderDeliveryMap } from './delivery-map.js';
 import { renderDeliveryTimeline, getStatusLabel } from './delivery-timeline.js';
 import { initDeliverySocket, onDeliveryEvent } from './delivery-events.js';
+import { getIcon } from '../utils/icons.js';
 
 export function renderDeliveryTracker(container) {
   const user = store.get('currentUser');
@@ -53,17 +54,17 @@ export function renderDeliveryTracker(container) {
           <!-- Stats -->
           <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">🚚</div>
+              <div class="stat-card-icon" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">${getIcon('delivery', 22)}</div>
               <div class="stat-card-value">${deliveries.length}</div>
               <div class="stat-card-label">${i18n.t('delivery.title')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: rgba(245,158,11,0.1); color: #f59e0b;">📦</div>
+              <div class="stat-card-icon" style="background: rgba(245,158,11,0.1); color: #f59e0b;">${getIcon('package', 22)}</div>
               <div class="stat-card-value">${activeDeliveries.length}</div>
               <div class="stat-card-label">${i18n.t('delivery.status.inTransit')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: rgba(34,197,94,0.1); color: #22c55e;">✅</div>
+              <div class="stat-card-icon" style="background: rgba(34,197,94,0.1); color: #22c55e;">${getIcon('checkCircle', 22)}</div>
               <div class="stat-card-value">${completedDeliveries.length}</div>
               <div class="stat-card-label">${i18n.t('delivery.status.delivered')}</div>
             </div>
@@ -71,7 +72,7 @@ export function renderDeliveryTracker(container) {
 
           ${deliveries.length === 0 ? `
             <div class="card" style="text-align: center; padding: 60px 24px;">
-              <div style="font-size: 3rem; margin-bottom: 16px;">🚚</div>
+              <div style="display: flex; justify-content: center; margin-bottom: 16px; color: var(--text-muted);">${getIcon('delivery', 44)}</div>
               <h3 style="color: var(--text-primary); margin-bottom: 8px;">${i18n.t('delivery.noDeliveries')}</h3>
               <p style="color: var(--text-secondary); font-size: 0.9rem;">${i18n.t('delivery.errors.unavailable')}</p>
             </div>
@@ -120,7 +121,7 @@ function renderDeliveryCard(delivery, role) {
     <div class="card delivery-card-wrapper" style="margin-bottom: 16px; overflow: hidden;">
       <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0;">
         <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
-          <div style="width: 44px; height: 44px; border-radius: 14px; background: ${statusColor}15; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">🚚</div>
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: ${statusColor}15; display: flex; align-items: center; justify-content: center; color: ${statusColor};">${getIcon('delivery', 20)}</div>
           <div>
             <div style="font-weight: 700; font-size: 1rem; color: var(--text-primary);">${delivery.produce || 'Produce'}</div>
             <div style="font-size: 0.8rem; color: var(--text-secondary);">${delivery.deliveryId} · ${delivery.quantity || 0} ${delivery.unit || 'kg'}</div>
@@ -140,13 +141,13 @@ function renderDeliveryCard(delivery, role) {
         ${renderDeliveryMap(delivery)}
 
         <div style="margin-top: 20px;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;">📜 ${i18n.t('delivery.deliveryTimeline')}</h4>
+          <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">${getIcon('clock', 16, '', 'color: var(--primary);')} ${i18n.t('delivery.deliveryTimeline')}</h4>
           ${renderDeliveryTimeline(delivery.events || [], delivery.status)}
         </div>
 
         ${delivery.driver ? `
           <div style="margin-top: 16px; padding: 12px 16px; background: var(--surface-secondary); border-radius: 12px;">
-            <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">🚗 ${i18n.t('delivery.driver')}</div>
+            <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">${getIcon('delivery', 14, '', 'color: var(--primary);')} ${i18n.t('delivery.driver')}</div>
             <div style="font-size: 0.9rem; color: var(--text-primary);">${delivery.driver.name || '—'} · ${delivery.driver.phone || '—'}</div>
           </div>
         ` : ''}
@@ -161,7 +162,7 @@ function renderDeliveryCard(delivery, role) {
         ${delivery.qualityGrade ? `
           <div style="margin-top: 8px; padding: 12px 16px; background: var(--surface-secondary); border-radius: 12px; display: flex; justify-content: space-between;">
             <span style="font-size: 0.85rem; color: var(--text-secondary);">${i18n.t('delivery.qualityGrade')}</span>
-            <span style="font-size: 0.85rem; font-weight: 600; color: #22c55e;">⭐ ${delivery.qualityGrade}</span>
+            <span style="font-size: 0.85rem; font-weight: 600; color: #22c55e; display: inline-flex; align-items: center; gap: 4px;">${getIcon('checkCircle', 14, '', 'color: #22c55e;')} ${delivery.qualityGrade}</span>
           </div>
         ` : ''}
 
@@ -184,10 +185,10 @@ function getActionButtons(delivery, role) {
       btns.push(`<button class="btn btn-primary btn-sm" data-delivery-id="${id}" data-delivery-action="PICKUP_ASSIGNED">${i18n.t('delivery.assignPickup')}</button>`);
     }
     if (delivery.status === 'PICKUP_ASSIGNED') {
-      btns.push(`<button class="btn btn-primary btn-sm" data-delivery-id="${id}" data-delivery-action="PICKED_UP">📦 ${i18n.t('delivery.status.pickedUp')}</button>`);
+      btns.push(`<button class="btn btn-primary btn-sm" data-delivery-id="${id}" data-delivery-action="PICKED_UP" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('package', 14)} ${i18n.t('delivery.status.pickedUp')}</button>`);
     }
     if (delivery.status === 'PICKED_UP') {
-      btns.push(`<button class="btn btn-primary btn-sm" data-delivery-id="${id}" data-delivery-action="IN_TRANSIT">🚚 ${i18n.t('delivery.updateShipment')}</button>`);
+      btns.push(`<button class="btn btn-primary btn-sm" data-delivery-id="${id}" data-delivery-action="IN_TRANSIT" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('delivery', 14)} ${i18n.t('delivery.updateShipment')}</button>`);
     }
   }
 
@@ -233,7 +234,7 @@ function handleStatusUpdate(deliveryId, newStatus, actorId) {
   deliveries[idx].events.push({ status: newStatus, timestamp: now, actor: actorId });
   store.set('deliveries', deliveries);
 
-  showToast(`${getStatusLabel(newStatus)} ✅`, 'success');
+  showToast(getStatusLabel(newStatus), 'success');
 
   // Re-render
   const app = document.getElementById('app');

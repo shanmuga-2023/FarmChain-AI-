@@ -17,6 +17,7 @@ import { QualityGuard } from '../../ai/quality-guard.js';
 import { i18n } from '../../i18n/index.js';
 import { FarmerProductWizard } from './product-wizard.js';
 import { LiveCamera } from '../../components/live-camera.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderFarmerProducts(container) {
   const user = store.get('currentUser') || { name: 'Farmer', id: 'farmer-001' };
@@ -40,14 +41,14 @@ export function renderFarmerProducts(container) {
         <header class="glass-header">
           <div class="header-left">
             <div>
-              <h2 class="header-title">${i18n.t('farmer.products.title')}</h2>
+              <h2 class="header-title">${i18n.t('farmer.products.title') || 'My Products'}</h2>
               <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Manage and monitor your listed agricultural products.</div>
             </div>
           </div>
           <div class="header-right">
             ${i18n.renderLanguageSelector('farmer-products-lang-select', 'padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text-primary); cursor: pointer; font-size: 0.85rem;')}
-            <button class="btn-icon" style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;">🔔</button>
-            <div class="avatar-circle" style="width: 40px; height: 40px;">👨🏽‍🌾</div>
+            <button class="btn-icon" style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;" title="Notifications">${getIcon('bell', 18)}</button>
+            <div class="avatar-circle" style="width: 40px; height: 40px; background: rgba(14, 165, 233, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center;">${getIcon('farmer', 20)}</div>
           </div>
         </header>
 
@@ -62,11 +63,11 @@ export function renderFarmerProducts(container) {
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
             <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">My Products</h3>
             <div style="display: flex; gap: 12px;">
-              <button class="saas-btn" id="farm-live-camera-btn" style="width: auto; padding: 0 20px; background: var(--surface); border: 1px solid var(--success); color: var(--success);">
-                📸 ${i18n.t('farmer.dashboard.actionLiveCamera')}
+              <button class="saas-btn" id="farm-live-camera-btn" style="width: auto; padding: 0 20px; background: var(--surface); border: 1px solid var(--success); color: var(--success); display: inline-flex; align-items: center; gap: 8px;">
+                ${getIcon('camera', 16)} ${i18n.t('farmer.dashboard.actionLiveCamera') || 'Open Live Camera'}
               </button>
-              <button class="saas-btn" id="add-product-btn" ${!eligibility.eligible ? 'disabled' : ''} style="width: auto; padding: 0 24px; background: linear-gradient(135deg, #0EA5E9, #6366F1);">
-                + ${i18n.t('farmer.dashboard.actionAddProduce')}
+              <button class="saas-btn" id="add-product-btn" ${!eligibility.eligible ? 'disabled' : ''} style="width: auto; padding: 0 24px; background: linear-gradient(135deg, #0EA5E9, #6366F1); display: inline-flex; align-items: center; gap: 8px;">
+                ${getIcon('plus', 16)} ${i18n.t('farmer.dashboard.actionAddProduce') || 'Add New Produce'}
               </button>
             </div>
           </div>
@@ -78,14 +79,19 @@ export function renderFarmerProducts(container) {
 
           ${products.length === 0 ? `
             <div class="saas-card" style="padding: 64px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 32px;">
-              <div style="font-size: 3rem; margin-bottom: 16px; opacity: 0.8;">📦</div>
+              <div style="width: 64px; height: 64px; border-radius: 20px; background: rgba(14, 165, 233, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                ${getIcon('package', 32)}
+              </div>
               <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">No products yet</h3>
               <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 400px; margin: 0 auto 24px;">Add your first product to start listing your agricultural produce on the marketplace.</p>
-              <button class="saas-btn" id="add-first-product-btn" ${!eligibility.eligible ? 'disabled' : ''} style="width: auto; padding: 0 32px;">
-                + ${i18n.t('farmer.dashboard.actionAddProduce')}
+              <button class="saas-btn" id="add-first-product-btn" ${!eligibility.eligible ? 'disabled' : ''} style="width: auto; padding: 0 32px; display: inline-flex; align-items: center; gap: 8px;">
+                ${getIcon('plus', 16)} ${i18n.t('farmer.dashboard.actionAddProduce') || 'Add New Produce'}
               </button>
             </div>
           ` : ''}
+        </div>
+      </main>
+    </div>
         </div>
       </main>
     </div>
@@ -182,7 +188,7 @@ export function renderFarmerProducts(container) {
       } catch (err) {
         showToast(err.message || i18n.t('errors.deleteFailed'), 'error');
         btn.disabled = false;
-        btn.textContent = '🗑️';
+        btn.innerHTML = getIcon('trash', 14);
       }
     });
   });
@@ -219,12 +225,15 @@ function renderProductCard(product) {
         ${product.photoUrl ? `
           <img src="${product.photoUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" />
         ` : `
-          <span style="font-size: 4rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));">${product.emoji || getCropEmoji(product.name)}</span>
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-tertiary);">
+            ${getIcon('sprout', 44)}
+            <span style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">${localizeCropName(product.name)}</span>
+          </div>
         `}
         
         <div style="position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
-          ${product.isOrganic ? `<span style="background: var(--success); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">🌿 Organic</span>` : ''}
-          ${product.isLiveCapture ? `<span style="background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">📸 Verified</span>` : ''}
+          ${product.isOrganic ? `<span class="fc-badge fc-badge-success" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">${getIcon('leaf', 12)} Organic</span>` : ''}
+          ${product.isLiveCapture ? `<span class="fc-badge fc-badge-info" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">${getIcon('camera', 12)} Verified</span>` : ''}
         </div>
       </div>
 
@@ -232,7 +241,7 @@ function renderProductCard(product) {
       <div style="padding: 20px; flex: 1; display: flex; flex-direction: column;">
         <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.3px;">${localizeCropName(product.name)}</div>
         <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; display: flex; align-items: center; gap: 4px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${getIcon('mapPin', 14)}
           ${localizeLocation(product.origin)}
         </div>
         
@@ -245,20 +254,23 @@ function renderProductCard(product) {
           <span style="background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
             ${formatNumber(product.quantity)} ${unit}
           </span>
-          <span style="background: ${prediction.isFairlyPriced ? 'rgba(34,197,94,0.1)' : 'rgba(245,158,11,0.1)'}; color: ${prediction.isFairlyPriced ? 'var(--success)' : 'var(--warning)'}; border: 1px solid ${prediction.isFairlyPriced ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)'}; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
-            ${prediction.isFairlyPriced ? `✓ Fair Price` : `⚠ Review Price`}
+          <span style="background: ${prediction.isFairlyPriced ? 'rgba(34,197,94,0.1)' : 'rgba(245,158,11,0.1)'}; color: ${prediction.isFairlyPriced ? 'var(--success)' : 'var(--warning)'}; border: 1px solid ${prediction.isFairlyPriced ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)'}; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            ${prediction.isFairlyPriced ? `${getIcon('check', 12)} Fair Price` : `${getIcon('alert', 12)} Review Price`}
           </span>
           ${aiGrade ? `
-            <span style="background: rgba(139,92,246,0.1); color: #8B5CF6; border: 1px solid rgba(139,92,246,0.2); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
-              ⭐ Grade ${aiGrade}
+            <span style="background: rgba(139,92,246,0.1); color: #8B5CF6; border: 1px solid rgba(139,92,246,0.2); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+              ${getIcon('award', 12)} Grade ${aiGrade}
             </span>
           ` : ''}
         </div>
 
         <div style="margin-top: auto; display: grid; grid-template-columns: 1fr auto auto; gap: 8px;">
-          <button class="saas-btn edit-product-btn" data-product-id="${product.productId}" style="height: 36px; font-size: 0.85rem; padding: 0 12px; background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border);">Edit</button>
-          <button class="saas-btn qr-btn" data-product-id="${product.productId}" style="height: 36px; font-size: 0.85rem; padding: 0 12px; width: 36px; background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border);">📱</button>
-          <button class="saas-btn delete-product-btn" data-product-id="${product.productId}" style="height: 36px; font-size: 0.85rem; padding: 0 12px; width: 36px; background: transparent; color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3);">🗑️</button>
+          <button class="saas-btn edit-product-btn" data-product-id="${product.productId}" style="height: 36px; font-size: 0.85rem; padding: 0 12px; background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+            ${getIcon('edit', 14)}
+            <span>Edit</span>
+          </button>
+          <button class="saas-btn qr-btn" data-product-id="${product.productId}" title="QR Code" style="height: 36px; width: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border);">${getIcon('qr', 15)}</button>
+          <button class="saas-btn delete-product-btn" data-product-id="${product.productId}" title="Delete" style="height: 36px; width: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3);">${getIcon('trash', 15)}</button>
         </div>
       </div>
     </div>
@@ -329,7 +341,7 @@ function showEditProductModal(container, product) {
     </div>
   `, `
     <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">${i18n.t('common.cancel')}</button>
-    <button class="btn btn-primary btn-sm" id="save-edit-product-btn">💾 ${i18n.t('common.saveChanges')}</button>
+    <button class="btn btn-primary btn-sm" id="save-edit-product-btn" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('edit', 14)} <span>${i18n.t('common.saveChanges')}</span></button>
   `);
 
   document.getElementById('save-edit-product-btn')?.addEventListener('click', async () => {
@@ -381,7 +393,7 @@ function showEditProductModal(container, product) {
       showToast(err.message || i18n.t('errors.updateFailed'), 'error');
       if (saveBtn) {
         saveBtn.disabled = false;
-        saveBtn.innerHTML = `💾 ${i18n.t('common.saveChanges')}`;
+        saveBtn.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('edit', 14)} <span>${i18n.t('common.saveChanges')}</span></span>`;
       }
     }
   });
@@ -395,20 +407,20 @@ function showFarmVerificationModal(container, result, user, openWizard) {
   const loc = proof.location || {};
   const formattedDateTime = formatDateTime(proof.timestamp);
 
-  createModal(`📸 ${i18n.t('farmer.products.verificationModalTitle')}`, `
+  createModal(i18n.t('farmer.products.verificationModalTitle'), `
     <div style="display: flex; flex-direction: column; gap: 16px;">
       <!-- Photo with burnt watermark preview -->
       <div style="position: relative; border-radius: 14px; overflow: hidden; background: #000; border: 2px solid #16a34a; max-height: 280px; display: flex; align-items: center; justify-content: center;">
         <img src="${result.imageDataUrl}" alt="Live Farm Capture" style="width: 100%; max-height: 280px; object-fit: cover;" />
-        <span style="position: absolute; top: 10px; right: 10px; background: rgba(22, 163, 74, 0.9); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 800;">
-          ✓ ${i18n.t('camera.exactVerified')}
+        <span style="position: absolute; top: 10px; right: 10px; background: rgba(22, 163, 74, 0.9); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+          ${getIcon('checkCircle', 12)} ${i18n.t('camera.exactVerified')}
         </span>
       </div>
 
       <!-- Exact Location & Date/Timestamp Info Grid -->
       <div style="background: var(--parchment-card-alt, #f8fafc); border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
         <div style="display: flex; align-items: flex-start; gap: 10px;">
-          <span style="font-size: 1.25rem;">📍</span>
+          <span style="color: var(--accent-green);">${getIcon('mapPin', 20)}</span>
           <div>
             <div style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">${i18n.t('farmer.products.exactFarmLocation')}</div>
             <div style="font-size: 0.92rem; font-weight: 800; color: #1e293b;">
@@ -421,20 +433,20 @@ function showFarmVerificationModal(container, result, user, openWizard) {
         </div>
 
         <div style="display: flex; align-items: flex-start; gap: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
-          <span style="font-size: 1.25rem;">📅</span>
+          <span style="color: var(--accent-blue);">${getIcon('clock', 20)}</span>
           <div>
             <div style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">${i18n.t('farmer.products.timestampHeader')}</div>
             <div style="font-size: 0.92rem; font-weight: 800; color: #1e293b;">
               ${formattedDateTime}
             </div>
-            <div style="font-size: 0.74rem; color: #166534; font-weight: 700; margin-top: 2px;">
-              ✓ ${i18n.t('farmer.products.stampedNotice')}
+            <div style="font-size: 0.74rem; color: #166534; font-weight: 700; margin-top: 2px; display: inline-flex; align-items: center; gap: 4px;">
+              ${getIcon('check', 12)} ${i18n.t('farmer.products.stampedNotice')}
             </div>
           </div>
         </div>
 
         <div style="display: flex; align-items: flex-start; gap: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
-          <span style="font-size: 1.25rem;">🛡️</span>
+          <span style="color: var(--accent-purple);">${getIcon('shieldCheck', 20)}</span>
           <div>
             <div style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">${i18n.t('camera.proofHash')}</div>
             <div style="font-size: 0.76rem; font-family: monospace; color: #64748b; word-break: break-all;">
@@ -445,7 +457,7 @@ function showFarmVerificationModal(container, result, user, openWizard) {
       </div>
     </div>
   `, `
-    <button class="btn btn-secondary btn-sm" id="save-farm-proof-btn">🌾 ${i18n.t('farmer.products.saveProofBtn')}</button>
+    <button class="btn btn-secondary btn-sm" id="save-farm-proof-btn" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('sprout', 14)} <span>${i18n.t('farmer.products.saveProofBtn')}</span></button>
     <button class="btn btn-primary btn-sm" id="list-with-camera-btn" style="background: #16a34a; border-color: #15803d; font-weight: 800;">
       ${i18n.t('farmer.products.listCropBtn')}
     </button>
@@ -485,20 +497,21 @@ function showProductProofModal(product) {
   const loc = proof?.location || {};
   const formattedDateTime = formatDateTime(proof?.timestamp || product.harvestDate || Date.now());
 
-  createModal(`📸 ${localizeCropName(product.name)} — ${i18n.t('farmer.products.sensorProofTitle')}`, `
+  createModal(`${localizeCropName(product.name)} — ${i18n.t('farmer.products.sensorProofTitle')}`, `
     <div style="display: flex; flex-direction: column; gap: 16px;">
       <div style="position: relative; border-radius: 14px; overflow: hidden; background: #000; border: 2px solid #16a34a; max-height: 280px; display: flex; align-items: center; justify-content: center;">
         <img src="${product.photoUrl || ''}" alt="${product.name}" style="width: 100%; max-height: 280px; object-fit: cover;" />
-        <span style="position: absolute; top: 10px; right: 10px; background: rgba(22, 163, 74, 0.9); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 800;">
-          ✓ ${i18n.t('farmer.products.liveHardwareStamped')}
+        <span style="position: absolute; top: 10px; right: 10px; background: rgba(22, 163, 74, 0.9); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+          ${getIcon('check', 12)} ${i18n.t('farmer.products.liveHardwareStamped')}
         </span>
       </div>
 
       <div style="background: var(--parchment-card-alt, #f8fafc); border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
         <div>
           <div style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">${i18n.t('farmer.products.exactFarmLocation')}</div>
-          <div style="font-size: 0.92rem; font-weight: 800; color: #1e293b;">
-            📍 ${localizeLocation(loc.address || product.origin || 'Registered Farm')}
+          <div style="font-size: 0.92rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+            ${getIcon('mapPin', 14, '', 'color: #16a34a;')}
+            <span>${localizeLocation(loc.address || product.origin || 'Registered Farm')}</span>
           </div>
           ${loc.lat ? `
             <div style="font-size: 0.76rem; color: #475569; margin-top: 2px;">
@@ -509,8 +522,9 @@ function showProductProofModal(product) {
 
         <div style="padding-top: 10px; border-top: 1px dashed #cbd5e1;">
           <div style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">${i18n.t('farmer.products.timestampHeader')}</div>
-          <div style="font-size: 0.92rem; font-weight: 800; color: #1e293b;">
-            📅 ${formattedDateTime}
+          <div style="font-size: 0.92rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+            ${getIcon('clock', 14, '', 'color: #16a34a;')}
+            <span>${formattedDateTime}</span>
           </div>
         </div>
 

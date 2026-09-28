@@ -15,6 +15,7 @@ import { postOrder, updateProduct, API_BASE } from '../../utils/api.js';
 import { addFirestoreOrder, updateFirestoreProduct } from '../../firebase/firestore.js';
 import { notifyOrderPlaced } from '../../utils/notifications.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderConsumerMarketplace(container) {
   const user = store.get('currentUser');
@@ -31,7 +32,7 @@ export function renderConsumerMarketplace(container) {
         <header class="glass-header">
           <div class="header-left">
             <div>
-              <h2 class="header-title">${i18n.t('consumer.marketplaceTitle') || 'Marketplace ️'}</h2>
+              <h2 class="header-title">${i18n.t('consumer.marketplaceTitle') || 'Marketplace'}</h2>
               <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('consumer.browseProducts') || 'Browse Products'}</span></div>
             </div>
           </div>
@@ -48,11 +49,11 @@ export function renderConsumerMarketplace(container) {
           <!-- Filters -->
           <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
             <button class="tab active filter-tab" data-category="all">${i18n.t('common.all') || 'All'}</button>
-            <button class="tab filter-tab" data-category="Grains">🌾 ${i18n.t('crops.grains') || 'Grains'}</button>
-            <button class="tab filter-tab" data-category="Vegetables">🥬 ${i18n.t('crops.vegetables') || 'Vegetables'}</button>
-            <button class="tab filter-tab" data-category="Fruits">🍎 ${i18n.t('crops.fruits') || 'Fruits'}</button>
-            <button class="tab filter-tab" data-category="Spices">🌶️ ${i18n.t('crops.spices') || 'Spices'}</button>
-            <button class="tab filter-tab" data-category="organic">🌿 ${i18n.t('common.organicOnly') || 'Organic Only'}</button>
+            <button class="tab filter-tab" data-category="Grains" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('wheat', 14)} <span>${i18n.t('crops.grains') || 'Grains'}</span></button>
+            <button class="tab filter-tab" data-category="Vegetables" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('sprout', 14)} <span>${i18n.t('crops.vegetables') || 'Vegetables'}</span></button>
+            <button class="tab filter-tab" data-category="Fruits" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('apple', 14)} <span>${i18n.t('crops.fruits') || 'Fruits'}</span></button>
+            <button class="tab filter-tab" data-category="Spices" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('flame', 14)} <span>${i18n.t('crops.spices') || 'Spices'}</span></button>
+            <button class="tab filter-tab" data-category="organic" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('leaf', 14)} <span>${i18n.t('common.organicOnly') || 'Organic Only'}</span></button>
           </div>
 
           <!-- Product Grid -->
@@ -65,24 +66,25 @@ export function renderConsumerMarketplace(container) {
 
               return `
                 <div class="product-card marketplace-item" data-category="${p.category}" data-organic="${p.isOrganic}" data-name="${p.name.toLowerCase()}">
-                  <div class="product-card-image">
-                    ${p.emoji || getCropEmoji(p.name)}
-                    ${p.isOrganic ? `<span class="product-card-badge badge-organic">🌿 ${i18n.t('common.organic') || 'Organic'}</span>` : ''}
-                    ${productCerts.length > 0 ? `<span class="product-card-badge badge-verified" style="top: 40px;">✅ ${i18n.t('common.certified') || 'Certified'}</span>` : ''}
+                  <div class="product-card-image" style="display: flex; align-items: center; justify-content: center; background: rgba(14, 165, 233, 0.05); color: var(--primary);">
+                    ${p.photoUrl ? `<img src="${p.photoUrl}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;" />` : getIcon('sprout', 44)}
+                    ${p.isOrganic ? `<span class="product-card-badge badge-organic" style="display: inline-flex; align-items: center; gap: 4px;">${getIcon('leaf', 12)} ${i18n.t('common.organic') || 'Organic'}</span>` : ''}
+                    ${productCerts.length > 0 ? `<span class="product-card-badge badge-verified" style="top: 40px; display: inline-flex; align-items: center; gap: 4px;">${getIcon('checkCircle', 12)} ${i18n.t('common.certified') || 'Certified'}</span>` : ''}
                   </div>
                   <div class="product-card-body">
                     <div class="product-card-name">${escapeHtml(locCrop)}</div>
-                    <div class="product-card-origin">📍 ${escapeHtml(p.origin)} · ${i18n.t('common.byAuthor', { author: escapeHtml(p.farmerName) }) || `By ${escapeHtml(p.farmerName)}`}</div>
+                    <div class="product-card-origin" style="display: flex; align-items: center; gap: 4px;">${getIcon('mapPin', 12)} ${escapeHtml(p.origin)} · ${i18n.t('common.byAuthor', { author: escapeHtml(p.farmerName) }) || `By ${escapeHtml(p.farmerName)}`}</div>
                     <div style="display: flex; align-items: baseline; gap: 8px;">
                       <div class="product-card-price">${formatCurrency(p.pricePerUnit)}</div>
                       <span class="product-card-unit">${i18n.t('common.perUnit', { unit: locUnit }) || `per ${locUnit}`}</span>
                     </div>
                     <div style="margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap;">
-                      <span class="badge ${prediction.isFairlyPriced ? 'badge-success' : 'badge-warning'}">
-                        🤖 ${prediction.isFairlyPriced ? (i18n.t('ai.fairPrice') || 'Fair Price') : (i18n.t('ai.aboveMarket') || 'Above Market')}
+                      <span class="badge ${prediction.isFairlyPriced ? 'badge-success' : 'badge-warning'}" style="display: inline-flex; align-items: center; gap: 4px;">
+                        ${getIcon(prediction.isFairlyPriced ? 'check' : 'alert', 12)}
+                        <span>${prediction.isFairlyPriced ? (i18n.t('ai.fairPrice') || 'Fair Price') : (i18n.t('ai.aboveMarket') || 'Above Market')}</span>
                       </span>
                       ${productCerts.map(c => `
-                        <span class="badge badge-info">${c.certType === 'organic' ? '🌿' : '✅'} ${c.grade}</span>
+                        <span class="badge badge-info" style="display: inline-flex; align-items: center; gap: 4px;">${c.certType === 'organic' ? getIcon('leaf', 12) : getIcon('checkCircle', 12)} ${c.grade}</span>
                       `).join('')}
                     </div>
                     <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
@@ -90,8 +92,8 @@ export function renderConsumerMarketplace(container) {
                     </p>
                   </div>
                   <div class="product-card-footer">
-                    <button class="btn btn-secondary btn-sm trace-btn" data-product-id="${p.productId}">🔍 ${i18n.t('consumer.traceBtn') || 'Trace'}</button>
-                    <button class="btn btn-primary btn-sm buy-btn" style="color: black !important; font-weight: bold; padding: 10px 18px; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px;" data-product='${JSON.stringify(p)}'><span style="font-size: 1.3rem;">🛒</span> ${i18n.t('consumer.buyBtn') || 'Buy'}</button>
+                    <button class="btn btn-secondary btn-sm trace-btn" data-product-id="${p.productId}" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('trace', 14)} <span>${i18n.t('consumer.traceBtn') || 'Trace'}</span></button>
+                    <button class="btn btn-primary btn-sm buy-btn" style="color: black !important; font-weight: bold; padding: 10px 18px; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px;" data-product='${JSON.stringify(p)}'>${getIcon('shoppingBag', 15)} <span>${i18n.t('consumer.buyBtn') || 'Buy'}</span></button>
                   </div>
                 </div>
               `;
@@ -147,7 +149,9 @@ export function renderConsumerMarketplace(container) {
 
       createModal(i18n.t('consumer.purchaseModalTitle') || 'Purchase Product', `
         <div style="text-align: center; margin-bottom: 16px;">
-          <span style="font-size: 3rem;">${product.emoji || getCropEmoji(product.name)}</span>
+          <div style="width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 14px; background: rgba(14,165,233,0.12); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+            ${getIcon('sprout', 30)}
+          </div>
           <h3 style="margin-top: 8px;">${escapeHtml(locCrop)}</h3>
           <p style="color: var(--text-muted);">${i18n.t('consumer.purchaseFrom', { farmer: escapeHtml(product.farmerName), origin: escapeHtml(product.origin) }) || `From ${escapeHtml(product.farmerName)} · ${escapeHtml(product.origin)}`}</p>
         </div>
@@ -157,19 +161,19 @@ export function renderConsumerMarketplace(container) {
         </div>
         <div class="price-breakdown" style="margin-top: 16px;" id="price-breakdown-container">
           <div class="price-row">
-            <span class="price-row-label">${i18n.t('consumer.splitFarmer') || '🌾 Farmer receives (60%)'}</span>
+            <span class="price-row-label" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('farmer', 14)} <span>${i18n.t('consumer.splitFarmer') || 'Farmer receives (60%)'}</span></span>
             <span class="price-row-value price-farmer" style="color: var(--accent-green);">${formatCurrency(product.pricePerUnit * defaultQty * 0.6)}</span>
           </div>
           <div class="price-row">
-            <span class="price-row-label">${i18n.t('consumer.splitIntermediary') || '🏪 Intermediary (20%)'}</span>
+            <span class="price-row-label" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('intermediary', 14)} <span>${i18n.t('consumer.splitIntermediary') || 'Intermediary (20%)'}</span></span>
             <span class="price-row-value price-intermediary">${formatCurrency(product.pricePerUnit * defaultQty * 0.2)}</span>
           </div>
           <div class="price-row">
-            <span class="price-row-label">${i18n.t('consumer.splitRetailer') || '🛒 Retailer (15%)'}</span>
+            <span class="price-row-label" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('retailer', 14)} <span>${i18n.t('consumer.splitRetailer') || 'Retailer (15%)'}</span></span>
             <span class="price-row-value price-retailer">${formatCurrency(product.pricePerUnit * defaultQty * 0.15)}</span>
           </div>
           <div class="price-row">
-            <span class="price-row-label">${i18n.t('consumer.splitPlatform') || '⛓️ Platform fee (5%)'}</span>
+            <span class="price-row-label" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('blockchain', 14)} <span>${i18n.t('consumer.splitPlatform') || 'Platform fee (5%)'}</span></span>
             <span class="price-row-value price-platform">${formatCurrency(product.pricePerUnit * defaultQty * 0.05)}</span>
           </div>
           <div class="price-row total" id="buy-total-row">
@@ -178,12 +182,9 @@ export function renderConsumerMarketplace(container) {
           </div>
         </div>
 
-
-
-
       `, `
         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">${i18n.t('common.cancel') || 'Cancel'}</button>
-        <button class="btn btn-primary btn-sm" id="confirm-buy-btn">💳 ${i18n.t('consumer.confirmPayBtn') || 'Pay & Record on Blockchain'}</button>
+        <button class="btn btn-primary btn-sm" id="confirm-buy-btn" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('creditCard', 15)} <span>${i18n.t('consumer.confirmPayBtn') || 'Pay & Record on Blockchain'}</span></button>
       `);
 
       // Dynamic price breakdown update on quantity change
@@ -279,16 +280,16 @@ export function renderConsumerMarketplace(container) {
         let invoiceActions = '';
         if (invoiceData) {
            invoiceActions = `
-             <button class="btn btn-secondary btn-sm" onclick="window.open('${API_BASE}/invoices/${invoiceData.invoiceId}/html')">📄 ${i18n.t('consumer.viewInvoiceBtn') || 'View Invoice'}</button>
-             <button class="btn btn-primary btn-sm" onclick="window.open('${API_BASE}/invoices/${invoiceData.invoiceId}/html?print=true')">📥 ${i18n.t('consumer.downloadInvoiceBtn') || 'Download Invoice'}</button>
+             <button class="btn btn-secondary btn-sm" onclick="window.open('${API_BASE}/invoices/${invoiceData.invoiceId}/html')" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('fileText', 14)} <span>${i18n.t('consumer.viewInvoiceBtn') || 'View Invoice'}</span></button>
+             <button class="btn btn-primary btn-sm" onclick="window.open('${API_BASE}/invoices/${invoiceData.invoiceId}/html?print=true')" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('download', 14)} <span>${i18n.t('consumer.downloadInvoiceBtn') || 'Download Invoice'}</span></button>
            `;
         } else {
            invoiceActions = `
-             <button class="btn btn-secondary btn-sm">🔄 ${i18n.t('consumer.retryInvoiceBtn') || 'Retry Invoice'}</button>
+             <button class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('refresh', 14)} <span>${i18n.t('consumer.retryInvoiceBtn') || 'Retry Invoice'}</span></button>
            `;
         }
 
-        createModal(i18n.t('consumer.orderSuccessTitle') || '✅ ORDER SUCCESSFUL', `
+        createModal(i18n.t('consumer.orderSuccessTitle') || 'ORDER SUCCESSFUL', `
           <div style="text-align: center; margin-bottom: 24px;">
             <p style="font-size: 1.1rem; color: var(--success); font-weight: 500;">${invoiceData ? (i18n.t('consumer.invoiceGenerated') || 'Invoice generated successfully.') : (i18n.t('consumer.invoiceFailed') || 'Order completed, but invoice generation failed.')}</p>
           </div>

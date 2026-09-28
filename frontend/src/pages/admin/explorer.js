@@ -9,6 +9,7 @@ import { renderSidebar } from '../../components/sidebar.js';
 import { formatDateTime, truncateHash, localizeCropName } from '../../utils/helpers.js';
 import { blockchain } from '../../blockchain/core.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderAdminExplorer(container) {
   const sidebarContainer = document.createElement('div');
@@ -24,13 +25,14 @@ export function renderAdminExplorer(container) {
         <header class="glass-header">
           <div class="header-left">
             <div>
-              <h2 class="header-title">${i18n.t('admin.explorerTitle') || 'Blockchain Explorer ️'}</h2>
+              <h2 class="header-title">${i18n.t('admin.explorerTitle') || 'Blockchain Explorer'}</h2>
               <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.navExplorer') || 'Explorer'}</span></div>
             </div>
           </div>
           <div class="header-right">
-            <span class="badge ${isValid ? 'badge-success' : 'badge-danger'}" style="font-size: 0.85rem; padding: 6px 14px;">
-              ${isValid ? (i18n.t('admin.chainVerified') || '✅ Chain Integrity Verified') : (i18n.t('admin.chainCompromised') || '❌ Chain Compromised')}
+            <span class="badge ${isValid ? 'badge-success' : 'badge-danger'}" style="font-size: 0.85rem; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px;">
+              ${isValid ? getIcon('shieldCheck', 14) : getIcon('alert', 14)}
+              <span>${isValid ? (i18n.t('admin.chainVerified') || 'Chain Integrity Verified') : (i18n.t('admin.chainCompromised') || 'Chain Compromised')}</span>
             </span>
             
           </div>
@@ -44,18 +46,18 @@ export function renderAdminExplorer(container) {
               <div class="stat-card-label">${i18n.t('admin.statBlocks') || 'Total Blocks'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">📝</div>
+              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">${getIcon('fileText', 24)}</div>
               <div class="stat-card-value">${chain.length - 1}</div>
               <div class="stat-card-label">${i18n.t('admin.transactions') || 'Transactions'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">🔒</div>
+              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">${getIcon('shieldCheck', 24)}</div>
               <div class="stat-card-value">SHA-256</div>
               <div class="stat-card-label">${i18n.t('admin.hashAlgorithm') || 'Hash Algorithm'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: ${isValid ? 'var(--accent-green-dim)' : 'var(--accent-red-dim)'}; color: ${isValid ? 'var(--accent-green)' : 'var(--accent-red)'};">
-                ${isValid ? '✅' : '❌'}
+              <div class="stat-card-icon" style="background: ${isValid ? 'var(--accent-green-dim)' : 'var(--accent-red-dim)'}; color: ${isValid ? 'var(--accent-green)' : 'var(--accent-red)'}; display: flex; align-items: center; justify-content: center;">
+                ${isValid ? getIcon('checkCircle', 24) : getIcon('xCircle', 24)}
               </div>
               <div class="stat-card-value">${isValid ? (i18n.t('admin.statusValid') || 'Valid') : (i18n.t('admin.statusInvalid') || 'Invalid')}</div>
               <div class="stat-card-label">${i18n.t('admin.chainStatus') || 'Chain Status'}</div>
@@ -65,7 +67,7 @@ export function renderAdminExplorer(container) {
           <!-- Search -->
           <div class="card" style="margin-bottom: 20px;">
             <div class="search-bar">
-              <span class="search-bar-icon">🔍</span>
+              <span class="search-bar-icon" style="display: flex; align-items: center;">${getIcon('search', 16)}</span>
               <input type="text" placeholder="${i18n.t('admin.searchBlocks') || 'Search by block index, hash, or transaction type...'}" id="block-search" />
             </div>
           </div>
@@ -75,7 +77,7 @@ export function renderAdminExplorer(container) {
             ${chain.slice().reverse().map((block, i) => `
               <div class="block explorer-block" data-index="${block.index}" data-type="${block.data?.type || ''}" data-hash="${block.hash || ''}">
                 <div class="block-header">
-                  <span class="block-index">${block.index === 0 ? (i18n.t('admin.genesisBlock') || '🏁 Genesis Block') : (i18n.t('trace.blockNumber', { index: block.index }) || `Block #${block.index}`)}</span>
+                  <span class="block-index">${block.index === 0 ? (i18n.t('admin.genesisBlock') || 'Genesis Block') : (i18n.t('trace.blockNumber', { index: block.index }) || `Block #${block.index}`)}</span>
                   <span class="block-time">${formatDateTime(block.timestamp)}</span>
                 </div>
 

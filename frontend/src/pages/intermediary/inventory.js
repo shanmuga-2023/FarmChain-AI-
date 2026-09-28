@@ -5,9 +5,9 @@
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, formatNumber, getStatusBadge, showToast, getCropEmoji, localizeCropName, localizeUnit } from '../../utils/helpers.js';
-import { escapeHtml } from '../../utils/sanitize.js';
+import { formatCurrency, formatNumber, getStatusBadge, showToast, getCropEmoji, localizeCropName, localizeUnit } from '../../utils/helpers.js';import { escapeHtml } from '../../utils/sanitize.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderIntermediaryInventory(container) {
   const user = store.get('currentUser') || { name: 'Trader', id: 'trader-001' };
@@ -29,8 +29,8 @@ export function renderIntermediaryInventory(container) {
         sellerName: order.sellerName,
       };
     }
-    inventoryMap[key].totalQuantity += order.quantity || 0;
-    inventoryMap[key].totalInvested += order.totalAmount || 0;
+    inventoryMap[key].totalQuantity += order.quantity;
+    inventoryMap[key].totalInvested += (order.totalAmount || 0);
     inventoryMap[key].orders.push(order);
   });
 
@@ -54,7 +54,10 @@ export function renderIntermediaryInventory(container) {
           </div>
           <div class="header-right">
             ${i18n.renderLanguageSelector('intermediary-inventory-lang-select')}
-            <button class="btn btn-primary btn-sm" onclick="window.location.hash='/intermediary/dashboard'">🏪 ${i18n.t('intermediary.inventory.sourceMore')}</button>
+            <button class="btn btn-primary btn-sm" onclick="window.location.hash='/intermediary/dashboard'" style="display: inline-flex; align-items: center; gap: 6px;">
+              ${getIcon('store', 14)}
+              <span>${i18n.t('intermediary.inventory.sourceMore')}</span>
+            </button>
             
           </div>
         </header>
@@ -78,7 +81,7 @@ export function renderIntermediaryInventory(container) {
               <div class="stat-card-label">${i18n.t('intermediary.dashboard.statTotalInvested')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">🔄</div>
+              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">${getIcon('delivery', 24)}</div>
               <div class="stat-card-value">${formatNumber(transfers.length)}</div>
               <div class="stat-card-label">${i18n.t('intermediary.dashboard.statOwnershipTransfers')}</div>
             </div>
@@ -110,7 +113,7 @@ export function renderIntermediaryInventory(container) {
                       <tr>
                         <td>
                           <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 1.3rem;">${getCropEmoji(item.productName)}</span>
+                            ${getCropEmoji(item.productName, 22)}
                             <span style="font-weight: 600;">${localizeCropName(item.productName)}</span>
                           </div>
                         </td>
@@ -126,10 +129,10 @@ export function renderIntermediaryInventory(container) {
               </table>
             ` : `
               <div class="empty-state">
-                <div class="empty-state-icon">📦</div>
+                <div class="empty-state-icon" style="display: flex; justify-content: center; margin-bottom: 12px; color: var(--text-muted);">${getIcon('package', 48)}</div>
                 <h3>${i18n.t('intermediary.inventory.noInventory')}</h3>
                 <p>${i18n.t('intermediary.inventory.noInventoryDesc')}</p>
-                <button class="btn btn-primary btn-sm" style="margin-top: 16px;" onclick="window.location.hash='/intermediary/dashboard'">🏪 ${i18n.t('intermediary.inventory.browseMarketplace')}</button>
+                <button class="btn btn-primary btn-sm" style="margin-top: 16px; display: inline-flex; align-items: center; gap: 6px;" onclick="window.location.hash='/intermediary/dashboard'">${getIcon('store', 14)} <span>${i18n.t('intermediary.inventory.browseMarketplace')}</span></button>
               </div>
             `}
           </div>

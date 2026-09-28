@@ -17,7 +17,7 @@ export function generateInvoiceHTML(invoice, opts = {}) {
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid ${isPrint ? '#e5e7eb' : 'var(--border)'};">
         <div>
           <h1 style="font-size: 24px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">
-            🌾 FarmChain
+            FarmChain
           </h1>
           <p style="font-size: 12px; color: ${isPrint ? '#6b7280' : 'var(--text-secondary)'}; margin: 4px 0 0;">Blockchain-Verified Agricultural Invoice</p>
         </div>
@@ -77,7 +77,7 @@ export function generateInvoiceHTML(invoice, opts = {}) {
             <span>${i18n.t('invoice.qualityAllocation')}</span><span>${formatCurrency(invoice.qualityAllocation || 0)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; color: #22c55e;">
-            <span>🌾 ${i18n.t('invoice.farmerPayout')} (60%)</span><span style="font-weight: 600;">${formatCurrency(invoice.farmerPayout || 0)}</span>
+            <span>${i18n.t('invoice.farmerPayout')} (60%)</span><span style="font-weight: 600;">${formatCurrency(invoice.farmerPayout || 0)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 12px 0; margin-top: 8px; border-top: 2px solid ${isPrint ? '#111827' : 'var(--text-primary)'}; font-size: 18px; font-weight: 800;">
             <span>${i18n.t('invoice.total')}</span><span>${formatCurrency(invoice.total || 0)}</span>
@@ -89,11 +89,11 @@ export function generateInvoiceHTML(invoice, opts = {}) {
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
         <div style="padding: 12px 16px; background: ${isPrint ? '#f0fdf4' : 'rgba(34,197,94,0.08)'}; border-radius: 12px; border: 1px solid ${isPrint ? '#bbf7d0' : 'rgba(34,197,94,0.2)'};">
           <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${isPrint ? '#16a34a' : '#22c55e'}; margin-bottom: 4px;">${i18n.t('invoice.paymentStatus')}</div>
-          <div style="font-size: 14px; font-weight: 600;">✅ ${invoice.paymentStatus || 'Completed'}</div>
+          <div style="font-size: 14px; font-weight: 600; color: #16a34a;">${invoice.paymentStatus || 'Completed'}</div>
         </div>
         <div style="padding: 12px 16px; background: ${isPrint ? '#eff6ff' : 'rgba(14,165,233,0.08)'}; border-radius: 12px; border: 1px solid ${isPrint ? '#bfdbfe' : 'rgba(14,165,233,0.2)'};">
           <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #0ea5e9; margin-bottom: 4px;">${i18n.t('invoice.blockchainVerification')}</div>
-          <div style="font-size: 14px; font-weight: 600;">${invoice.blockchainVerified ? '⛓️ VERIFIED' : '⏳ Pending'}</div>
+          <div style="font-size: 14px; font-weight: 600; color: #0ea5e9;">${invoice.blockchainVerified ? 'VERIFIED' : 'Pending'}</div>
         </div>
       </div>
 

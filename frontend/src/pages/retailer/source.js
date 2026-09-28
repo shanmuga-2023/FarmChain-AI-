@@ -14,6 +14,7 @@ import { postOrder } from '../../utils/api.js';
 import { addFirestoreOrder } from '../../firebase/firestore.js';
 import { notifyOrderPlaced } from '../../utils/notifications.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderRetailerSource(container) {
   const user = store.get('currentUser');
@@ -47,11 +48,11 @@ export function renderRetailerSource(container) {
           <!-- Category Filters -->
           <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
             <button class="tab active source-filter" data-category="all">${i18n.t('common.all') || 'All'}</button>
-            <button class="tab source-filter" data-category="Grains">🌾 ${i18n.t('crops.grains') || 'Grains'}</button>
-            <button class="tab source-filter" data-category="Vegetables">🥬 ${i18n.t('crops.vegetables') || 'Vegetables'}</button>
-            <button class="tab source-filter" data-category="Fruits">🍎 ${i18n.t('crops.fruits') || 'Fruits'}</button>
-            <button class="tab source-filter" data-category="Spices">🌶️ ${i18n.t('crops.spices') || 'Spices'}</button>
-            <button class="tab source-filter" data-category="organic">🌿 ${i18n.t('common.organicOnly') || 'Organic Only'}</button>
+            <button class="tab source-filter" data-category="Grains" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('sprout', 13)} <span>${i18n.t('crops.grains') || 'Grains'}</span></button>
+            <button class="tab source-filter" data-category="Vegetables" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('package', 13)} <span>${i18n.t('crops.vegetables') || 'Vegetables'}</span></button>
+            <button class="tab source-filter" data-category="Fruits" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('award', 13)} <span>${i18n.t('crops.fruits') || 'Fruits'}</span></button>
+            <button class="tab source-filter" data-category="Spices" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('flask', 13)} <span>${i18n.t('crops.spices') || 'Spices'}</span></button>
+            <button class="tab source-filter" data-category="organic" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('sprout', 13)} <span>${i18n.t('common.organicOnly') || 'Organic Only'}</span></button>
           </div>
 
           <!-- Product Grid -->
@@ -63,13 +64,16 @@ export function renderRetailerSource(container) {
               const locUnit = localizeUnit(p.unit);
               return `
                 <div class="product-card source-item" data-category="${escapeHtml(p.category)}" data-organic="${p.isOrganic}" data-name="${escapeHtml((p.name || '').toLowerCase())}">
-                  <div class="product-card-image" style="height: 120px;">
-                    ${p.emoji || getCropEmoji(p.name)}
-                    ${p.isOrganic ? `<span class="product-card-badge badge-organic">🌿 ${i18n.t('common.organic') || 'Organic'}</span>` : ''}
+                  <div class="product-card-image" style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); position: relative;">
+                    ${getCropEmoji(p.name, 40)}
+                    ${p.isOrganic ? `<span class="product-card-badge badge-organic" style="display: inline-flex; align-items: center; gap: 4px;">${getIcon('sprout', 10)} ${i18n.t('common.organic') || 'Organic'}</span>` : ''}
                   </div>
                   <div class="product-card-body">
                     <div class="product-card-name">${escapeHtml(locCrop)}</div>
-                    <div class="product-card-origin">📍 ${escapeHtml(p.origin)}</div>
+                    <div class="product-card-origin" style="display: flex; align-items: center; gap: 4px;">
+                      ${getIcon('mapPin', 12, '', 'color: var(--text-muted);')}
+                      <span>${escapeHtml(p.origin)}</span>
+                    </div>
                     <div style="display: flex; align-items: baseline; gap: 8px;">
                       <div class="product-card-price">${formatCurrency(p.pricePerUnit)}</div>
                       <span class="product-card-unit">${i18n.t('common.perUnit', { unit: locUnit }) || `per ${locUnit}`}</span>
@@ -78,18 +82,22 @@ export function renderRetailerSource(container) {
                       ${p.quantity} ${locUnit} ${i18n.t('common.available') || 'available'}
                     </div>
                     <div style="margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap;">
-                      <span class="badge ${prediction.isFairlyPriced ? 'badge-success' : 'badge-warning'}">
-                        🤖 ${prediction.isFairlyPriced ? (i18n.t('ai.fairPrice') || 'Fair Price') : (i18n.t('ai.aboveMarket') || 'Above Market')}
+                      <span class="badge ${prediction.isFairlyPriced ? 'badge-success' : 'badge-warning'}" style="display: inline-flex; align-items: center; gap: 4px;">
+                        ${getIcon('bot', 11)}
+                        <span>${prediction.isFairlyPriced ? (i18n.t('ai.fairPrice') || 'Fair Price') : (i18n.t('ai.aboveMarket') || 'Above Market')}</span>
                       </span>
-                      ${farmer.rating ? `<span class="badge badge-info">★ ${farmer.rating}</span>` : ''}
-                      ${farmer.verified ? `<span class="badge badge-success">✅ ${i18n.t('common.verified') || 'Verified'}</span>` : ''}
-                      ${p.aiQualityScore ? `<span class="badge ${p.aiQualityScore >= 80 ? 'badge-success' : p.aiQualityScore >= 50 ? 'badge-warning' : 'badge-danger'}" title="AI Quality Score">🔬 ${p.aiQualityGrade || ''} (${p.aiQualityScore}%)</span>` : ''}
-                      ${p.isLiveCapture ? `<span class="badge badge-success" style="font-size: 0.65rem;">📸 ${i18n.t('farmer.gpsChecked') || 'GPS ✓'}</span>` : ''}
+                      ${farmer.rating ? `<span class="badge badge-info" style="display: inline-flex; align-items: center; gap: 3px;">${getIcon('award', 11)} <span>${farmer.rating}</span></span>` : ''}
+                      ${farmer.verified ? `<span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 3px;">${getIcon('checkCircle', 11)} <span>${i18n.t('common.verified') || 'Verified'}</span></span>` : ''}
+                      ${p.aiQualityScore ? `<span class="badge ${p.aiQualityScore >= 80 ? 'badge-success' : p.aiQualityScore >= 50 ? 'badge-warning' : 'badge-danger'}" title="AI Quality Score" style="display: inline-flex; align-items: center; gap: 3px;">${getIcon('bot', 11)} <span>${p.aiQualityGrade || ''} (${p.aiQualityScore}%)</span></span>` : ''}
+                      ${p.isLiveCapture ? `<span class="badge badge-success" style="font-size: 0.65rem; display: inline-flex; align-items: center; gap: 3px;">${getIcon('camera', 11)} <span>${i18n.t('farmer.gpsChecked') || 'GPS Verified'}</span></span>` : ''}
                     </div>
                   </div>
                   <div class="product-card-footer">
                     <span class="product-card-meta">${i18n.t('common.byAuthor', { author: escapeHtml(p.farmerName) }) || `By ${escapeHtml(p.farmerName)}`}</span>
-                    <button class="btn btn-primary btn-sm source-order-btn" data-product='${JSON.stringify(p)}'>📦 ${i18n.t('retailer.orderBtn') || 'Order'}</button>
+                    <button class="btn btn-primary btn-sm source-order-btn" data-product='${JSON.stringify(p)}' style="display: inline-flex; align-items: center; gap: 6px;">
+                      ${getIcon('package', 13)}
+                      <span>${i18n.t('retailer.orderBtn') || 'Order'}</span>
+                    </button>
                   </div>
                 </div>
               `;
@@ -98,7 +106,7 @@ export function renderRetailerSource(container) {
 
           ${allProducts.length === 0 ? `
             <div class="empty-state">
-              <div class="empty-state-icon">🔍</div>
+              <div class="empty-state-icon" style="display: flex; justify-content: center; margin-bottom: 12px; color: var(--text-muted);">${getIcon('search', 48)}</div>
               <h3>${i18n.t('retailer.noProducts') || 'No products available'}</h3>
               <p>${i18n.t('retailer.noProductsDesc') || 'Check back later for new products from farmers.'}</p>
             </div>
@@ -139,7 +147,9 @@ export function renderRetailerSource(container) {
 
       createModal(i18n.t('retailer.sourceProductModalTitle') || 'Source Product', `
         <div style="text-align: center; margin-bottom: 16px;">
-          <span style="font-size: 3rem;">${product.emoji || getCropEmoji(product.name)}</span>
+          <div style="display: flex; justify-content: center; margin-bottom: 8px;">
+            ${getCropEmoji(product.name, 48)}
+          </div>
           <h3 style="margin-top: 8px;">${escapeHtml(locCrop)}</h3>
           <p style="color: var(--text-muted);">${i18n.t('retailer.modalFrom', { farmer: escapeHtml(product.farmerName), origin: escapeHtml(product.origin) }) || `From ${escapeHtml(product.farmerName)} · ${escapeHtml(product.origin)}`}</p>
         </div>
@@ -159,7 +169,7 @@ export function renderRetailerSource(container) {
         </div>
       `, `
         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">${i18n.t('common.cancel') || 'Cancel'}</button>
-        <button class="btn btn-primary btn-sm" id="confirm-source-btn">📦 ${i18n.t('retailer.placeB2BOrder') || 'Place B2B Order'}</button>
+        <button class="btn btn-primary btn-sm" id="confirm-source-btn" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('package', 14)} <span>${i18n.t('retailer.placeB2BOrder') || 'Place B2B Order'}</span></button>
       `);
 
       // Update total on quantity change
@@ -217,7 +227,7 @@ export function renderRetailerSource(container) {
         notifyOrderPlaced(order);
 
         closeModal();
-        showToast(i18n.t('retailer.orderPlacedSuccess') || 'B2B order placed on blockchain! ⛓️', 'success');
+        showToast(i18n.t('retailer.orderPlacedSuccess') || 'B2B order placed on blockchain!', 'success');
         renderRetailerSource(container);
       });
     });

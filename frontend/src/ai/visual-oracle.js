@@ -106,7 +106,7 @@ export class VisualOracle {
 
       this._model = await window.mobilenet.load({ version: 2, alpha: 1.0 });
       this._isLoading = false;
-      console.log('🔬 Visual Oracle: MobileNet v2 loaded successfully');
+      console.log('[Visual Oracle] MobileNet v2 loaded successfully');
       return this._model;
     } catch (err) {
       this._isLoading = false;
@@ -153,7 +153,7 @@ export class VisualOracle {
    * Example:
    *   [Poor: 0.05, Average: 0.15, Good: 0.80]
    *   Score = 0.05×0 + 0.15×50 + 0.80×100 = 0 + 7.5 + 80 = 87.5%
-   *   87.5 ≥ 40 → PRODUCT ALLOWED ✅
+   *   87.5 ≥ 40 → PRODUCT ALLOWED
    */
   static _computeVerdict(predictions) {
     let matchedCategory = 'Unknown';
@@ -324,8 +324,8 @@ export class VisualOracle {
     const avgVal = (average * 50).toFixed(1);
     const goodVal = (good * 100).toFixed(1);
 
-    const allowedText = i18n.t('ai.productAllowed') || 'PRODUCT ALLOWED ✅';
-    const blockedText = i18n.t('ai.productBlocked') || 'PRODUCT BLOCKED 🚫';
+    const allowedText = i18n.t('ai.productAllowed') || 'PRODUCT ALLOWED';
+    const blockedText = i18n.t('ai.productBlocked') || 'PRODUCT BLOCKED';
 
     return {
       formula: i18n.t('ai.formulaTitle') || `Quality Score = P(Poor)×0 + P(Average)×50 + P(Good)×100`,

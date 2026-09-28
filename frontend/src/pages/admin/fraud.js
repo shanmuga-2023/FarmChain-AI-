@@ -10,6 +10,7 @@ import { FraudDetector } from '../../ai/fraud-detector.js';
 import { GeoVelocityChecker } from '../../ai/geo-velocity.js';
 import { formatNumber, timeAgo, showToast, localizeCropName } from '../../utils/helpers.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderAdminFraud(container) {
   const sidebarContainer = document.createElement('div');
@@ -24,7 +25,7 @@ export function renderAdminFraud(container) {
         <header class="glass-header">
           <div class="header-left">
             <div>
-              <h2 class="header-title">${i18n.t('admin.fraudTitle') || 'Fraud Detection '}</h2>
+              <h2 class="header-title">${i18n.t('admin.fraudTitle') || 'Fraud Detection'}</h2>
               <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.fraudAlerts') || 'Fraud Alerts'}</span></div>
             </div>
           </div>
@@ -36,22 +37,22 @@ export function renderAdminFraud(container) {
         <div class="page-content">
           <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-red-dim); color: var(--accent-red);">🚨</div>
+              <div class="stat-card-icon" style="background: var(--accent-red-dim); color: var(--accent-red);">${getIcon('alert', 24)}</div>
               <div class="stat-card-value">${alerts.filter(a => a.riskLevel === 'critical').length}</div>
               <div class="stat-card-label">${i18n.t('admin.criticalAlerts') || 'Critical Alerts'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">⚠️</div>
+              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">${getIcon('alert', 24)}</div>
               <div class="stat-card-value">${alerts.filter(a => a.riskLevel === 'high').length}</div>
               <div class="stat-card-label">${i18n.t('admin.highRisk') || 'High Risk'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">ℹ️</div>
+              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">${getIcon('checkCircle', 24)}</div>
               <div class="stat-card-value">${alerts.filter(a => a.riskLevel === 'medium').length}</div>
               <div class="stat-card-label">${i18n.t('admin.mediumRisk') || 'Medium Risk'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">✅</div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">${getIcon('checkCircle', 24)}</div>
               <div class="stat-card-value">${alerts.filter(a => a.riskLevel === 'low').length}</div>
               <div class="stat-card-label">${i18n.t('admin.lowRisk') || 'Low Risk'}</div>
             </div>
@@ -59,13 +60,18 @@ export function renderAdminFraud(container) {
 
           <div class="card">
             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-              <div class="card-title">${i18n.t('admin.aiAnomaliesTitle') || '🤖 AI-Detected Anomalies'}</div>
+              <div class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                ${getIcon('bot', 16, '', 'color: var(--accent-purple);')}
+                <span>${i18n.t('admin.aiAnomaliesTitle') || 'AI-Detected Anomalies'}</span>
+              </div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="btn btn-primary btn-sm" id="trigger-sybil-demo" style="background: var(--accent-amber); border-color: var(--accent-amber); display: flex; align-items: center; gap: 6px; font-size: 0.75rem;">
-                  ${i18n.t('admin.simulateSybilBtn') || '🧪 Simulate Sybil QR Attack (Cloned Labels)'}
+                <button class="btn btn-primary btn-sm" id="trigger-sybil-demo" style="background: var(--accent-amber); border-color: var(--accent-amber); display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem;">
+                  ${getIcon('flask', 14)}
+                  <span>${i18n.t('admin.simulateSybilBtn') || 'Simulate Sybil QR Attack (Cloned Labels)'}</span>
                 </button>
-                <button class="btn btn-primary btn-sm" id="trigger-live-fraud-demo" style="background: var(--accent-red); border-color: var(--accent-red); display: flex; align-items: center; gap: 6px; font-size: 0.75rem;">
-                  ${i18n.t('admin.triggerLiveFraudBtn') || '🧪 Trigger Live Fraud Spike (+140% Markup)'}
+                <button class="btn btn-primary btn-sm" id="trigger-live-fraud-demo" style="background: var(--accent-red); border-color: var(--accent-red); display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem;">
+                  ${getIcon('alert', 14)}
+                  <span>${i18n.t('admin.triggerLiveFraudBtn') || 'Trigger Live Fraud Spike (+140% Markup)'}</span>
                 </button>
               </div>
             </div>
@@ -78,10 +84,11 @@ export function renderAdminFraud(container) {
                 <div class="ai-insight-card" style="background: ${alert.riskLevel === 'critical' ? 'var(--accent-red-dim)' : alert.riskLevel === 'high' ? 'var(--accent-amber-dim)' : 'var(--accent-cyan-dim)'}; border-color: ${alert.riskLevel === 'critical' ? 'rgba(239,68,68,0.3)' : alert.riskLevel === 'high' ? 'rgba(245,158,11,0.3)' : 'rgba(6,182,212,0.3)'};">
                   <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
                     <div>
-                      <div class="ai-insight-title">
-                        ${alert.riskLevel === 'critical' ? '🚨' : '⚠️'} ${localizeCropName(alert.transaction.productName)}
+                      <div class="ai-insight-title" style="display: flex; align-items: center; gap: 6px;">
+                        ${getIcon('alert', 16, '', `color: ${alert.riskLevel === 'critical' ? 'var(--accent-red)' : 'var(--accent-amber)'};`)}
+                        <span>${localizeCropName(alert.transaction.productName)}</span>
                       </div>
-                      <div style="font-size: 0.8rem; color: var(--text-muted);">
+                      <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
                         ${i18n.t('common.quantity') || 'Qty'}: ${formatNumber(alert.transaction.quantity)} ${alert.transaction.unit || 'kg'} · ${i18n.t('common.origin') || 'Origin'}: ${alert.transaction.origin || 'Nashik'}
                       </div>
                     </div>
@@ -127,7 +134,8 @@ export function renderAdminFraud(container) {
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
             <div>
               <div style="font-weight: 800; font-size: 1rem; color: var(--accent-red); display: flex; align-items: center; gap: 8px;">
-                ${i18n.t('admin.sybilDetectedTitle') || '🚨 SYBIL QR ATTACK DETECTED'}
+                ${getIcon('alert', 18, '', 'color: var(--accent-red);')}
+                ${i18n.t('admin.sybilDetectedTitle') || 'SYBIL QR ATTACK DETECTED'}
                 <span class="badge badge-danger" style="animation: pulse-glow 1.5s infinite;">${i18n.t('admin.live') || 'LIVE'}</span>
               </div>
               <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
@@ -144,13 +152,14 @@ export function renderAdminFraud(container) {
 
           <!-- City Scan Map Visualization -->
           <div style="padding: 12px; background: rgba(0,0,0,0.3); border-radius: var(--radius-md); margin-bottom: 12px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase;">
-              ${i18n.t('admin.simultaneousLocations') || '📍 Simultaneous Scan Locations (All within 2 minutes)'}
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+              ${getIcon('mapPin', 14, '', 'color: var(--accent-red);')}
+              ${i18n.t('admin.simultaneousLocations') || 'Simultaneous Scan Locations (All within 2 minutes)'}
             </div>
             <div style="display: flex; flex-wrap: wrap; gap: 8px;">
               ${attackResult.attackCities.map((city, i) => `
                 <div style="flex: 1; min-width: 100px; padding: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-sm); text-align: center; animation: fade-in 0.3s ease ${i * 0.15}s both;">
-                  <div style="font-size: 1.2rem;">📍</div>
+                  <div style="display: flex; justify-content: center; margin-bottom: 4px; color: var(--accent-red);">${getIcon('mapPin', 16)}</div>
                   <div style="font-weight: 700; font-size: 0.82rem; color: var(--accent-red);">${city.city}</div>
                   <div style="font-size: 0.7rem; color: var(--text-muted);">${city.timeFormatted}</div>
                   <div style="font-size: 0.65rem; color: var(--text-muted);">${city.lat.toFixed(2)}°N, ${city.lon.toFixed(2)}°E</div>
@@ -161,7 +170,7 @@ export function renderAdminFraud(container) {
 
           <!-- Escrow Freeze Notice -->
           <div style="padding: 10px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid var(--accent-red); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 1.5rem;">🔒</span>
+            <div style="color: var(--accent-red); flex-shrink: 0;">${getIcon('shieldCheck', 20)}</div>
             <div>
               <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-red);">${i18n.t('admin.escrowFrozenTitle') || 'SMART CONTRACT ACTION: Escrow Funds FROZEN'}</div>
               <div style="font-size: 0.75rem; color: var(--text-secondary);">
@@ -173,13 +182,13 @@ export function renderAdminFraud(container) {
       `;
     }
 
-    showToast(i18n.t('admin.sybilSimulatedToast') || `🚨 Sybil Attack Simulated: ${attackResult.attackCities.length} cloned scans detected across India. Escrow FROZEN.`, 'error');
+    showToast(i18n.t('admin.sybilSimulatedToast') || `Sybil Attack Simulated: ${attackResult.attackCities.length} cloned scans detected across India. Escrow FROZEN.`, 'error');
   });
 
   // Live Fraud Demo Button
   container.querySelector('#trigger-live-fraud-demo')?.addEventListener('click', () => {
     const anomalousTx = {
-      productName: i18n.t('admin.predatoryBatchName') || '🚨 Predatory Aggregator Rice Batch',
+      productName: i18n.t('admin.predatoryBatchName') || 'Predatory Aggregator Rice Batch',
       quantity: 15000,
       unit: 'kg',
       priceDeviation: 142,
@@ -202,10 +211,11 @@ export function renderAdminFraud(container) {
         <div class="ai-insight-card animate-fade-in" style="background: var(--accent-red-dim); border-color: var(--accent-red); border-width: 2px; box-shadow: 0 0 20px rgba(239,68,68,0.25);">
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
             <div>
-              <div class="ai-insight-title" style="color: var(--accent-red);">
-                ${i18n.t('admin.liveAnomalyDetected') || '🚨 LIVE ANOMALY DETECTED:'} ${newAlert.transaction.productName}
+              <div class="ai-insight-title" style="color: var(--accent-red); display: flex; align-items: center; gap: 8px;">
+                ${getIcon('alert', 16, '', 'color: var(--accent-red);')}
+                <span>${i18n.t('admin.liveAnomalyDetected') || 'LIVE ANOMALY DETECTED:'} ${newAlert.transaction.productName}</span>
               </div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
                 ${i18n.t('common.quantity') || 'Qty'}: ${formatNumber(newAlert.transaction.quantity)} ${newAlert.transaction.unit} ${i18n.t('admin.flaggedJustNow') || '· Flagged just now'}
               </div>
             </div>
@@ -222,13 +232,14 @@ export function renderAdminFraud(container) {
               </div>
             `).join('')}
           </div>
-          <div style="margin-top: 10px; font-size: 0.85rem; font-weight: 700; color: var(--accent-red);">
-            🛑 ${newAlert.recommendation}
+          <div style="margin-top: 10px; font-size: 0.85rem; font-weight: 700; color: var(--accent-red); display: flex; align-items: center; gap: 6px;">
+            ${getIcon('xCircle', 15, '', 'color: var(--accent-red);')}
+            <span>${newAlert.recommendation}</span>
           </div>
         </div>
       `;
       containerEl.insertAdjacentHTML('afterbegin', alertHtml);
-      showToast(i18n.t('admin.liveAnomalyToast') || '🚨 Live Anomaly Flagged! +142% Price Markup & Rapid Transfers Detected', 'error');
+      showToast(i18n.t('admin.liveAnomalyToast') || 'Live Anomaly Flagged! +142% Price Markup & Rapid Transfers Detected', 'error');
     }
   });
 }

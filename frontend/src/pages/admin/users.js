@@ -9,8 +9,8 @@ import { renderSidebar } from '../../components/sidebar.js';
 import { getRoleConfig, showToast, timeAgo } from '../../utils/helpers.js';
 import { escapeHtml } from '../../utils/sanitize.js';
 import { getFirestoreUsers } from '../../firebase/firestore.js';
-import { fetchUsers } from '../../utils/api.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderAdminUsers(container) {
   const users = store.get('users') || {};
@@ -53,17 +53,17 @@ export function renderAdminUsers(container) {
               <div class="stat-card-label">${i18n.t('admin.statUsers') || 'Total Users'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">🌾</div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">${getIcon('farmer', 22)}</div>
               <div class="stat-card-value">${roleCounts.farmer || 0}</div>
               <div class="stat-card-label">${i18n.t('roles.farmers') || 'Farmers'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">🏪</div>
+              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">${getIcon('intermediary', 22)}</div>
               <div class="stat-card-value">${roleCounts.intermediary || 0}</div>
               <div class="stat-card-label">${i18n.t('roles.intermediaries') || 'Intermediaries'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-blue-dim); color: var(--accent-blue);">🛒</div>
+              <div class="stat-card-icon" style="background: var(--accent-blue-dim); color: var(--accent-blue);">${getIcon('retailer', 22)}</div>
               <div class="stat-card-value">${(roleCounts.retailer || 0) + (roleCounts.consumer || 0)}</div>
               <div class="stat-card-label">${i18n.t('admin.retailersAndConsumers') || 'Retailers + Consumers'}</div>
             </div>
@@ -72,11 +72,11 @@ export function renderAdminUsers(container) {
           <!-- Role Filter Tabs -->
           <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
             <button class="tab active role-filter-tab" data-role="all">${i18n.t('common.all') || 'All'}</button>
-            <button class="tab role-filter-tab" data-role="farmer">🌾 ${i18n.t('roles.farmers') || 'Farmers'}</button>
-            <button class="tab role-filter-tab" data-role="intermediary">🏪 ${i18n.t('roles.intermediaries') || 'Intermediaries'}</button>
-            <button class="tab role-filter-tab" data-role="retailer">🛒 ${i18n.t('roles.retailers') || 'Retailers'}</button>
-            <button class="tab role-filter-tab" data-role="consumer">👤 ${i18n.t('roles.consumers') || 'Consumers'}</button>
-            <button class="tab role-filter-tab" data-role="admin">🔧 ${i18n.t('roles.admins') || 'Admins'}</button>
+            <button class="tab role-filter-tab" data-role="farmer" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('farmer', 14)} <span>${i18n.t('roles.farmers') || 'Farmers'}</span></button>
+            <button class="tab role-filter-tab" data-role="intermediary" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('intermediary', 14)} <span>${i18n.t('roles.intermediaries') || 'Intermediaries'}</span></button>
+            <button class="tab role-filter-tab" data-role="retailer" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('retailer', 14)} <span>${i18n.t('roles.retailers') || 'Retailers'}</span></button>
+            <button class="tab role-filter-tab" data-role="consumer" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('consumer', 14)} <span>${i18n.t('roles.consumers') || 'Consumers'}</span></button>
+            <button class="tab role-filter-tab" data-role="admin" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('admin', 14)} <span>${i18n.t('roles.admins') || 'Admins'}</span></button>
           </div>
 
           <!-- Users Table -->
@@ -103,8 +103,8 @@ export function renderAdminUsers(container) {
                     <tr class="user-row" data-role="${u.role}" data-name="${escapeHtml((u.name || '').toLowerCase())}" data-id="${u.id}">
                       <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                          <div style="width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: ${config.bgColor}; color: ${config.color}; font-size: 1.2rem;">
-                            ${u.avatar || config.icon}
+                          <div style="width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: ${config.bgColor}; color: ${config.color};">
+                            ${config.icon}
                           </div>
                           <div>
                             <div style="font-weight: 600;">${escapeHtml(u.name || 'Unknown')}</div>
@@ -113,26 +113,27 @@ export function renderAdminUsers(container) {
                         </div>
                       </td>
                       <td>
-                        <span class="badge" style="background: ${config.bgColor}; color: ${config.color};">
+                        <span class="badge" style="background: ${config.bgColor}; color: ${config.color}; display: inline-flex; align-items: center; gap: 4px;">
                           ${config.icon} ${config.label}
                         </span>
                       </td>
                       <td style="font-size: 0.85rem;">${escapeHtml(u.location || 'N/A')}</td>
                       <td>
-                        <span style="color: var(--accent-amber);">★</span> ${u.rating || 'N/A'}
+                        <span style="color: var(--accent-amber); display: inline-flex; align-items: center; gap: 3px;">${getIcon('award', 13)} ${u.rating || 'N/A'}</span>
                       </td>
                       <td>
-                        <span class="badge ${u.verified ? 'badge-success' : 'badge-warning'}">
-                          ${u.verified ? (i18n.t('common.verified') || '✅ Verified') : (i18n.t('status.pending') || '⏳ Pending')}
+                        <span class="badge ${u.verified ? 'badge-success' : 'badge-warning'}" style="display: inline-flex; align-items: center; gap: 4px;">
+                          <span class="status-dot ${u.verified ? 'green' : 'amber'}"></span>
+                          ${u.verified ? (i18n.t('common.verified') || 'Verified') : (i18n.t('status.pending') || 'Pending')}
                         </span>
                       </td>
                       <td style="font-size: 0.8rem; color: var(--text-muted);">
                         ${u.joinedAt ? timeAgo(u.joinedAt) : 'N/A'}
                       </td>
                       <td>
-                        <div style="display: flex; gap: 4px;">
-                          ${!u.verified ? `<button class="btn btn-primary btn-sm verify-btn" data-user-id="${u.id}" style="font-size: 0.7rem; padding: 4px 8px;">${i18n.t('admin.verifyUserBtn') || '✅ Verify'}</button>` : ''}
-                          ${u.role !== 'admin' ? `<button class="btn btn-secondary btn-sm ban-btn" data-user-id="${u.id}" style="font-size: 0.7rem; padding: 4px 8px;">${i18n.t('admin.banUserBtn') || '🚫 Ban'}</button>` : ''}
+                        <div style="display: flex; gap: 6px;">
+                          ${!u.verified ? `<button class="btn btn-primary btn-sm verify-btn" data-user-id="${u.id}" style="font-size: 0.72rem; padding: 4px 8px; display: inline-flex; align-items: center; gap: 4px;">${getIcon('check', 12)} ${i18n.t('admin.verifyUserBtn') || 'Verify'}</button>` : ''}
+                          ${u.role !== 'admin' ? `<button class="btn btn-secondary btn-sm ban-btn" data-user-id="${u.id}" style="font-size: 0.72rem; padding: 4px 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--accent-red); border-color: rgba(239,68,68,0.3);">${getIcon('xCircle', 12)} ${i18n.t('admin.banUserBtn') || 'Ban'}</button>` : ''}
                         </div>
                       </td>
                     </tr>
@@ -175,7 +176,7 @@ export function renderAdminUsers(container) {
       if (users[userId]) {
         users[userId].verified = true;
         store.set('users', users);
-        showToast(i18n.t('admin.userVerifiedToast', { name: users[userId].name }) || `User ${users[userId].name} verified ✅`, 'success');
+        showToast(i18n.t('admin.userVerifiedToast', { name: users[userId].name }) || `User ${users[userId].name} verified`, 'success');
         renderAdminUsers(container);
       }
     });
@@ -191,7 +192,7 @@ export function renderAdminUsers(container) {
         if (confirm(i18n.t('admin.banConfirmPrompt', { name: userName }) || `Are you sure you want to ban ${userName}?`)) {
           delete users[userId];
           store.set('users', users);
-          showToast(i18n.t('admin.userBannedToast', { name: userName }) || `User ${userName} has been banned 🚫`, 'warning');
+          showToast(i18n.t('admin.userBannedToast', { name: userName }) || `User ${userName} has been banned`, 'warning');
           renderAdminUsers(container);
         }
       }

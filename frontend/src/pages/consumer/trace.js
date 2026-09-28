@@ -16,6 +16,7 @@ import { GeoVelocityChecker } from '../../ai/geo-velocity.js';
 import { i18n } from '../../i18n/index.js';
 import { getExplorerTxUrl, getExplorerAddressUrl, getAgriSupplyChainContract } from '../../web3/contracts.js';
 import { fetchProduct } from '../../utils/api.js';
+import { getIcon } from '../../utils/icons.js';
 
 const escapeHtml = (str) => String(str || '').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
@@ -51,13 +52,16 @@ export async function renderConsumerTrace(container) {
         <div class="page-content">
             <div class="card" style="max-width: 600px; margin: 40px auto;">
               <div style="text-align: center; padding: 20px;">
-                <div style="font-size: 4rem; margin-bottom: 16px;">🔍</div>
+                <div style="width: 72px; height: 72px; margin: 0 auto 16px; border-radius: 50%; background: rgba(14,165,233,0.12); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                  ${getIcon('search', 34)}
+                </div>
                 <h2 style="margin-bottom: 8px;">${i18n.t('trace.traceHeroTitle') || 'Trace Any Produce Batch'}</h2>
                 <p style="color: var(--text-muted); margin-bottom: 24px;">${i18n.t('trace.traceHeroSub') || 'Scan produce QR code or select a batch to verify cryptographic blockchain provenance'}</p>
                 
                 <div style="margin-bottom: 20px;">
                   <button class="btn btn-primary" id="open-cam-scanner-btn" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px;">
-                    ${i18n.t('trace.openCamBtn') || '📸 Open Camera QR Scanner'}
+                    ${getIcon('camera', 18)}
+                    <span>${i18n.t('trace.openCamBtn') || 'Open Camera QR Scanner'}</span>
                   </button>
                 </div>
 
@@ -72,28 +76,35 @@ export async function renderConsumerTrace(container) {
                     <option value="">${i18n.t('trace.selectPlaceholder') || 'Select a product to trace...'}</option>
                     ${products.map(p => {
                       const locName = localizeCropName(p.name);
-                      return `<option value="${p.productId}">${p.emoji || getCropEmoji(p.name)} ${locName} — ${p.farmerName}</option>`;
+                      return `<option value="${p.productId}">${locName} — ${p.farmerName}</option>`;
                     }).join('')}
                   </select>
                 </div>
-                <button class="btn btn-secondary" style="margin-top: 16px; width: 100%;" id="trace-btn">${i18n.t('trace.traceSelectedBtn') || '🔍 Trace Selected on Blockchain'}</button>
+                <button class="btn btn-secondary" style="margin-top: 16px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;" id="trace-btn">
+                  ${getIcon('trace', 16)}
+                  <span>${i18n.t('trace.traceSelectedBtn') || 'Trace Selected on Blockchain'}</span>
+                </button>
 
                 <!-- Hackathon Quick Demo Panel -->
                 <div style="margin-top: 24px; padding: 14px; background: rgba(255,255,255,0.03); border: 1px dashed var(--border-subtle); border-radius: var(--radius-md); text-align: left;">
-                  <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
-                    ${i18n.t('trace.demoSecurityTitle') || '🧪 1-Click Security Demo (For Judges)'}
+                  <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                    ${getIcon('shieldCheck', 14)}
+                    <span>${i18n.t('trace.demoSecurityTitle') || '1-Click Security Demo (For Judges)'}</span>
                   </div>
                   <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button class="btn btn-sm btn-primary" id="demo-authentic-btn" style="flex: 1; font-size: 0.75rem;">
-                      ${i18n.t('trace.testAuthentic') || '✅ Test Authentic Batch'}
+                    <button class="btn btn-sm btn-primary" id="demo-authentic-btn" style="flex: 1; font-size: 0.75rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                      ${getIcon('checkCircle', 14)}
+                      <span>${i18n.t('trace.testAuthentic') || 'Test Authentic Batch'}</span>
                     </button>
-                    <button class="btn btn-sm btn-secondary" id="demo-counterfeit-btn" style="flex: 1; font-size: 0.75rem; border-color: rgba(239, 68, 68, 0.4); color: var(--accent-red);">
-                      ${i18n.t('trace.testSpoofed') || '🚨 Test Spoofed / Fake QR'}
+                    <button class="btn btn-sm btn-secondary" id="demo-counterfeit-btn" style="flex: 1; font-size: 0.75rem; border-color: rgba(239, 68, 68, 0.4); color: var(--accent-red); display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                      ${getIcon('shieldAlert', 14)}
+                      <span>${i18n.t('trace.testSpoofed') || 'Test Spoofed / Fake QR'}</span>
                     </button>
                   </div>
                   <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
-                    <button class="btn btn-sm btn-secondary" id="demo-clone-btn" style="flex: 1; font-size: 0.75rem; border-color: rgba(245, 158, 11, 0.4); color: var(--accent-amber);">
-                      ${i18n.t('trace.testCloned') || '📋 Test Cloned QR (Photocopy Attack)'}
+                    <button class="btn btn-sm btn-secondary" id="demo-clone-btn" style="flex: 1; font-size: 0.75rem; border-color: rgba(245, 158, 11, 0.4); color: var(--accent-amber); display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                      ${getIcon('alert', 14)}
+                      <span>${i18n.t('trace.testCloned') || 'Test Cloned QR (Photocopy Attack)'}</span>
                     </button>
                   </div>
                 </div>
@@ -166,7 +177,10 @@ export async function renderConsumerTrace(container) {
         <div class="page-content">
             <div class="card" style="max-width: 620px; margin: 40px auto; text-align: center; padding: 48px 24px;">
               <div class="spinner" style="width: 52px; height: 52px; border-width: 4px; margin: 0 auto 20px;"></div>
-              <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px;">⛓️ Verifying Cryptographic Provenance...</h3>
+              <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                ${getIcon('blockchain', 22, '', 'color: var(--accent-purple);')}
+                <span>${i18n.t('trace.verifyingProvenance') || 'Verifying Cryptographic Provenance...'}</span>
+              </h3>
               <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
                 Checking decentralized produce registry & Polygon Amoy blockchain ledger for batch:
               </p>
@@ -317,7 +331,7 @@ function captureGeoAndRender(container, sidebarContainer, product, products, cer
 }
 
 /**
- * 🚨 Clone Detected Alert Page
+ * Clone Detected Alert Page
  */
 function renderCloneAlert(container, sidebarContainer, product, velocityResult) {
   const locCrop = localizeCropName(product.name);
@@ -328,7 +342,7 @@ function renderCloneAlert(container, sidebarContainer, product, velocityResult) 
         <header class="glass-header">
           <div class="header-left">
             <div>
-              <div class="header-title" style="color: var(--accent-red);">${i18n.t('trace.cloneAlertTitle') || 'Clone Detected 🚨'}</div>
+              <div class="header-title" style="color: var(--accent-red);">${i18n.t('trace.cloneAlertTitle') || 'Clone Detected'}</div>
               <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('trace.breadcrumb') || 'Trace'}</span> <span>›</span> <span>${i18n.t('trace.cyberAlert') || 'Cybersecurity Alert'}</span></div>
             </div>
           </div>
@@ -339,11 +353,14 @@ function renderCloneAlert(container, sidebarContainer, product, velocityResult) 
 
         <div class="page-content">
           <div class="clone-alert-card animate-fade-in" style="max-width: 720px; margin: 24px auto;">
-            <div style="text-align: center; padding: 24px; background: rgba(239, 68, 68, 0.06); border: 2px solid var(--accent-red); border-radius: var(--radius-lg); box-shadow: 0 0 40px rgba(239, 68, 68, 0.2); animation: pulse-glow 2s infinite;">
-              <div style="font-size: 4rem; margin-bottom: 12px; animation: pulse-glow 1.5s infinite;">🚨</div>
+            <div style="text-align: center; padding: 24px; background: rgba(239, 68, 68, 0.06); border: 2px solid var(--accent-red); border-radius: var(--radius-lg); box-shadow: 0 0 40px rgba(239, 68, 68, 0.2);">
+              <div style="width: 72px; height: 72px; margin: 0 auto 16px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.4); display: flex; align-items: center; justify-content: center; color: var(--accent-red);">
+                ${getIcon('alert', 38)}
+              </div>
               <h2 style="color: var(--accent-red); margin-bottom: 8px; font-size: 1.4rem;">${i18n.t('trace.cloneAlertHeading') || 'CYBERSECURITY ALERT: QR Clone Detected'}</h2>
-              <div class="badge badge-danger" style="font-size: 0.9rem; padding: 8px 16px; margin-bottom: 16px;">
-                ${i18n.t('trace.cloneBadge') || '⚠️ Impossible Spatial-Temporal Velocity — Produce Likely Counterfeit'}
+              <div class="badge badge-danger" style="font-size: 0.85rem; padding: 6px 14px; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 6px;">
+                ${getIcon('alert', 14)}
+                <span>${i18n.t('trace.cloneBadge') || 'Impossible Spatial-Temporal Velocity — Produce Likely Counterfeit'}</span>
               </div>
               <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
                 ${i18n.t('trace.cloneDesc', { crop: `<strong>${locCrop}</strong>` }) || `This QR code for <strong>${locCrop}</strong> has exhibited physically impossible geographic velocity. The same batch was scanned in two locations that cannot be reached within the elapsed time.`}
@@ -352,31 +369,31 @@ function renderCloneAlert(container, sidebarContainer, product, velocityResult) 
               <!-- Velocity Details -->
               <div style="background: rgba(0,0,0,0.4); border-radius: var(--radius-md); padding: 16px; text-align: left; margin-bottom: 20px; font-size: 0.85rem;">
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>🏃 ${i18n.t('trace.calcVelocity') || 'Calculated Velocity:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('trendingUp', 14)} <span>${i18n.t('trace.calcVelocity') || 'Calculated Velocity:'}</span></span>
                   <span style="color: var(--accent-red); font-weight: 800; font-size: 1.1rem;">${velocityResult.velocity?.toLocaleString() || '∞'} km/h</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>📏 ${i18n.t('trace.distBetween') || 'Distance Between Scans:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('mapPin', 14)} <span>${i18n.t('trace.distBetween') || 'Distance Between Scans:'}</span></span>
                   <span style="color: var(--accent-amber); font-weight: 700;">${velocityResult.distance?.toLocaleString() || 'N/A'} km</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>⏱️ ${i18n.t('trace.timeBetween') || 'Time Between Scans:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('clock', 14)} <span>${i18n.t('trace.timeBetween') || 'Time Between Scans:'}</span></span>
                   <span style="font-weight: 600;">${velocityResult.timeDeltaFormatted || 'N/A'}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>📍 ${i18n.t('trace.prevScanLoc') || 'Previous Scan Location:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('mapPin', 14)} <span>${i18n.t('trace.prevScanLoc') || 'Previous Scan Location:'}</span></span>
                   <span style="font-weight: 600;">${velocityResult.previousScan?.city || velocityResult.conflictingScan?.city || 'Unknown'}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>📍 ${i18n.t('trace.currScanLoc') || 'Current Scan Location:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('mapPin', 14)} <span>${i18n.t('trace.currScanLoc') || 'Current Scan Location:'}</span></span>
                   <span style="font-weight: 600;">${velocityResult.newLocation?.city || 'Current Location'}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>🔢 ${i18n.t('trace.totalScansRec') || 'Total Scans Recorded:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('refresh', 14)} <span>${i18n.t('trace.totalScansRec') || 'Total Scans Recorded:'}</span></span>
                   <span style="color: var(--accent-red); font-weight: 700;">${velocityResult.totalScans || 0}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-                  <span>🛡️ ${i18n.t('trace.recommendationLabel') || 'Recommendation:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('shieldCheck', 14)} <span>${i18n.t('trace.recommendationLabel') || 'Recommendation:'}</span></span>
                   <span style="color: var(--accent-red); font-weight: 800;">${i18n.t('trace.recommendationDoNotBuy') || 'DO NOT PURCHASE'}</span>
                 </div>
               </div>
@@ -386,8 +403,8 @@ function renderCloneAlert(container, sidebarContainer, product, velocityResult) 
               </div>
 
               <div style="display: flex; gap: 12px; justify-content: center;">
-                <button class="btn btn-primary btn-sm" onclick="window.location.hash='/consumer/trace'">${i18n.t('trace.scanValidBtn') || '📸 Scan Valid Batch'}</button>
-                <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/consumer/marketplace'">${i18n.t('trace.browseVerifiedBtn') || '🛍️ Browse Verified Marketplace'}</button>
+                <button class="btn btn-primary btn-sm" onclick="window.location.hash='/consumer/trace'" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('camera', 14)} <span>${i18n.t('trace.scanValidBtn') || 'Scan Valid Batch'}</span></button>
+                <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/consumer/marketplace'" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('shoppingBag', 14)} <span>${i18n.t('trace.browseVerifiedBtn') || 'Browse Verified Marketplace'}</span></button>
               </div>
             </div>
           </div>
@@ -398,7 +415,7 @@ function renderCloneAlert(container, sidebarContainer, product, velocityResult) 
 }
 
 /**
- * 🚨 Counterfeit / Spoofed QR Alert
+ * Counterfeit / Spoofed QR Alert
  */
 function renderCounterfeitAlert(container, sidebarContainer, productId) {
   const escapeHtml = (str) => str.replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -410,7 +427,7 @@ function renderCounterfeitAlert(container, sidebarContainer, productId) {
         <header class="glass-header">
           <div class="header-left">
             <div>
-              <div class="header-title" style="color: var(--accent-red);">${i18n.t('trace.securityAlertTitle') || 'Security Alert 🚨'}</div>
+              <div class="header-title" style="color: var(--accent-red);">${i18n.t('trace.securityAlertTitle') || 'Security Alert'}</div>
               <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('trace.breadcrumb') || 'Trace'}</span> <span>›</span> <span>${i18n.t('trace.tamperVerification') || 'Tamper Verification'}</span></div>
             </div>
           </div>
@@ -422,10 +439,13 @@ function renderCounterfeitAlert(container, sidebarContainer, productId) {
         <div class="page-content">
           <div class="card" style="max-width: 680px; margin: 40px auto; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.04); box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);">
             <div style="text-align: center; padding: 24px;">
-              <div style="font-size: 4rem; animation: pulse-glow 1.5s infinite; margin-bottom: 12px;">🚨</div>
+              <div style="width: 72px; height: 72px; margin: 0 auto 16px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.4); display: flex; align-items: center; justify-content: center; color: var(--accent-red);">
+                ${getIcon('xCircle', 38)}
+              </div>
               <h2 style="color: var(--accent-red); margin-bottom: 8px;">${i18n.t('trace.counterfeitHeading') || 'Cryptographic Verification Failed'}</h2>
-              <div class="badge badge-danger" style="font-size: 0.85rem; padding: 6px 14px; margin-bottom: 16px;">
-                ${i18n.t('trace.counterfeitBadge') || '⚠️ Unverified / Counterfeit Produce Label'}
+              <div class="badge badge-danger" style="font-size: 0.85rem; padding: 6px 14px; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 6px;">
+                ${getIcon('alert', 14)}
+                <span>${i18n.t('trace.counterfeitBadge') || 'Unverified / Counterfeit Produce Label'}</span>
               </div>
               <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
                 ${i18n.t('trace.counterfeitDesc', { id: `<code style="background: rgba(239,68,68,0.15); color: var(--accent-red); padding: 2px 6px; border-radius: 4px;">${escapeHtml(productId)}</code>` }) || `The scanned QR batch ID <code style="background: rgba(239,68,68,0.15); color: var(--accent-red); padding: 2px 6px; border-radius: 4px;">${escapeHtml(productId)}</code> does not exist on the EVM blockchain registry. This label may be counterfeit, re-printed, or tampered with.`}
@@ -433,30 +453,30 @@ function renderCounterfeitAlert(container, sidebarContainer, productId) {
 
               <div style="background: rgba(0,0,0,0.4); border-radius: var(--radius-md); padding: 16px; text-align: left; margin-bottom: 20px; font-size: 0.85rem;">
                 <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>⛓️ ${i18n.t('trace.sigLabel') || 'Blockchain Batch Signature:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('blockchain', 14)} <span>${i18n.t('trace.sigLabel') || 'Blockchain Batch Signature:'}</span></span>
                   <span style="color: var(--accent-red); font-weight: 700;">${i18n.t('trace.sigFailed') || 'FAILED (0 Blocks)'}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>🌱 ${i18n.t('trace.certifiedOriginLabel') || 'Certified Farmer Origin:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('sprout', 14)} <span>${i18n.t('trace.certifiedOriginLabel') || 'Certified Farmer Origin:'}</span></span>
                   <span style="color: var(--accent-red); font-weight: 700;">${i18n.t('trace.unregistered') || 'UNREGISTERED'}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>🔬 ${i18n.t('trace.aiScoreLabel') || 'AI Visual Oracle Score:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('bot', 14)} <span>${i18n.t('trace.aiScoreLabel') || 'AI Visual Oracle Score:'}</span></span>
                   <span style="color: var(--accent-red); font-weight: 700;">${i18n.t('trace.noImage') || 'NONE (No Image)'}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span>💰 ${i18n.t('trace.escrowDepositLabel') || 'Smart Escrow Deposit:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('wallet', 14)} <span>${i18n.t('trace.escrowDepositLabel') || 'Smart Escrow Deposit:'}</span></span>
                   <span style="color: var(--accent-red); font-weight: 700;">${i18n.t('trace.noDeposit') || 'NONE (₹0.00)'}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 6px 0;">
-                  <span>🛡️ ${i18n.t('trace.recommendationLabel') || 'Recommendation:'}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('shieldCheck', 14)} <span>${i18n.t('trace.recommendationLabel') || 'Recommendation:'}</span></span>
                   <span style="color: var(--accent-amber); font-weight: 600;">${i18n.t('trace.recommendationDoNotBuy') || 'DO NOT PURCHASE'}</span>
                 </div>
               </div>
 
               <div style="display: flex; gap: 12px; justify-content: center;">
-                <button class="btn btn-primary btn-sm" onclick="window.location.hash='/consumer/trace'">${i18n.t('trace.scanValidBtn') || '📸 Scan Valid Batch'}</button>
-                <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/consumer/marketplace'">${i18n.t('trace.browseVerifiedBtn') || '🛍️ Browse Verified Marketplace'}</button>
+                <button class="btn btn-primary btn-sm" onclick="window.location.hash='/consumer/trace'" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('camera', 14)} <span>${i18n.t('trace.scanValidBtn') || 'Scan Valid Batch'}</span></button>
+                <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/consumer/marketplace'" style="display: inline-flex; align-items: center; gap: 6px;">${getIcon('shoppingBag', 14)} <span>${i18n.t('trace.browseVerifiedBtn') || 'Browse Verified Marketplace'}</span></button>
               </div>
             </div>
           </div>
@@ -484,16 +504,17 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
   let qualityBonusLabel = '';
   if (aiScore >= 95) {
     farmerPct = 65; platformPct = 0;
-    qualityBonusLabel = i18n.t('trace.highQualityBonus') || '🏆 High-Quality Bonus Active';
+    qualityBonusLabel = i18n.t('trace.highQualityBonus') || 'High-Quality Bonus Active';
   } else if (aiScore > 0 && aiScore < 60) {
     farmerPct = 55; platformPct = 10;
-    qualityBonusLabel = i18n.t('trace.qualityReduction') || '⚠️ Quality Reduction Applied';
+    qualityBonusLabel = i18n.t('trace.qualityReduction') || 'Quality Reduction Applied';
   }
 
   // Build journey timeline
   const journeySteps = [];
   journeySteps.push({
-    title: `🌱 ${i18n.t('trace.stepHarvested') || 'Harvested at Farm'}`,
+    title: i18n.t('trace.stepHarvested') || 'Harvested at Farm',
+    iconName: 'sprout',
     location: product.origin,
     actor: product.farmerName,
     role: i18n.t('farmer.role') || 'Farmer',
@@ -504,7 +525,8 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
 
   if (aiScore > 0) {
     journeySteps.push({
-      title: `🔬 ${i18n.t('trace.stepAiVerified') || 'AI Quality Verified'}`,
+      title: i18n.t('trace.stepAiVerified') || 'AI Quality Verified',
+      iconName: 'bot',
       location: 'Edge AI (Browser)',
       actor: 'Visual Oracle AI',
       role: 'AI Engine',
@@ -516,7 +538,8 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
 
   if (productCerts.length > 0) {
     journeySteps.push({
-      title: `✅ ${i18n.t('trace.stepCertified') || 'Quality Certified'}`,
+      title: i18n.t('trace.stepCertified') || 'Quality Certified',
+      iconName: 'award',
       location: 'Certification Authority',
       actor: productCerts[0].issuerName,
       role: 'Certifier',
@@ -527,7 +550,8 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
   }
 
   journeySteps.push({
-    title: `📋 ${i18n.t('trace.stepListed') || 'Listed on Blockchain'}`,
+    title: i18n.t('trace.stepListed') || 'Listed on Blockchain',
+    iconName: 'blockchain',
     location: 'FarmChain Platform',
     actor: 'Smart Contract',
     role: 'System',
@@ -538,7 +562,8 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
 
   for (const transfer of productTransfers) {
     journeySteps.push({
-      title: `🔄 ${i18n.t('trace.stepTransferred', { to: transfer.toName }) || `Transferred to ${transfer.toName}`}`,
+      title: i18n.t('trace.stepTransferred', { to: transfer.toName }) || `Transferred to ${transfer.toName}`,
+      iconName: 'delivery',
       location: users[transfer.to]?.location || 'In Transit',
       actor: transfer.fromName,
       role: 'Transfer',
@@ -549,7 +574,8 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
   }
 
   journeySteps.push({
-    title: `📍 ${i18n.t('trace.stepAvailable') || 'Available for Purchase'}`,
+    title: i18n.t('trace.stepAvailable') || 'Available for Purchase',
+    iconName: 'store',
     location: 'Consumer Marketplace',
     actor: 'FarmChain',
     role: 'Platform',
@@ -561,8 +587,8 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
 
   const geoVerified = velocityResult && velocityResult.verdict !== 'CLONE_DETECTED';
   const geoStatus = velocityResult
-    ? (velocityResult.verdict === 'FIRST_SCAN' ? `🟢 ${i18n.t('trace.firstScan') || 'First Scan'}` : geoVerified ? `🟢 ${i18n.t('trace.spatiallyVerified') || 'Spatially Verified'}` : `🔴 ${i18n.t('trace.cloneAlertBadge') || 'Clone Alert'}`)
-    : `⚪ ${i18n.t('trace.geoNA') || 'Geo N/A'}`;
+    ? (velocityResult.verdict === 'FIRST_SCAN' ? (i18n.t('trace.firstScan') || 'First Scan') : geoVerified ? (i18n.t('trace.spatiallyVerified') || 'Spatially Verified') : (i18n.t('trace.cloneAlertBadge') || 'Clone Alert'))
+    : (i18n.t('trace.geoNA') || 'Geo N/A');
 
   container.innerHTML = `
     <div class="dashboard-layout">
@@ -584,8 +610,10 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
         <div class="page-content">
           ${velocityResult ? `
             <div style="background: ${geoVerified ? 'rgba(34, 197, 94, 0.06)' : 'rgba(239, 68, 68, 0.06)'}; border: 1px solid ${geoVerified ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}; border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 1.1rem;">${geoVerified ? '🛡️' : '🚨'}</span>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: ${geoVerified ? 'var(--accent-green-dim)' : 'var(--accent-red-dim)'}; color: ${geoVerified ? 'var(--accent-green)' : 'var(--accent-red)'};">
+                  ${geoVerified ? getIcon('shieldCheck', 16) : getIcon('alert', 16)}
+                </span>
                 <div>
                   <div style="font-size: 0.8rem; font-weight: 700; color: ${geoVerified ? 'var(--accent-green)' : 'var(--accent-red)'};">
                     ${i18n.t('trace.spatialTemporalVerif') || 'Spatial-Temporal QR Verification:'} ${geoStatus}
@@ -608,7 +636,7 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
                     ${i18n.t('trace.provenanceRoll') || 'Consumer Provenance Roll'}
                   </span>
                   <span class="stamp-seal stamp-verified">
-                    ${i18n.t('trace.blockchainVerifiedOrigin') || 'Blockchain Verified Origin ✓'}
+                    ${i18n.t('trace.blockchainVerifiedOrigin') || 'Blockchain Verified Origin'}
                   </span>
                 </div>
                 <div class="card-title" style="margin-top: 8px; font-size: 1.15rem;">
@@ -637,19 +665,25 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
             <div class="trace-hero-qr" id="trace-qr-container"></div>
             <div class="trace-hero-info">
               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
-                ${product.isOrganic ? `<span class="badge badge-success">🌿 ${i18n.t('common.organicCertified') || 'Organic Certified'}</span>` : ''}
-                ${productCerts.map(c => `<span class="badge badge-info">✅ ${c.certType} ${i18n.t('common.grade') || 'Grade'} ${c.grade}</span>`).join('')}
+                ${product.isOrganic ? `<span class="badge badge-success"><span style="vertical-align: middle; margin-right: 4px;">${getIcon('sprout', 12)}</span> ${i18n.t('common.organicCertified') || 'Organic Certified'}</span>` : ''}
+                ${productCerts.map(c => `<span class="badge badge-info"><span style="vertical-align: middle; margin-right: 4px;">${getIcon('checkCircle', 12)}</span> ${c.certType} ${i18n.t('common.grade') || 'Grade'} ${c.grade}</span>`).join('')}
                 <a href="${product.onChainTxHash ? getExplorerTxUrl(product.onChainTxHash) : getExplorerAddressUrl('0xFee2B36737BDdBB3AB8C0924B013f898e512715F')}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                   <span class="badge" style="background: rgba(147, 51, 234, 0.15); color: #9333EA; border: 1px solid rgba(147, 51, 234, 0.4); display: inline-flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
-                    🟣 Verified on Polygon Amoy (80002) ↗
+                    ${getIcon('blockchain', 12, '', 'color: #9333EA;')} Verified on Polygon Amoy (80002) ↗
                   </span>
                 </a>
-                <span class="badge badge-purple">⛓️ ${i18n.t('common.blockchainVerified') || 'Blockchain Verified'}</span>
-                ${aiScore > 0 ? `<span class="badge ${aiScore >= 90 ? 'badge-success' : aiScore >= 65 ? 'badge-info' : 'badge-warning'}">🔬 AI: ${aiGrade} (${aiScore}%)</span>` : ''}
-                ${aiScore >= 95 ? `<span class="badge badge-purple" style="font-size: 0.65rem;">🏆 ${i18n.t('trace.qualityBonusBadge') || 'Quality Bonus'}</span>` : ''}
+                <span class="badge badge-purple"><span style="vertical-align: middle; margin-right: 4px;">${getIcon('blockchain', 12)}</span> ${i18n.t('common.blockchainVerified') || 'Blockchain Verified'}</span>
+                ${aiScore > 0 ? `<span class="badge ${aiScore >= 90 ? 'badge-success' : aiScore >= 65 ? 'badge-info' : 'badge-warning'}"><span style="vertical-align: middle; margin-right: 4px;">${getIcon('bot', 12)}</span> AI: ${aiGrade} (${aiScore}%)</span>` : ''}
+                ${aiScore >= 95 ? `<span class="badge badge-purple" style="font-size: 0.65rem;"><span style="vertical-align: middle; margin-right: 4px;">${getIcon('award', 12)}</span> ${i18n.t('trace.qualityBonusBadge') || 'Quality Bonus'}</span>` : ''}
               </div>
-              <div class="trace-hero-name">${product.emoji || getCropEmoji(product.name)} ${locCrop}</div>
-              <div class="trace-hero-origin">📍 ${i18n.t('common.origin') || 'Origin'}: ${product.origin} · ${i18n.t('farmer.role') || 'Farmer'}: ${product.farmerName}</div>
+              <div class="trace-hero-name" style="display: flex; align-items: center; gap: 10px;">
+                ${getCropEmoji(product.name, 28)}
+                <span>${locCrop}</span>
+              </div>
+              <div class="trace-hero-origin" style="display: flex; align-items: center; gap: 4px;">
+                ${getIcon('mapPin', 14, '', 'color: var(--text-muted);')}
+                <span>${i18n.t('common.origin') || 'Origin'}: ${product.origin} · ${i18n.t('farmer.role') || 'Farmer'}: ${product.farmerName}</span>
+              </div>
 
               <div class="trace-details-grid" style="margin-top: 16px;">
                 <div class="trace-detail">
@@ -678,15 +712,24 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
             <!-- Journey Timeline -->
             <div class="card animate-fade-in-up">
               <div class="card-header">
-                <div class="card-title">🗺️ ${i18n.t('trace.productJourneyTitle') || 'Product Journey'}</div>
+                <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+                  ${getIcon('delivery', 18, '', 'color: var(--accent-green);')}
+                  <span>${i18n.t('trace.productJourneyTitle') || 'Product Journey'}</span>
+                </div>
               </div>
               <div class="timeline">
                 ${journeySteps.map(step => `
                   <div class="timeline-item">
                     <div class="timeline-dot ${step.active ? 'active' : ''}" style="border-color: ${step.color};"></div>
                     <div class="timeline-content">
-                      <div class="timeline-title">${step.title}</div>
-                      <div class="timeline-meta">📍 ${step.location} · ${step.actor} (${step.role})</div>
+                      <div class="timeline-title" style="display: flex; align-items: center; gap: 8px;">
+                        ${step.iconName ? getIcon(step.iconName, 15, '', `color: ${step.color};`) : ''}
+                        <span>${step.title}</span>
+                      </div>
+                      <div class="timeline-meta" style="display: flex; align-items: center; gap: 4px;">
+                        ${getIcon('mapPin', 13, '', 'color: var(--text-muted);')}
+                        <span>${step.location} · ${step.actor} (${step.role})</span>
+                      </div>
                       <div class="timeline-desc">${step.details}</div>
                     </div>
                   </div>
@@ -698,27 +741,43 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
             <div style="display: flex; flex-direction: column; gap: 20px;">
               <div class="card animate-fade-in-up">
                 <div class="card-header">
-                  <div class="card-title">💰 ${i18n.t('trace.priceTransparencyTitle') || 'Price Transparency'} ${qualityBonusLabel ? `<span class="badge badge-purple" style="font-size: 0.65rem; margin-left: 6px;">${qualityBonusLabel}</span>` : ''}</div>
+                  <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+                    ${getIcon('creditCard', 18, '', 'color: var(--accent-green);')}
+                    <span>${i18n.t('trace.priceTransparencyTitle') || 'Price Transparency'}</span>
+                    ${qualityBonusLabel ? `<span class="badge badge-purple" style="font-size: 0.65rem; margin-left: 6px;"><span style="vertical-align: middle; margin-right: 3px;">${getIcon('award', 11)}</span> ${qualityBonusLabel}</span>` : ''}
+                  </div>
                 </div>
                 <div class="chart-wrapper" style="height: 200px;">
                   <canvas id="trace-price-chart"></canvas>
                 </div>
                 <div class="price-breakdown" style="margin-top: 16px;">
                   <div class="price-row">
-                    <span class="price-row-label">${i18n.t('consumer.splitFarmer') || '🌾 Farmer receives'}</span>
-                    <span class="price-row-value" style="color: var(--accent-green);">${formatCurrency(product.pricePerUnit * farmerPct / 100)} (${farmerPct}%)${aiScore >= 95 ? ' 🏆' : ''}</span>
+                    <span class="price-row-label" style="display: flex; align-items: center; gap: 6px;">
+                      ${getIcon('farmer', 14, '', 'color: var(--text-muted);')}
+                      <span>${i18n.t('consumer.splitFarmer') || 'Farmer receives'}</span>
+                    </span>
+                    <span class="price-row-value" style="color: var(--accent-green);">${formatCurrency(product.pricePerUnit * farmerPct / 100)} (${farmerPct}%)</span>
                   </div>
                   <div class="price-row">
-                    <span class="price-row-label">${i18n.t('consumer.splitIntermediary') || '🏪 Intermediary'}</span>
+                    <span class="price-row-label" style="display: flex; align-items: center; gap: 6px;">
+                      ${getIcon('intermediary', 14, '', 'color: var(--text-muted);')}
+                      <span>${i18n.t('consumer.splitIntermediary') || 'Intermediary'}</span>
+                    </span>
                     <span class="price-row-value">${formatCurrency(product.pricePerUnit * intermediaryPct / 100)} (${intermediaryPct}%)</span>
                   </div>
                   <div class="price-row">
-                    <span class="price-row-label">${i18n.t('consumer.splitRetailer') || '🛒 Retailer'}</span>
+                    <span class="price-row-label" style="display: flex; align-items: center; gap: 6px;">
+                      ${getIcon('retailer', 14, '', 'color: var(--text-muted);')}
+                      <span>${i18n.t('consumer.splitRetailer') || 'Retailer'}</span>
+                    </span>
                     <span class="price-row-value">${formatCurrency(product.pricePerUnit * retailerPct / 100)} (${retailerPct}%)</span>
                   </div>
                   <div class="price-row">
-                    <span class="price-row-label">${i18n.t('consumer.splitPlatform') || '⛓️ Platform'}</span>
-                    <span class="price-row-value">${formatCurrency(product.pricePerUnit * platformPct / 100)} (${platformPct}%)${platformPct === 0 ? ` ✨ ${i18n.t('trace.waived') || 'Waived'}` : ''}</span>
+                    <span class="price-row-label" style="display: flex; align-items: center; gap: 6px;">
+                      ${getIcon('blockchain', 14, '', 'color: var(--text-muted);')}
+                      <span>${i18n.t('consumer.splitPlatform') || 'Platform'}</span>
+                    </span>
+                    <span class="price-row-value">${formatCurrency(product.pricePerUnit * platformPct / 100)} (${platformPct}%)${platformPct === 0 ? ` (${i18n.t('trace.waived') || 'Waived'})` : ''}</span>
                   </div>
                 </div>
               </div>
@@ -727,7 +786,10 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
               ${aiScore > 0 ? `
                 <div class="card animate-fade-in-up">
                   <div class="card-header">
-                    <div class="card-title">🔬 ${i18n.t('trace.aiIpfsTitle') || 'AI Oracle × IPFS Binding'}</div>
+                    <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+                      ${getIcon('bot', 18, '', 'color: var(--accent-purple);')}
+                      <span>${i18n.t('trace.aiIpfsTitle') || 'AI Oracle × IPFS Binding'}</span>
+                    </div>
                   </div>
                   <div style="padding: 4px 0; font-size: 0.82rem;">
                     <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
@@ -752,7 +814,10 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
 
               <div class="card animate-fade-in-up">
                 <div class="card-header">
-                  <div class="card-title">⛓️ ${i18n.t('trace.blockchainRecordsTitle') || 'Blockchain Records'}</div>
+                  <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+                    ${getIcon('blockchain', 18, '', 'color: var(--accent-blue);')}
+                    <span>${i18n.t('trace.blockchainRecordsTitle') || 'Blockchain Records'}</span>
+                  </div>
                 </div>
                 <div class="explorer-chain">
                   ${productHistory.slice(-3).reverse().map((h, i) => `

@@ -200,7 +200,7 @@ export class PaymentSplitter {
     let farmerPct, intermediaryPct, retailerPct, platformPct, qualityBonus;
 
     if (aiQualityScore && aiQualityScore >= 95) {
-      // 🏆 High-Quality Bonus: Farmer gets 65%, Platform fee waived
+      // High-Quality Bonus: Farmer gets 65%, Platform fee waived
       farmerPct = 0.65;
       intermediaryPct = intermediaryId ? 0.20 : 0;
       retailerPct = retailerId ? 0.15 : 0;

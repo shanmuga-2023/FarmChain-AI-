@@ -15,6 +15,7 @@ import { PaymentSplitter } from '../../blockchain/contracts.js';
 import { getFirestoreUsers } from '../../firebase/firestore.js';
 import { fetchUsers } from '../../utils/api.js';
 import { i18n } from '../../i18n/index.js';
+import { getIcon } from '../../utils/icons.js';
 
 export function renderAdminDashboard(container) {
   const user = store.get('currentUser');
@@ -46,7 +47,10 @@ export function renderAdminDashboard(container) {
             </div>
           </div>
           <div class="header-right">
-            <button class="btn btn-secondary btn-sm" id="reset-btn" title="Reset all data">${i18n.t('admin.resetDemoBtn') || '🗑️ Reset Demo'}</button>
+            <button class="btn btn-secondary btn-sm" id="reset-btn" title="Reset all data" style="display: inline-flex; align-items: center; gap: 6px;">
+              ${getIcon('trash', 14)}
+              <span>${i18n.t('admin.resetDemoBtn') || 'Reset Demo'}</span>
+            </button>
             <button class="btn-icon notification-btn" aria-label="Notifications" style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; color: var(--text-primary); position: relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notification-dot" style="position: absolute; top: 6px; right: 8px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%;"></span></button>
             
           </div>
@@ -59,7 +63,7 @@ export function renderAdminDashboard(container) {
               <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
               <div class="stat-card-value">${blockCount}</div>
               <div class="stat-card-label">${i18n.t('admin.statBlocks') || 'Blockchain Blocks'}</div>
-              <div class="stat-card-change positive">${i18n.t('admin.chainIntact') || 'Chain intact ✓'}</div>
+              <div class="stat-card-change positive">${i18n.t('admin.chainIntact') || 'Chain intact'}</div>
             </div>
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
@@ -72,7 +76,7 @@ export function renderAdminDashboard(container) {
               <div class="stat-card-label">${i18n.t('admin.statUsers') || 'Registered Users'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-red-dim); color: var(--accent-red);">🚨</div>
+              <div class="stat-card-icon" style="background: var(--accent-red-dim); color: var(--accent-red);">${getIcon('alert', 24)}</div>
               <div class="stat-card-value">${fraudAlerts.filter(a => a.riskScore >= 40).length}</div>
               <div class="stat-card-label">${i18n.t('admin.statFraud') || 'Fraud Alerts'}</div>
               <div class="stat-card-change negative">${i18n.t('admin.requiresReview') || 'Requires review'}</div>
@@ -83,7 +87,10 @@ export function renderAdminDashboard(container) {
           <div class="charts-grid">
             <div class="chart-card">
               <div class="chart-card-header">
-                <div class="chart-card-title">${i18n.t('admin.txTimeline') || '📊 Transaction Timeline'}</div>
+                <div class="chart-card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('barChart', 16, '', 'color: var(--accent-cyan);')}
+                  <span>${i18n.t('admin.txTimeline') || 'Transaction Timeline'}</span>
+                </div>
               </div>
               <div class="chart-wrapper">
                 <canvas id="admin-tx-chart"></canvas>
@@ -91,7 +98,10 @@ export function renderAdminDashboard(container) {
             </div>
             <div class="chart-card">
               <div class="chart-card-header">
-                <div class="chart-card-title">${i18n.t('admin.userDistribution') || '👥 User Distribution'}</div>
+                <div class="chart-card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('users', 16, '', 'color: var(--accent-amber);')}
+                  <span>${i18n.t('admin.userDistribution') || 'User Distribution'}</span>
+                </div>
               </div>
               <div class="chart-wrapper">
                 <canvas id="admin-users-chart"></canvas>
@@ -103,14 +113,17 @@ export function renderAdminDashboard(container) {
             <!-- Fraud Alerts -->
             <div class="card">
               <div class="card-header">
-                <div class="card-title">${i18n.t('admin.fraudAlertsCard') || '🚨 AI Fraud Detection Alerts'}</div>
+                <div class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('alert', 16, '', 'color: var(--accent-red);')}
+                  <span>${i18n.t('admin.fraudAlertsCard') || 'AI Fraud Detection Alerts'}</span>
+                </div>
                 <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/admin/fraud'">${i18n.t('common.viewAll') || 'View All →'}</button>
               </div>
               <div class="tx-feed">
                 ${fraudAlerts.slice(0, 5).map(alert => `
                   <div class="tx-item" style="border-left: 3px solid ${alert.riskLevel === 'critical' ? 'var(--accent-red)' : alert.riskLevel === 'high' ? 'var(--accent-amber)' : 'var(--accent-cyan)'};">
-                    <div class="tx-icon" style="background: ${alert.riskLevel === 'critical' ? 'var(--accent-red-dim)' : 'var(--accent-amber-dim)'}; color: ${alert.riskLevel === 'critical' ? 'var(--accent-red)' : 'var(--accent-amber)'};">
-                      ${alert.riskLevel === 'critical' ? '🚨' : '⚠️'}
+                    <div class="tx-icon" style="background: ${alert.riskLevel === 'critical' ? 'var(--accent-red-dim)' : 'var(--accent-amber-dim)'}; color: ${alert.riskLevel === 'critical' ? 'var(--accent-red)' : 'var(--accent-amber)'}; display: flex; align-items: center; justify-content: center;">
+                      ${getIcon('alert', 16)}
                     </div>
                     <div class="tx-info">
                       <div class="tx-title">${localizeCropName(alert.transaction.productName)}</div>
@@ -129,14 +142,17 @@ export function renderAdminDashboard(container) {
             <!-- Demand Forecast -->
             <div class="card">
               <div class="card-header">
-                <div class="card-title">${i18n.t('admin.demandForecastCard') || '📈 AI Demand Forecast'}</div>
+                <div class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                  ${getIcon('barChart', 16, '', 'color: var(--accent-green);')}
+                  <span>${i18n.t('admin.demandForecastCard') || 'AI Demand Forecast'}</span>
+                </div>
                 <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/admin/forecast'">${i18n.t('common.details') || 'Details →'}</button>
               </div>
               <div class="tx-feed">
                 ${marketInsights.map(insight => `
                   <div class="tx-item">
-                    <div class="tx-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">
-                      ${insight.trend === 'increasing' ? '📈' : insight.trend === 'decreasing' ? '📉' : '📊'}
+                    <div class="tx-icon" style="background: var(--accent-green-dim); color: var(--accent-green); display: flex; align-items: center; justify-content: center;">
+                      ${getIcon('barChart', 16)}
                     </div>
                     <div class="tx-info">
                       <div class="tx-title">${localizeCropName(insight.crop)}</div>
@@ -154,9 +170,12 @@ export function renderAdminDashboard(container) {
           <!-- Blockchain Explorer Preview -->
           <div class="card" style="margin-top: 20px;">
             <div class="card-header">
-              <div class="card-title">${i18n.t('admin.recentBlocksCard') || '⛓️ Recent Blockchain Blocks'}</div>
+              <div class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                ${getIcon('blockchain', 16, '', 'color: var(--accent-blue);')}
+                <span>${i18n.t('admin.recentBlocksCard') || 'Recent Blockchain Blocks'}</span>
+              </div>
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="badge badge-success">${i18n.t('admin.chainValid') || 'Chain Valid ✓'}</span>
+                <span class="badge badge-success">${i18n.t('admin.chainValid') || 'Chain Valid'}</span>
                 <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/admin/explorer'">${i18n.t('admin.fullExplorerBtn') || 'Full Explorer →'}</button>
               </div>
             </div>
@@ -164,7 +183,7 @@ export function renderAdminDashboard(container) {
               ${blockchain.chain.slice(-5).reverse().map((block, i) => `
                 <div class="block">
                   <div class="block-header">
-                    <span class="block-index">${block.index === 0 ? (i18n.t('admin.genesisBlock') || '🏁 Genesis Block') : (i18n.t('trace.blockNumber', { index: block.index }) || `Block #${block.index}`)}</span>
+                    <span class="block-index">${block.index === 0 ? (i18n.t('admin.genesisBlock') || 'Genesis Block') : (i18n.t('trace.blockNumber', { index: block.index }) || `Block #${block.index}`)}</span>
                     <span class="block-time">${formatDateTime(block.timestamp)}</span>
                   </div>
                   <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 4px;">
