@@ -138,9 +138,5 @@ export function renderIntermediaryInventory(container) {
     </div>
   `;
 
-  i18n.onChange(() => {
-    if (window.location.hash.includes('/intermediary/inventory')) {
-      renderIntermediaryInventory(container);
-    }
-  });
+  
 }

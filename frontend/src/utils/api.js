@@ -11,7 +11,7 @@ const isLocalHost = typeof window !== 'undefined' && (
   window.location.hostname.startsWith('10.') ||
   window.location.hostname.endsWith('.local')
 );
-const API_BASE = import.meta.env.VITE_API_URL || (isLocalHost ? `http://${window.location.hostname}:4000/api` : 'https://farmchain-ai-1oge.onrender.com/api');
+export const API_BASE = import.meta.env.VITE_API_URL || (isLocalHost ? `http://${window.location.hostname}:4000/api` : 'https://farmchain-ai-1oge.onrender.com/api');
 let _serverOnline = null; // null = unknown, true/false = checked
 
 /**

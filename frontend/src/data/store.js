@@ -18,6 +18,8 @@ const defaultState = {
   notifications: [],
   farmerReputations: {},
   qualityDisputes: [],
+  deliveries: [],
+  invoices: [],
 };
 
 class Store {

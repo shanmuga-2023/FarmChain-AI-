@@ -91,7 +91,7 @@ export function renderConsumerMarketplace(container) {
                   </div>
                   <div class="product-card-footer">
                     <button class="btn btn-secondary btn-sm trace-btn" data-product-id="${p.productId}">🔍 ${i18n.t('consumer.traceBtn') || 'Trace'}</button>
-                    <button class="btn btn-primary btn-sm buy-btn" data-product='${JSON.stringify(p)}'>🛒 ${i18n.t('consumer.buyBtn') || 'Buy'}</button>
+                    <button class="btn btn-primary btn-sm buy-btn" style="color: black !important; font-weight: bold; padding: 10px 18px; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px;" data-product='${JSON.stringify(p)}'><span style="font-size: 1.3rem;">🛒</span> ${i18n.t('consumer.buyBtn') || 'Buy'}</button>
                   </div>
                 </div>
               `;

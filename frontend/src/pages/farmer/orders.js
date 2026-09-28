@@ -166,9 +166,5 @@ export function renderFarmerOrders(container) {
   });
 
   // Dynamic re-render on language switch
-  i18n.onChange(() => {
-    if (window.location.hash.includes('/farmer/orders')) {
-      renderFarmerOrders(container);
-    }
-  });
+  
 }

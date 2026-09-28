@@ -14,6 +14,9 @@ import cors from 'cors';
 import { Server } from 'socket.io';
 import { apiRouter } from './routes/api.js';
 import { blockchainRouter } from './routes/blockchain.js';
+import { deliveryRouter } from './routes/delivery.js';
+import { invoiceRouter } from './routes/invoices.js';
+import { assistantRouter } from './routes/assistant.js';
 import { db } from './db.js';
 
 const app = express();
@@ -75,6 +78,9 @@ app.get('/', (req, res) => {
 
 // Mount API routes
 app.use('/api/blockchain', blockchainRouter);
+app.use('/api/deliveries', deliveryRouter);
+app.use('/api/invoices', invoiceRouter);
+app.use('/api/assistant', assistantRouter);
 app.use('/api', apiRouter);
 
 const PORT = process.env.PORT || 4000;

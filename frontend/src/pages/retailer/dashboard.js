@@ -278,9 +278,5 @@ export function renderRetailerDashboard(container) {
     });
   }, 100);
 
-  i18n.onChange(() => {
-    if (window.location.hash.includes('/retailer/dashboard')) {
-      renderRetailerDashboard(container);
-    }
-  });
+  
 }

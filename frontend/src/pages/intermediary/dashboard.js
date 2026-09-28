@@ -563,9 +563,5 @@ export function renderIntermediaryDashboard(container) {
   });
 
   // Dynamic re-render on language switch
-  i18n.onChange(() => {
-    if (window.location.hash.includes('/intermediary/dashboard')) {
-      renderIntermediaryDashboard(container);
-    }
-  });
+  
 }

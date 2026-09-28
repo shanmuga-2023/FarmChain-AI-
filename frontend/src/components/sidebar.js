@@ -23,12 +23,15 @@ function getSidebarMenus() {
         items: [
           { label: i18n.t('nav.myProducts') || 'My Products', icon: '📦', path: '/farmer/products' },
           { label: i18n.t('nav.orders') || 'Orders', icon: '📋', path: '/farmer/orders' },
+          { label: i18n.t('delivery.title') || 'Deliveries', icon: '🚚', path: '/farmer/deliveries' },
+          { label: i18n.t('invoice.title') || 'Invoices', icon: '📄', path: '/farmer/invoices' },
         ],
       },
       {
         section: i18n.t('nav.sections.insights') || 'Insights',
         items: [
           { label: i18n.t('nav.aiPricing') || 'AI Pricing', icon: '🤖', path: '/farmer/pricing' },
+          { label: i18n.t('assistant.title') || 'AI Assistant', icon: '🤖', path: '/farmer/assistant' },
         ],
       },
     ],
@@ -44,6 +47,8 @@ function getSidebarMenus() {
         items: [
           { label: i18n.t('nav.marketplace') || 'Marketplace', icon: '🏪', path: '/intermediary/marketplace' },
           { label: i18n.t('nav.inventory') || 'Inventory', icon: '📦', path: '/intermediary/inventory' },
+          { label: i18n.t('delivery.title') || 'Deliveries', icon: '🚚', path: '/intermediary/deliveries' },
+          { label: i18n.t('invoice.title') || 'Invoices', icon: '📄', path: '/intermediary/invoices' },
         ],
       },
       {
@@ -65,6 +70,8 @@ function getSidebarMenus() {
         items: [
           { label: i18n.t('nav.sourceProducts') || 'Source Products', icon: '🔍', path: '/retailer/source' },
           { label: i18n.t('nav.myStorefront') || 'My Storefront', icon: '🏬', path: '/retailer/storefront' },
+          { label: i18n.t('delivery.title') || 'Deliveries', icon: '🚚', path: '/retailer/deliveries' },
+          { label: i18n.t('invoice.title') || 'Invoices', icon: '📄', path: '/retailer/invoices' },
         ],
       },
       {
@@ -91,6 +98,8 @@ function getSidebarMenus() {
         section: i18n.t('nav.sections.account') || 'Account',
         items: [
           { label: i18n.t('nav.myOrders') || 'My Orders', icon: '📋', path: '/consumer/orders' },
+          { label: i18n.t('delivery.title') || 'Deliveries', icon: '🚚', path: '/consumer/delivery' },
+          { label: i18n.t('invoice.title') || 'Invoices', icon: '📄', path: '/consumer/invoices' },
         ],
       },
     ],
@@ -107,6 +116,8 @@ function getSidebarMenus() {
           { label: i18n.t('nav.products') || 'Products', icon: '📦', path: '/admin/products' },
           { label: i18n.t('nav.users') || 'Users', icon: '👥', path: '/admin/users' },
           { label: i18n.t('nav.fraudAlerts') || 'Fraud Alerts', icon: '🚨', path: '/admin/fraud' },
+          { label: i18n.t('delivery.title') || 'Deliveries', icon: '🚚', path: '/admin/deliveries' },
+          { label: i18n.t('invoice.title') || 'Invoices', icon: '📄', path: '/admin/invoices' },
         ],
       },
       {

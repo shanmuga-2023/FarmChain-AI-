@@ -43,30 +43,30 @@ export function renderAuthPage(container) {
             </div>
 
             <div style="max-width: 500px;">
-              <h1 style="font-size: 48px; font-weight: 800; margin: 0 0 24px 0; line-height: 1.1; letter-spacing: -1px;">Grow Trust.<br/><span style="color: var(--brand-amber);">Earn More.</span></h1>
+              <h1 style="font-size: 48px; font-weight: 800; margin: 0 0 24px 0; line-height: 1.1; letter-spacing: -1px;">${i18n.t('auth_new.growTrust')}<br/><span style="color: var(--brand-amber);">${i18n.t('auth_new.earnMore')}</span></h1>
               
               <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 32px;">
                 <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
                   <div style="color: var(--brand-amber);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.292 1.292L3 12l5.8 1.9a2 2 0 0 1 1.292 1.292L12 21l1.9-5.8a2 2 0 0 1 1.292-1.292L21 12l-5.8-1.9a2 2 0 0 1-1.292-1.292Z"/></svg></div>
-                  <div><div style="font-weight: 600; font-size: 1.1rem;">AI Grading</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Automated objective crop quality analysis</div></div>
+                  <div><div style="font-weight: 600; font-size: 1.1rem;">${i18n.t('auth_new.aiGrading')}</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${i18n.t('auth_new.aiGradingDesc')}</div></div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
                   <div style="color: #38BDF8;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
-                  <div><div style="font-weight: 600; font-size: 1.1rem;">GPS Verification</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Authentic harvest origin mapping</div></div>
+                  <div><div style="font-weight: 600; font-size: 1.1rem;">${i18n.t('auth_new.gpsVerification')}</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${i18n.t('auth_new.gpsVerificationDesc')}</div></div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
                   <div style="color: #4ADE80;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
-                  <div><div style="font-weight: 600; font-size: 1.1rem;">Blockchain Provenance</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Immutable supply-chain records on Polygon</div></div>
+                  <div><div style="font-weight: 600; font-size: 1.1rem;">${i18n.t('auth_new.blockchainProvenance')}</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${i18n.t('auth_new.blockchainProvenanceDesc')}</div></div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
                   <div style="color: #F8FAFC;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-                  <div><div style="font-weight: 600; font-size: 1.1rem;">Direct Farmer Payments</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Transparent smart-contract settlements</div></div>
+                  <div><div style="font-weight: 600; font-size: 1.1rem;">${i18n.t('auth_new.directPayments')}</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${i18n.t('auth_new.directPaymentsDesc')}</div></div>
                 </div>
               </div>
             </div>
             
             <div style="margin-top: auto; font-size: 0.8rem; color: rgba(255,255,255,0.5);">
-              © 2026 FarmChain AI. All rights reserved.
+              ${i18n.t('auth_new.copyright')}
             </div>
           </div>
         </div>
@@ -80,63 +80,136 @@ export function renderAuthPage(container) {
 
           <div class="saas-card" style="width: 100%; max-width: 460px; padding: 40px; border-radius: 24px;">
             <div style="text-align: center; margin-bottom: 32px;">
-              <h2 style="font-size: 28px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0;">${isRegister ? 'Create an Account' : 'Welcome back'}</h2>
-              <p style="font-size: 15px; color: var(--text-secondary); margin: 0;">${isRegister ? 'Join the agricultural revolution' : 'Sign in to your account'}</p>
+              <h2 style="font-size: 28px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0;">${isRegister ? i18n.t('auth_new.createAccountTitle') : i18n.t('auth_new.welcomeBackTitle')}</h2>
+              <p style="font-size: 15px; color: var(--text-secondary); margin: 0;">${isRegister ? i18n.t('auth_new.joinRevolution') : i18n.t('auth_new.signInSubtitle')}</p>
             </div>
 
             <!-- Role Selection -->
             <div style="margin-bottom: 24px;">
-              <div style="display: grid; grid-template-columns: repeat(4, 1fr) 48px; gap: 4px; background: var(--surface-secondary); padding: 4px; border-radius: 12px; border: 1px solid var(--border);" id="role-tabs">
-                <button type="button" class="tab role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer" title="Farmer">${roleIcons.farmer}</button>
-                <button type="button" class="tab role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary" title="Intermediary">${roleIcons.intermediary}</button>
-                <button type="button" class="tab role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer" title="Retailer">${roleIcons.retailer}</button>
-                <button type="button" class="tab role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer" title="Consumer">${roleIcons.consumer}</button>
-                <button type="button" class="tab role-tab ${initialRole === 'admin' ? 'active' : ''}" data-role="admin" title="Admin">${roleIcons.admin}</button>
+              <style>
+                .role-card-grid {
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 12px;
+                }
+                .role-card {
+                  background: var(--surface);
+                  border: 1px solid var(--border);
+                  border-radius: 12px;
+                  padding: 12px;
+                  text-align: center;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 8px;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+                  outline: none;
+                }
+                .role-card:hover {
+                  border-color: rgba(14, 165, 233, 0.4);
+                  background: rgba(14, 165, 233, 0.02);
+                }
+                .role-card.active {
+                  border-color: #0EA5E9;
+                  background: #E0F2FE;
+                  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+                }
+                [data-theme="dark"] .role-card.active {
+                  background: rgba(14, 165, 233, 0.15);
+                  border-color: #0EA5E9;
+                  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+                }
+                .role-icon {
+                  width: 36px; height: 36px;
+                  border-radius: 10px;
+                  background: var(--surface-secondary);
+                  display: flex; align-items: center; justify-content: center;
+                  color: var(--text-primary);
+                  transition: all 0.2s;
+                }
+                .role-card.active .role-icon {
+                  background: #0EA5E9;
+                  color: #FFF;
+                }
+                .role-title {
+                  font-weight: 800;
+                  font-size: 0.95rem;
+                  color: var(--text-primary);
+                  margin-bottom: 2px;
+                  white-space: normal;
+                  line-height: 1.2;
+                }
+              </style>
+              <div class="role-card-grid" id="role-tabs">
+                <!-- Farmer -->
+                <button type="button" class="role-card role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer">
+                  <div class="role-icon">${roleIcons.farmer}</div>
+                  <div class="role-title">${i18n.t('farmerRole')}</div>
+                </button>
+                <!-- Retailer -->
+                <button type="button" class="role-card role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer">
+                  <div class="role-icon">${roleIcons.retailer}</div>
+                  <div class="role-title">${i18n.t('retailerRole')}</div>
+                </button>
+                <!-- Consumer -->
+                <button type="button" class="role-card role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer">
+                  <div class="role-icon">${roleIcons.consumer}</div>
+                  <div class="role-title">${i18n.t('consumerRole')}</div>
+                </button>
+                <!-- Intermediary -->
+                <button type="button" class="role-card role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary">
+                  <div class="role-icon">${roleIcons.intermediary}</div>
+                  <div class="role-title">${i18n.t('intermediaryRole')}</div>
+                </button>
+                <!-- Admin hidden -->
+                <button type="button" class="tab role-tab ${initialRole === 'admin' ? 'active' : ''}" data-role="admin" style="display:none;"></button>
               </div>
             </div>
 
             <!-- Form -->
             <form id="auth-form" style="display: flex; flex-direction: column; gap: 16px;">
               ${isRegister ? `
-                <div><input type="text" class="saas-input" id="auth-name" placeholder="Full Name" required /></div>
-                <div><input type="tel" class="saas-input" id="auth-phone" placeholder="Phone Number" required /></div>
-                <div><input type="text" class="saas-input" id="auth-location" placeholder="Location (e.g. Nashik, MH)" required /></div>
+                <div><input type="text" class="saas-input" id="auth-name" placeholder="${i18n.t('auth_new.fullName')}" required /></div>
+                <div><input type="tel" class="saas-input" id="auth-phone" placeholder="${i18n.t('auth_new.phonePlaceholder')}" required /></div>
+                <div><input type="text" class="saas-input" id="auth-location" placeholder="${i18n.t('auth_new.locationPlaceholder')}" required /></div>
                 ${initialRole === 'farmer' ? `
-                  <div><input type="text" class="saas-input" id="auth-farmsize" placeholder="Farm Size (e.g. 5 Acres)" /></div>
-                  <div><input type="text" class="saas-input" id="auth-crops" placeholder="Primary Crops (e.g. Tomatoes, Onion)" /></div>
+                  <div><input type="text" class="saas-input" id="auth-farmsize" placeholder="${i18n.t('auth_new.farmSizePlaceholder')}" /></div>
+                  <div><input type="text" class="saas-input" id="auth-crops" placeholder="${i18n.t('auth_new.cropsPlaceholder')}" /></div>
                 ` : ''}
               ` : ''}
 
               <div>
-                <input type="email" class="saas-input" id="auth-email" placeholder="Email Address" required />
+                <input type="email" class="saas-input" id="auth-email" placeholder="${i18n.t('auth_new.emailPlaceholder')}" required />
               </div>
               <div>
-                <input type="password" class="saas-input" id="auth-password" placeholder="Password" required />
+                <input type="password" class="saas-input" id="auth-password" placeholder="${i18n.t('auth_new.passwordPlaceholder')}" required />
               </div>
               
               ${isRegister ? `
                 <div>
-                  <input type="password" class="saas-input" id="auth-password-confirm" placeholder="Confirm Password" required />
+                  <input type="password" class="saas-input" id="auth-password-confirm" placeholder="${i18n.t('auth_new.confirmPassword')}" required />
                 </div>
               ` : ''}
               
               <div style="display: flex; justify-content: flex-end; margin-top: -8px; ${isRegister ? 'display: none;' : ''}">
-                <a href="#" style="font-size: 13px; color: var(--primary); font-weight: 500; text-decoration: none;">Forgot password?</a>
+                <a href="#" style="font-size: 13px; color: var(--primary); font-weight: 500; text-decoration: none;">${i18n.t('auth_new.forgotPassword')}</a>
               </div>
 
               <button type="submit" class="saas-btn" id="submit-auth-btn" style="margin-top: 8px;">
-                ${isRegister ? 'Sign Up' : 'Sign In'}
+                ${isRegister ? i18n.t('auth_new.signUpBtn') : i18n.t('auth_new.signInBtn')}
               </button>
             </form>
 
             <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-secondary);">
-              ${isRegister ? 'Already have an account? ' : 'New to FarmChain? '}
-              <a href="#" id="toggle-mode-btn" style="color: var(--primary); font-weight: 600; text-decoration: none;">${isRegister ? 'Sign In' : 'Create Account'}</a>
+              ${isRegister ? i18n.t('auth_new.alreadyHaveAccount') : i18n.t('auth_new.newToFarmChain')}
+              <a href="#" id="toggle-mode-btn" style="color: var(--primary); font-weight: 600; text-decoration: none;">${isRegister ? i18n.t('auth_new.signInBtn') : i18n.t('auth_new.createAccountLink')}</a>
             </div>
 
             <!-- Quick Demo Credentials for Judges -->
             <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); ${isRegister ? 'display: none;' : ''}">
-              <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">Quick Demo Access</div>
+              <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">${i18n.t('auth_new.quickDemo')}</div>
               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;" id="demo-quick-buttons">
                 ${DEMO_CREDENTIALS.map(demo => `
                   <button class="demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}" style="font-size: 13px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">

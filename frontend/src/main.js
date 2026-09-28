@@ -14,6 +14,9 @@ import { initTheme } from './utils/theme.js';
 // Pages
 import { renderLanding } from './pages/landing.js';
 import { renderAuthPage } from './pages/auth.js';
+import { renderDeliveryTracker } from './delivery/delivery-tracker.js';
+import { renderInvoicePage, renderInvoiceVerify } from './invoice/invoice.js';
+import { renderFarmingAssistant } from './pages/farmer/farming-assistant.js';
 import { renderFarmerDashboard } from './pages/farmer/dashboard.js';
 import { renderFarmerProducts } from './pages/farmer/products.js';
 import { renderFarmerOrders } from './pages/farmer/orders.js';
@@ -80,6 +83,8 @@ function render(renderFn) {
 // Auth guard + RBAC — redirect if not logged in or wrong role
 router.beforeEach((path) => {
   const publicPaths = ['/', '/login', '/register', 'how-it-works', 'mandi-section', 'features', 'roles'];
+  // Allow public verification routes
+  if (path.startsWith('/verify/')) return true;
   // If it's a known public path or an in-page landing anchor (no leading slash or landing section), allow it
   if (publicPaths.includes(path) || !path.startsWith('/') || path.startsWith('/#')) return true;
 
@@ -103,11 +108,15 @@ router.beforeEach((path) => {
 router.register('/', render(renderLanding));
 router.register('/login', render(renderAuthPage));
 router.register('/register', render(renderAuthPage));
+router.register('/verify/*', render(renderInvoiceVerify));
 
 // Farmer routes
 router.register('/farmer/dashboard', render(renderFarmerDashboard));
 router.register('/farmer/products', render(renderFarmerProducts));
 router.register('/farmer/orders', render(renderFarmerOrders));
+router.register('/farmer/deliveries', render(renderDeliveryTracker));
+router.register('/farmer/invoices', render(renderInvoicePage));
+router.register('/farmer/assistant', render(renderFarmingAssistant));
 router.register('/farmer/pricing', render(renderFarmerDashboard)); // reuses dashboard for now
 router.register('/farmer/blockchain', () => {
   router.navigate('/farmer/dashboard');
@@ -118,18 +127,24 @@ router.register('/intermediary/dashboard', render(renderIntermediaryDashboard));
 router.register('/intermediary/marketplace', render(renderIntermediaryDashboard));
 router.register('/intermediary/inventory', render(renderIntermediaryInventory));
 router.register('/intermediary/transactions', render(renderIntermediaryDashboard));
+router.register('/intermediary/deliveries', render(renderDeliveryTracker));
+router.register('/intermediary/invoices', render(renderInvoicePage));
 
 // Retailer routes
 router.register('/retailer/dashboard', render(renderRetailerDashboard));
 router.register('/retailer/source', render(renderRetailerSource));
 router.register('/retailer/storefront', render(renderRetailerDashboard));
 router.register('/retailer/supplychain', render(renderRetailerDashboard));
+router.register('/retailer/deliveries', render(renderDeliveryTracker));
+router.register('/retailer/invoices', render(renderInvoicePage));
 
 // Consumer routes
 router.register('/consumer/dashboard', render(renderConsumerMarketplace));
 router.register('/consumer/marketplace', render(renderConsumerMarketplace));
 router.register('/consumer/trace', render(renderConsumerTrace));
 router.register('/consumer/orders', render(renderConsumerOrders));
+router.register('/consumer/delivery', render(renderDeliveryTracker));
+router.register('/consumer/invoices', render(renderInvoicePage));
 
 // Admin routes
 router.register('/admin/dashboard', render(renderAdminDashboard));
@@ -138,6 +153,8 @@ router.register('/admin/explorer', render(renderAdminExplorer));
 router.register('/admin/fraud', render(renderAdminFraud));
 router.register('/admin/forecast', render(renderAdminForecast));
 router.register('/admin/users', render(renderAdminUsers));
+router.register('/admin/deliveries', render(renderDeliveryTracker));
+router.register('/admin/invoices', render(renderInvoicePage));
 
 // Initialize the application
 async function init() {
