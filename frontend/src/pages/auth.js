@@ -29,18 +29,20 @@ export function renderAuthPage(container) {
     container.innerHTML = `
       <div class="auth-page-wrapper">
         <div class="auth-card-modal">
+          <!-- Top-Right Language Switcher (Aligned at top-right of entire modal) -->
+          <div style="position: absolute; top: 20px; right: 24px; z-index: 10;">
+             ${i18n.renderLanguageSelector('auth-header-lang-select', 'padding: 7px 14px; font-size: 13px; font-weight: 600; background: rgba(18, 23, 44, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #cbd5e1; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 4px 14px rgba(0,0,0,0.3); cursor: pointer; outline: none; transition: border-color 0.2s;')}
+          </div>
+
           <!-- LEFT: Auth Form Panel -->
           <div class="auth-card-left">
-            <!-- Header bar: Back arrow & Language switcher -->
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+            <!-- Header bar: Back arrow -->
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
               <a href="#/" id="auth-back-btn" title="Back to home" style="color: #94a3b8; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #161c32; border: 1px solid #232b49; transition: all 0.2s ease;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="m15 18-6-6 6-6"/>
                 </svg>
               </a>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                ${i18n.renderLanguageSelector('auth-header-lang-select', 'padding: 6px 12px; font-size: 13px; font-weight: 600; background: #151b31; color: #cbd5e1; border-radius: 16px; border: 1px solid #252f52; cursor: pointer; outline: none;')}
-              </div>
             </div>
 
             <!-- Title & Subtitle (matching user screenshot) -->
@@ -158,7 +160,7 @@ export function renderAuthPage(container) {
                 <button type="button" id="toggle-otp-modal-btn" style="background: none; border: none; color: #38bdf8; font-size: 11px; cursor: pointer; font-weight: 600; padding: 0;">📱 Phone OTP</button>
               </div>
               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;" id="demo-quick-buttons">
-                ${DEMO_CREDENTIALS.map(demo => `
+                ${DEMO_CREDENTIALS.slice(0, 5).map(demo => `
                   <button type="button" class="demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}" style="font-size: 12px; padding: 8px 10px; background: #14192e; border: 1px solid #232b49; border-radius: 10px; color: #e2e8f0; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">
                     <span style="font-weight: 500;">${demo.avatar} ${demo.name.split(' ')[0]}</span>
                     <span style="color: #38bdf8; font-size: 10px; font-weight: 600; text-transform: capitalize;">${i18n.t(`roles.${demo.role}`) || demo.role}</span>
@@ -220,14 +222,16 @@ export function renderAuthPage(container) {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 32px 16px;
+            padding: 40px 16px;
             background: radial-gradient(circle at 50% 40%, #3e4b85 0%, #2f3a6e 60%, #232c57 100%);
             box-sizing: border-box;
+            overflow-y: auto;
           }
           .auth-card-modal {
             width: 100%;
             max-width: 980px;
-            min-height: 600px;
+            min-height: 580px;
+            margin: auto;
             background: #0f1325;
             border-radius: 28px;
             overflow: hidden;
@@ -238,11 +242,11 @@ export function renderAuthPage(container) {
           .auth-card-left {
             flex: 1 1 50%;
             min-width: 320px;
-            padding: 44px 44px 36px 44px;
+            padding: 36px 44px;
             background: #0f1325;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             position: relative;
             z-index: 2;
           }
@@ -313,6 +317,16 @@ export function renderAuthPage(container) {
             box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18), 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
           }
 
+          .system-glass-input:-webkit-autofill,
+          .system-glass-input:-webkit-autofill:hover, 
+          .system-glass-input:-webkit-autofill:focus,
+          .system-underline-input:-webkit-autofill {
+            -webkit-text-fill-color: #ffffff !important;
+            -webkit-box-shadow: 0 0 0px 1000px #161c36 inset !important;
+            box-shadow: 0 0 0px 1000px #161c36 inset !important;
+            transition: background-color 5000s ease-in-out 0s;
+          }
+
           .system-password-eye-btn {
             position: absolute !important;
             right: 14px !important;
@@ -373,13 +387,16 @@ export function renderAuthPage(container) {
             border: 1px solid #232b49;
             border-radius: 10px;
             padding: 8px 4px;
+            min-height: 48px;
             font-size: 12px;
             font-weight: 600;
             color: #8e9cb5;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 3px;
+            text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
           }
