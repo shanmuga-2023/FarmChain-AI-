@@ -35,83 +35,54 @@ export function renderFarmerProducts(container) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        
+        <!-- Header -->
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('farmer.products.title')} 📦</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('roles.farmer')}</span> <span>›</span> <span>${i18n.t('farmer.products.title')}</span></div>
+              <h2 class="header-title">${i18n.t('farmer.products.title')}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Manage and monitor your listed agricultural products.</div>
             </div>
           </div>
-          <div class="topbar-right" style="display: flex; align-items: center; gap: 10px;">
-            ${i18n.renderLanguageSelector('farmer-products-lang-select')}
-            <button class="btn btn-secondary btn-sm" id="farm-live-camera-btn" style="font-weight: 800; padding: 8px 14px; border-radius: 10px; display: flex; align-items: center; gap: 6px; background: #ECFDF5; border: 2px solid #16A34A; color: #15803D; cursor: pointer; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.15);">
-              <span>📸</span>
-              <span>${i18n.t('farmer.dashboard.actionLiveCamera')}</span>
-            </button>
-            <button class="btn btn-primary btn-sm" id="add-product-btn" ${!eligibility.eligible ? 'disabled' : ''} style="font-weight: 700; padding: 8px 16px; border-radius: 10px; background: linear-gradient(135deg, #22c55e, #16a34a); border-color: #16a34a;">
-              ${i18n.t('farmer.dashboard.actionAddProduce')}
-            </button>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout')}</span></button>
+          <div class="header-right">
+            ${i18n.renderLanguageSelector('farmer-products-lang-select', 'padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text-primary); cursor: pointer; font-size: 0.85rem;')}
+            <button class="btn-icon" style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;">🔔</button>
+            <div class="avatar-circle" style="width: 40px; height: 40px;">👨🏽‍🌾</div>
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
+          
           <!-- Farmer Trust Score Badge -->
-          ${QualityGuard.renderReputationBadge(user.id)}
-
-          <!-- Live Farm Camera Verification Banner -->
-          <div class="live-farm-verification-banner" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(16, 185, 129, 0.05)); border: 2px solid #86EFAC; border-radius: 16px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
-            <div style="display: flex; align-items: center; gap: 14px;">
-              <div style="width: 46px; height: 46px; border-radius: 12px; background: #DCFCE7; border: 1.5px solid #86EFAC; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;">
-                📸
-              </div>
-              <div>
-                <div style="font-size: 0.95rem; font-weight: 800; color: #166534; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                  <span>${i18n.t('farmer.products.cameraBannerTitle')}</span>
-                  <span class="badge" style="background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 20px;">${i18n.t('farmer.products.cameraBannerBadge')}</span>
-                </div>
-                <div style="font-size: 0.78rem; color: #4B382A; margin-top: 3px; font-weight: 500;">
-                  ${i18n.t('farmer.products.cameraBannerDesc')}
-                </div>
-              </div>
-            </div>
-            <button class="btn btn-primary btn-sm" id="banner-live-camera-btn" style="font-weight: 800; padding: 10px 18px; border-radius: 10px; background: #16A34A; border: 2px solid #15803D; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);">
-              <span>📸</span>
-              <span>${i18n.t('farmer.products.openCameraBtn')}</span>
-            </button>
+          <div style="margin-bottom: 24px;">
+            ${QualityGuard.renderReputationBadge(user.id)}
           </div>
 
-          <!-- Producer Benefit Banner (Clean, Zero Blockchain Jargon) -->
-          <div class="producer-benefit-banner" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.09), rgba(16, 185, 129, 0.05)); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 1.6rem;">🌾</span>
-              <div>
-                <div style="font-size: 0.88rem; font-weight: 800; color: #4ade80;">
-                  ${i18n.t('farmer.products.producerBenefitTitle')}
-                </div>
-                <div style="font-size: 0.76rem; color: var(--text-muted, #94a3b8);">
-                  ${i18n.t('farmer.products.producerBenefitSub')}
-                </div>
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.4); font-size: 0.75rem; font-weight: 700;">✓ ${i18n.t('farmer.products.payoutGuaranteed')}</span>
-              <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); font-size: 0.75rem; font-weight: 700;">${i18n.t('farmer.products.qualityTestedBadge')}</span>
+          <!-- Action Bar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
+            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">My Products</h3>
+            <div style="display: flex; gap: 12px;">
+              <button class="saas-btn" id="farm-live-camera-btn" style="width: auto; padding: 0 20px; background: var(--surface); border: 1px solid var(--success); color: var(--success);">
+                📸 ${i18n.t('farmer.dashboard.actionLiveCamera')}
+              </button>
+              <button class="saas-btn" id="add-product-btn" ${!eligibility.eligible ? 'disabled' : ''} style="width: auto; padding: 0 24px; background: linear-gradient(135deg, #0EA5E9, #6366F1);">
+                + ${i18n.t('farmer.dashboard.actionAddProduce')}
+              </button>
             </div>
           </div>
 
           <!-- Products Grid -->
-          <div class="data-grid stagger-children" id="products-grid">
+          <div class="product-grid-layout" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;" id="products-grid">
             ${products.map(p => renderProductCard(p)).join('')}
           </div>
 
           ${products.length === 0 ? `
-            <div class="empty-state" style="padding: 48px 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.15); border-radius: 16px; background: rgba(255,255,255,0.02);">
-              <div class="empty-state-icon" style="font-size: 3rem; margin-bottom: 12px;">📦</div>
-              <h3 style="font-size: 1.2rem; font-weight: 800; color: #fff; margin-bottom: 6px;">${i18n.t('farmer.products.noProducts')}</h3>
-              <p style="font-size: 0.88rem; color: #94a3b8; max-width: 420px; margin: 0 auto 16px;">${i18n.t('farmer.products.startAdding')}</p>
-              <button class="btn btn-primary btn-sm" id="add-first-product-btn" ${!eligibility.eligible ? 'disabled' : ''} style="font-weight: 700; padding: 10px 20px; border-radius: 10px; background: linear-gradient(135deg, #22c55e, #16a34a); border-color: #16a34a;">
-                ${i18n.t('farmer.dashboard.actionAddProduce')}
+            <div class="saas-card" style="padding: 64px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 32px;">
+              <div style="font-size: 3rem; margin-bottom: 16px; opacity: 0.8;">📦</div>
+              <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">No products yet</h3>
+              <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 400px; margin: 0 auto 24px;">Add your first product to start listing your agricultural produce on the marketplace.</p>
+              <button class="saas-btn" id="add-first-product-btn" ${!eligibility.eligible ? 'disabled' : ''} style="width: auto; padding: 0 32px;">
+                + ${i18n.t('farmer.dashboard.actionAddProduce')}
               </button>
             </div>
           ` : ''}
@@ -233,9 +204,6 @@ export function renderFarmerProducts(container) {
   });
 }
 
-/**
- * Render individual product card with clean farmer-friendly terminology
- */
 function renderProductCard(product) {
   const prediction = FairPricePredictor.predict(
     product.name.split(' ').pop(),
@@ -248,57 +216,53 @@ function renderProductCard(product) {
   const unit = localizeUnit(product.unit || 'kg');
 
   return `
-    <div class="product-card" style="border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); background: var(--parchment-card, #1e293b); box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
-      <div class="product-card-image" style="height: 160px; position: relative; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; overflow: hidden; ${product.photoUrl ? 'cursor: pointer;' : ''}" ${product.photoUrl ? `onclick="window._showProductProof && window._showProductProof('${product.productId}')"` : ''}>
+    <div class="saas-card" style="display: flex; flex-direction: column; overflow: hidden;">
+      
+      <!-- Image Section -->
+      <div style="height: 160px; position: relative; background: linear-gradient(180deg, rgba(14,165,233,0.1) 0%, rgba(14,165,233,0.02) 100%); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; ${product.photoUrl ? 'cursor: pointer;' : ''}" ${product.photoUrl ? `onclick="window._showProductProof && window._showProductProof('${product.productId}')"` : ''}>
         ${product.photoUrl ? `
           <img src="${product.photoUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" />
         ` : `
-          <span style="font-size: 4rem;">${product.emoji || getCropEmoji(product.name)}</span>
+          <span style="font-size: 4rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));">${product.emoji || getCropEmoji(product.name)}</span>
         `}
-        ${product.isOrganic ? `<span class="product-card-badge badge-organic" style="position: absolute; top: 10px; right: 10px;">🌿 ${i18n.t('farmer.products.organicBadge')}</span>` : ''}
-        ${product.isLiveCapture ? `<span class="product-card-badge badge-success" style="position: absolute; top: 10px; left: 10px; font-size: 0.7rem; font-weight: 800; background: rgba(22, 163, 74, 0.9); color: #fff;">📸 ${i18n.t('farmer.products.liveVerified')}</span>` : ''}
+        
+        <div style="position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+          ${product.isOrganic ? `<span style="background: var(--success); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">🌿 Organic</span>` : ''}
+          ${product.isLiveCapture ? `<span style="background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">📸 Verified</span>` : ''}
+        </div>
       </div>
 
-      <div class="product-card-body" style="padding: 16px;">
-        <div class="product-card-name" style="font-size: 1.15rem; font-weight: 800; margin-bottom: 4px;">${localizeCropName(product.name)}</div>
-        <div class="product-card-origin" style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">📍 ${localizeLocation(product.origin)}</div>
-        <div class="product-card-price" style="font-size: 1.25rem; font-weight: 800; color: #4ade80;">${formatCurrency(product.pricePerUnit)}</div>
-        <div class="product-card-unit" style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 10px;">${i18n.t('farmer.products.perUnit', { unit })} · ${formatNumber(product.quantity)} ${unit} ${i18n.t('farmer.products.available')}</div>
+      <!-- Info Section -->
+      <div style="padding: 20px; flex: 1; display: flex; flex-direction: column;">
+        <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.3px;">${localizeCropName(product.name)}</div>
+        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; display: flex; align-items: center; gap: 4px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${localizeLocation(product.origin)}
+        </div>
+        
+        <div style="display: flex; align-items: baseline; gap: 6px; margin-bottom: 12px;">
+          <span style="font-size: 1.5rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px;">${formatCurrency(product.pricePerUnit)}</span>
+          <span style="font-size: 0.85rem; color: var(--text-secondary);">per ${unit}</span>
+        </div>
 
-        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-          <span class="badge ${prediction.isFairlyPriced ? 'badge-success' : 'badge-warning'}" style="font-size: 0.72rem;">
-            ${prediction.isFairlyPriced ? `✓ ${i18n.t('farmer.products.fairPrice')}` : `⚠ ${i18n.t('farmer.products.reviewPrice')}`}
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;">
+          <span style="background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+            ${formatNumber(product.quantity)} ${unit}
           </span>
-          <span class="badge ${statusBadge.class}" style="font-size: 0.72rem;">${statusBadge.label}</span>
+          <span style="background: ${prediction.isFairlyPriced ? 'rgba(34,197,94,0.1)' : 'rgba(245,158,11,0.1)'}; color: ${prediction.isFairlyPriced ? 'var(--success)' : 'var(--warning)'}; border: 1px solid ${prediction.isFairlyPriced ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)'}; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+            ${prediction.isFairlyPriced ? `✓ Fair Price` : `⚠ Review Price`}
+          </span>
           ${aiGrade ? `
-            <span class="badge badge-purple" style="font-size: 0.72rem;">
-              🏆 ${i18n.t('farmer.products.grade')} ${aiGrade} ${aiScore ? `(${aiScore}%)` : ''}
+            <span style="background: rgba(139,92,246,0.1); color: #8B5CF6; border: 1px solid rgba(139,92,246,0.2); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+              ⭐ Grade ${aiGrade}
             </span>
           ` : ''}
         </div>
 
-        ${(product.isLiveCapture || product.captureProof) ? `
-          <div class="product-live-proof-tag" data-product-id="${product.productId}" style="margin-top: 10px; padding: 7px 10px; background: #ECFDF5; border: 1.5px solid #86EFAC; border-radius: 8px; font-size: 0.72rem; color: #166534; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 6px;" title="${i18n.t('farmer.products.proofTooltip')}">
-            <span style="display: flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-              <span>📸</span>
-              <span>${i18n.t('farmer.products.liveVerified')}: ${localizeLocation(product.captureProof?.location?.address || product.origin)}</span>
-            </span>
-            <span style="font-size: 0.68rem; color: #047857; white-space: nowrap; font-weight: 800;">
-              📅 ${formatDate(product.captureProof?.timestamp || product.harvestDate || Date.now())}
-            </span>
-          </div>
-        ` : ''}
-      </div>
-
-      <!-- Footer (Clean, Zero Blockchain Jargon) -->
-      <div class="product-card-footer" style="padding: 12px 16px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15);">
-        <div style="font-size: 0.75rem; color: #86efac; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-          <span>✓</span> <span>${i18n.t('farmer.products.marketplaceActive')}</span>
-        </div>
-        <div style="display: flex; gap: 6px; align-items: center;">
-          <button class="btn-icon edit-product-btn" data-product-id="${product.productId}" title="${i18n.t('farmer.products.editTitle')}" style="font-size: 0.85rem; padding: 4px 8px; border-radius: 8px;">✏️</button>
-          <button class="btn-icon delete-product-btn" data-product-id="${product.productId}" title="${i18n.t('farmer.products.deleteTitle')}" style="font-size: 0.85rem; padding: 4px 8px; border-radius: 8px; color: var(--accent-red);">🗑️</button>
-          <button class="btn-icon qr-btn" data-product-id="${product.productId}" title="${i18n.t('farmer.products.traceQrTitle')}" style="font-size: 0.85rem; padding: 4px 8px; border-radius: 8px;">📱</button>
+        <div style="margin-top: auto; display: grid; grid-template-columns: 1fr auto auto; gap: 8px;">
+          <button class="saas-btn edit-product-btn" data-product-id="${product.productId}" style="height: 36px; font-size: 0.85rem; padding: 0 12px; background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border);">Edit</button>
+          <button class="saas-btn qr-btn" data-product-id="${product.productId}" style="height: 36px; font-size: 0.85rem; padding: 0 12px; width: 36px; background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border);">📱</button>
+          <button class="saas-btn delete-product-btn" data-product-id="${product.productId}" style="height: 36px; font-size: 0.85rem; padding: 0 12px; width: 36px; background: transparent; color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3);">🗑️</button>
         </div>
       </div>
     </div>

@@ -21,25 +21,25 @@ export function renderAdminExplorer(container) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('admin.explorerTitle') || 'Blockchain Explorer ⛓️'}</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.navExplorer') || 'Explorer'}</span></div>
+              <h2 class="header-title">${i18n.t('admin.explorerTitle') || 'Blockchain Explorer ️'}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.navExplorer') || 'Explorer'}</span></div>
             </div>
           </div>
-          <div class="topbar-right">
+          <div class="header-right">
             <span class="badge ${isValid ? 'badge-success' : 'badge-danger'}" style="font-size: 0.85rem; padding: 6px 14px;">
               ${isValid ? (i18n.t('admin.chainVerified') || '✅ Chain Integrity Verified') : (i18n.t('admin.chainCompromised') || '❌ Chain Compromised')}
             </span>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
+            
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
-          <div class="dashboard-stats stagger-children">
+          <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">⛓️</div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
               <div class="stat-card-value">${chain.length}</div>
               <div class="stat-card-label">${i18n.t('admin.statBlocks') || 'Total Blocks'}</div>
             </div>

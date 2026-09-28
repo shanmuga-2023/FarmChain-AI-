@@ -28,27 +28,27 @@ export function renderAdminUsers(container) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('admin.usersTitle') || 'User Management 👥'}</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.users') || 'Users'}</span></div>
+              <h2 class="header-title">${i18n.t('admin.usersTitle') || 'User Management '}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.users') || 'Users'}</span></div>
             </div>
           </div>
-          <div class="topbar-right">
-            <div class="topbar-search">
-              <span class="topbar-search-icon">🔍</span>
-              <input type="text" placeholder="${i18n.t('admin.searchUsers') || 'Search users...'}" id="user-search-input" />
+          <div class="header-right">
+            <div class="saas-search-wrapper">
+              <span class="saas-search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+              <input class="saas-search" type="text" placeholder="${i18n.t('admin.searchUsers') || 'Search users...'}" id="user-search-input" />
             </div>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
+            
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
           <!-- Role Summary Stats -->
-          <div class="dashboard-stats stagger-children">
+          <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">👥</div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
               <div class="stat-card-value">${userList.length}</div>
               <div class="stat-card-label">${i18n.t('admin.statUsers') || 'Total Users'}</div>
             </div>

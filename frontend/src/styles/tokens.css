@@ -1,0 +1,176 @@
+/* ============================================
+   FarmChain AI — Global Design System
+   White + Sky Blue SaaS Identity
+   ============================================ */
+
+:root,
+[data-theme="light"] {
+  /* LIGHT THEME */
+  --primary: #0EA5E9;
+  --primary-light: #38BDF8;
+  --primary-dark: #0369A1;
+
+  --background: #F0F9FF;
+  --background-secondary: #E0F2FE;
+
+  --surface: #FFFFFF;
+  --surface-secondary: #F8FAFC;
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-strong: rgba(255, 255, 255, 0.88);
+
+  --border: #E2E8F0;
+  --glass-border: rgba(255, 255, 255, 0.65);
+
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+
+  --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.06);
+  --shadow-glass: 0 8px 32px rgba(15, 23, 42, 0.08);
+
+  /* Legacy Mappings to prevent existing code from breaking */
+  --bg-primary: var(--background);
+  --bg-secondary: var(--background-secondary);
+  --bg-card: var(--surface);
+  --bg-glass: var(--glass-bg);
+  --border-rule: var(--border);
+  --border-strong: #CBD5E1;
+  --surface-3: var(--surface-secondary);
+  --semantic-green-dim: #DCFCE7;
+  --brand-green: var(--success);
+  --semantic-amber-dim: #FEF3C7;
+  --brand-amber: var(--warning);
+  --brand-violet: #8B5CF6;
+}
+
+[data-theme="dark"] {
+  /* DARK THEME */
+  --background: #071A24;
+  --background-secondary: #0B2533;
+
+  --surface: #0F2938;
+  --surface-secondary: #123344;
+
+  --glass-bg: rgba(15, 41, 56, 0.72);
+  --glass-bg-strong: rgba(15, 41, 56, 0.90);
+
+  --border: rgba(148, 163, 184, 0.16);
+  --glass-border: rgba(255, 255, 255, 0.10);
+
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.3);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Legacy Mappings for Dark */
+  --bg-primary: var(--background);
+  --bg-secondary: var(--background-secondary);
+  --bg-card: var(--surface);
+  --bg-glass: var(--glass-bg);
+  --border-rule: var(--border);
+  --border-strong: rgba(255,255,255,0.25);
+  --surface-3: var(--surface-secondary);
+  --semantic-green-dim: rgba(34, 197, 94, 0.15);
+  --brand-green: #4ADE80;
+  --semantic-amber-dim: rgba(245, 158, 11, 0.15);
+  --brand-amber: #FBBF24;
+
+  /* New Refined Header & Search (Dark) */
+  --glass-header-bg: rgba(15, 41, 56, 0.72);
+  --glass-header-border: 1px solid rgba(255, 255, 255, 0.10);
+  --glass-header-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+
+  --search-bg: rgba(15, 41, 56, 0.75);
+  --search-border: rgba(148, 163, 184, 0.18);
+  --search-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+  --search-icon-color: #38BDF8;
+  --search-placeholder: #94A3B8;
+  --search-hover-border: rgba(148, 163, 184, 0.40);
+}
+
+/* Shared Core Tokens */
+:root {
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =======================================
+   SHARED COMPONENTS (SaaS Aesthetic)
+   ======================================= */
+
+.saas-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+}
+.saas-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glass);
+}
+
+.saas-input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  height: 48px;
+  padding: 0 16px;
+  color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  outline: none;
+}
+.saas-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.saas-btn {
+  background: var(--primary);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  height: 48px;
+  font-weight: 600;
+  font-size: 15px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.saas-btn:hover {
+  background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+/* Auth Specific overrides */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  background: var(--background);
+  transition: all 0.3s;
+}

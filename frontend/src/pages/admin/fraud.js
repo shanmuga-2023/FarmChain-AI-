@@ -21,20 +21,20 @@ export function renderAdminFraud(container) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('admin.fraudTitle') || 'Fraud Detection 🚨'}</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.fraudAlerts') || 'Fraud Alerts'}</span></div>
+              <h2 class="header-title">${i18n.t('admin.fraudTitle') || 'Fraud Detection '}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.fraudAlerts') || 'Fraud Alerts'}</span></div>
             </div>
           </div>
-          <div class="topbar-right">
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
+          <div class="header-right">
+            
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
-          <div class="dashboard-stats stagger-children">
+          <div class="dashboard-stats">
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-red-dim); color: var(--accent-red);">🚨</div>
               <div class="stat-card-value">${alerts.filter(a => a.riskLevel === 'critical').length}</div>

@@ -36,18 +36,19 @@ export async function renderConsumerTrace(container) {
       <div class="dashboard-layout">
         ${sidebarContainer.innerHTML}
         <main class="dashboard-main">
-          <div class="topbar">
-            <div class="topbar-left">
+          <header class="glass-header">
+            <div class="header-left">
               <div>
-                <div class="topbar-title">${i18n.t('trace.title') || 'Trace Product 🔍'}</div>
-                <div class="topbar-breadcrumb"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('trace.breadcrumb') || 'Traceability'}</span></div>
+                <h2 class="header-title">${i18n.t('trace.title') || 'Trace Product '}</h2>
+                <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('trace.breadcrumb') || 'Traceability'}</span></div>
               </div>
             </div>
-            <div class="topbar-right">
-              <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
+            <div class="header-right">
+              
             </div>
-          </div>
-          <div class="page-content">
+          </header>
+
+        <div class="page-content">
             <div class="card" style="max-width: 600px; margin: 40px auto;">
               <div style="text-align: center; padding: 20px;">
                 <div style="font-size: 4rem; margin-bottom: 16px;">🔍</div>
@@ -150,18 +151,19 @@ export async function renderConsumerTrace(container) {
       <div class="dashboard-layout">
         ${sidebarContainer.innerHTML}
         <main class="dashboard-main">
-          <div class="topbar">
-            <div class="topbar-left">
+          <header class="glass-header">
+            <div class="header-left">
               <div>
-                <div class="topbar-title">${i18n.t('trace.title') || 'Trace Product 🔍'}</div>
-                <div class="topbar-breadcrumb"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('trace.breadcrumb') || 'Verifying Batch'}</span></div>
+                <h2 class="header-title">${i18n.t('trace.title') || 'Trace Product '}</h2>
+                <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('trace.breadcrumb') || 'Verifying Batch'}</span></div>
               </div>
             </div>
-            <div class="topbar-right">
+            <div class="header-right">
               <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/consumer/trace'">${i18n.t('trace.backToScanner') || '← Back to Scanner'}</button>
             </div>
-          </div>
-          <div class="page-content">
+          </header>
+
+        <div class="page-content">
             <div class="card" style="max-width: 620px; margin: 40px auto; text-align: center; padding: 48px 24px;">
               <div class="spinner" style="width: 52px; height: 52px; border-width: 4px; margin: 0 auto 20px;"></div>
               <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px;">⛓️ Verifying Cryptographic Provenance...</h3>
@@ -323,17 +325,18 @@ function renderCloneAlert(container, sidebarContainer, product, velocityResult) 
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title" style="color: var(--accent-red);">${i18n.t('trace.cloneAlertTitle') || 'Clone Detected 🚨'}</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('trace.breadcrumb') || 'Trace'}</span> <span>›</span> <span>${i18n.t('trace.cyberAlert') || 'Cybersecurity Alert'}</span></div>
+              <div class="header-title" style="color: var(--accent-red);">${i18n.t('trace.cloneAlertTitle') || 'Clone Detected 🚨'}</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('trace.breadcrumb') || 'Trace'}</span> <span>›</span> <span>${i18n.t('trace.cyberAlert') || 'Cybersecurity Alert'}</span></div>
             </div>
           </div>
-          <div class="topbar-right">
+          <div class="header-right">
             <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/consumer/trace'">${i18n.t('trace.backToScanner') || '← Back to Scanner'}</button>
           </div>
-        </div>
+        </header>
+
         <div class="page-content">
           <div class="clone-alert-card animate-fade-in" style="max-width: 720px; margin: 24px auto;">
             <div style="text-align: center; padding: 24px; background: rgba(239, 68, 68, 0.06); border: 2px solid var(--accent-red); border-radius: var(--radius-lg); box-shadow: 0 0 40px rgba(239, 68, 68, 0.2); animation: pulse-glow 2s infinite;">
@@ -404,17 +407,18 @@ function renderCounterfeitAlert(container, sidebarContainer, productId) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title" style="color: var(--accent-red);">${i18n.t('trace.securityAlertTitle') || 'Security Alert 🚨'}</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('trace.breadcrumb') || 'Trace'}</span> <span>›</span> <span>${i18n.t('trace.tamperVerification') || 'Tamper Verification'}</span></div>
+              <div class="header-title" style="color: var(--accent-red);">${i18n.t('trace.securityAlertTitle') || 'Security Alert 🚨'}</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('trace.breadcrumb') || 'Trace'}</span> <span>›</span> <span>${i18n.t('trace.tamperVerification') || 'Tamper Verification'}</span></div>
             </div>
           </div>
-          <div class="topbar-right">
+          <div class="header-right">
             <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/consumer/trace'">${i18n.t('trace.backToScanner') || '← Back to Scanner'}</button>
           </div>
-        </div>
+        </header>
+
         <div class="page-content">
           <div class="card" style="max-width: 680px; margin: 40px auto; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.04); box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);">
             <div style="text-align: center; padding: 24px;">
@@ -564,18 +568,18 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('trace.title') || 'Product Traceability 🔍'}</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('trace.breadcrumb') || 'Trace'}</span> <span>›</span> <span>${locCrop}</span></div>
+              <h2 class="header-title">${i18n.t('trace.title') || 'Product Traceability '}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('trace.breadcrumb') || 'Trace'}</span> <span>›</span> <span>${locCrop}</span></div>
             </div>
           </div>
-          <div class="topbar-right">
+          <div class="header-right">
             <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/consumer/trace'">${i18n.t('common.back') || '← Back'}</button>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
+            
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
           ${velocityResult ? `

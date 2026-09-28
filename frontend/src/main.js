@@ -9,6 +9,7 @@ import { blockchain } from './blockchain/core.js';
 import { seedData } from './data/seed.js';
 import { destroyAllCharts } from './components/charts.js';
 import { showToast } from './utils/helpers.js';
+import { initTheme } from './utils/theme.js';
 
 // Pages
 import { renderLanding } from './pages/landing.js';
@@ -140,6 +141,7 @@ router.register('/admin/users', render(renderAdminUsers));
 
 // Initialize the application
 async function init() {
+  initTheme();
   showLoading();
 
   try {

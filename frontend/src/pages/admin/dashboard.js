@@ -38,36 +38,36 @@ export function renderAdminDashboard(container) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('admin.dashboardTitle') || 'Platform Admin 🔧'}</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.navAnalytics') || 'Analytics'}</span></div>
+              <h2 class="header-title">${i18n.t('admin.dashboardTitle') || 'Platform Admin '}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.navAnalytics') || 'Analytics'}</span></div>
             </div>
           </div>
-          <div class="topbar-right">
+          <div class="header-right">
             <button class="btn btn-secondary btn-sm" id="reset-btn" title="Reset all data">${i18n.t('admin.resetDemoBtn') || '🗑️ Reset Demo'}</button>
-            <button class="btn-icon notification-btn">🔔<span class="notification-dot"></span></button>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
+            <button class="btn-icon notification-btn" aria-label="Notifications" style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; color: var(--text-primary); position: relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notification-dot" style="position: absolute; top: 6px; right: 8px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%;"></span></button>
+            
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
           <!-- Platform Stats -->
-          <div class="dashboard-stats stagger-children">
+          <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">⛓️</div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
               <div class="stat-card-value">${blockCount}</div>
               <div class="stat-card-label">${i18n.t('admin.statBlocks') || 'Blockchain Blocks'}</div>
               <div class="stat-card-change positive">${i18n.t('admin.chainIntact') || 'Chain intact ✓'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">💰</div>
+              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
               <div class="stat-card-value">${formatCurrency(totalRevenue)}</div>
               <div class="stat-card-label">${i18n.t('admin.statVolume') || 'Total Platform Volume'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">👥</div>
+              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
               <div class="stat-card-value">${userCount}</div>
               <div class="stat-card-label">${i18n.t('admin.statUsers') || 'Registered Users'}</div>
             </div>

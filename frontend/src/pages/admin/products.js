@@ -29,37 +29,37 @@ export function renderAdminProducts(container) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('admin.productsTitle') || 'Product Management 📦'}</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.navProducts') || 'Products'}</span></div>
+              <h2 class="header-title">${i18n.t('admin.productsTitle') || 'Product Management '}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('admin.role') || 'Admin'}</span> <span>›</span> <span>${i18n.t('admin.navProducts') || 'Products'}</span></div>
             </div>
           </div>
-          <div class="topbar-right">
-            <div class="topbar-search">
-              <span class="topbar-search-icon">🔍</span>
-              <input type="text" placeholder="${i18n.t('common.searchProducts') || 'Search products...'}" id="admin-product-search" />
+          <div class="header-right">
+            <div class="saas-search-wrapper">
+              <span class="saas-search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+              <input class="saas-search" type="text" placeholder="${i18n.t('common.searchProducts') || 'Search products...'}" id="admin-product-search" />
             </div>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
+            
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
           <!-- Stats -->
-          <div class="dashboard-stats stagger-children">
+          <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">📦</div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
               <div class="stat-card-value">${products.length}</div>
               <div class="stat-card-label">${i18n.t('admin.statProducts') || 'Total Products'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">💰</div>
+              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
               <div class="stat-card-value">${formatCurrency(totalValue)}</div>
               <div class="stat-card-label">${i18n.t('admin.statInventoryValue') || 'Total Inventory Value'}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">📊</div>
+              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
               <div class="stat-card-value">${Object.keys(categoryCounts).length}</div>
               <div class="stat-card-label">${i18n.t('admin.statCategories') || 'Categories'}</div>
             </div>

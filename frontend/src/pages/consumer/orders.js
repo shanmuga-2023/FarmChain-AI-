@@ -25,22 +25,22 @@ export function renderConsumerOrders(container) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('consumer.myOrdersTitle') || 'My Orders 📋'}</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('consumer.orders') || 'Orders'}</span></div>
+              <h2 class="header-title">${i18n.t('consumer.myOrdersTitle') || 'My Orders '}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('consumer.role') || 'Consumer'}</span> <span>›</span> <span>${i18n.t('consumer.orders') || 'Orders'}</span></div>
             </div>
           </div>
-          <div class="topbar-right">
+          <div class="header-right">
             <button class="btn btn-primary btn-sm" onclick="window.location.hash='/consumer/marketplace'">${i18n.t('consumer.browseMoreBtn') || '🛍️ Browse More'}</button>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout') || 'Logout'}</span></button>
+            
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
           <!-- Order Stats -->
-          <div class="dashboard-stats stagger-children">
+          <div class="dashboard-stats">
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">🛍️</div>
               <div class="stat-card-value">${orders.length}</div>

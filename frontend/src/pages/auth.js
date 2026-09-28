@@ -17,206 +17,169 @@ export function renderAuthPage(container) {
   let isRegisterMode = false;
 
   function renderForm() {
-    container.innerHTML = `
-      <div class="landing-page" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px;">
-        <div class="landing-bg-orbs">
-          <div class="bg-orb bg-orb-1"></div>
-          <div class="bg-orb bg-orb-2"></div>
-        </div>
+    const isRegister = isRegisterMode;
+    const roleIcons = {
+      farmer: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-12.5.5-16.5-5-20"/><path d="M14 20c-5.5-12.5-.5-16.5 5-20"/></svg>',
+      intermediary: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>',
+      retailer: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.2 9.3a1 1 0 0 0 1 .7h10.4a1 1 0 0 0 1-.7L17 13"/><circle cx="9" cy="20" r="1"/><circle cx="15" cy="20" r="1"/></svg>',
+      consumer: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+      admin: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'
+    };
 
-        <div style="width: 100%; max-width: 480px; position: relative; z-index: 10;">
-          <!-- Top Header / Back & Language Selector -->
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <div class="logo" style="cursor: pointer;" onclick="window.location.hash='/'">
-              <div class="logo-icon">⛓️</div>
-              <span style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;">FarmChain <span class="text-gradient">AI</span></span>
+    container.innerHTML = `
+      <div style="min-height: 100vh; display: flex; background: var(--background);">
+        <!-- LEFT: Visual / Branding Area (Hidden on small screens) -->
+        <div style="flex: 1; display: none; background: url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80') center/cover; position: relative; overflow: hidden; border-right: 1px solid var(--border);" id="auth-visual-panel">
+          <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(7, 26, 18, 0.85) 0%, rgba(14, 165, 233, 0.6) 100%); backdrop-filter: blur(4px);"></div>
+          
+          <div style="position: relative; z-index: 10; padding: 60px; display: flex; flex-direction: column; justify-content: center; height: 100%; color: #FFFFFF;">
+            <div style="margin-bottom: auto;">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                <div style="background: rgba(255,255,255,0.2); padding: 12px; border-radius: 12px; backdrop-filter: blur(10px);">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-12.5.5-16.5-5-20"/><path d="M14 20c-5.5-12.5-.5-16.5 5-20"/></svg>
+                </div>
+                <h2 style="font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">FarmChain AI 2.0</h2>
+              </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              ${i18n.renderLanguageSelector('auth-header-lang-select', 'padding: 5px 12px; font-size: 0.8rem; background: rgba(30, 41, 59, 0.9); color: #fff; border-radius: 20px; border: 1px solid rgba(255,255,255,0.25);')}
-              <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/'">${i18n.t('auth.backHome')}</button>
+
+            <div style="max-width: 500px;">
+              <h1 style="font-size: 48px; font-weight: 800; margin: 0 0 24px 0; line-height: 1.1; letter-spacing: -1px;">Grow Trust.<br/><span style="color: var(--brand-amber);">Earn More.</span></h1>
+              
+              <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 32px;">
+                <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
+                  <div style="color: var(--brand-amber);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.292 1.292L3 12l5.8 1.9a2 2 0 0 1 1.292 1.292L12 21l1.9-5.8a2 2 0 0 1 1.292-1.292L21 12l-5.8-1.9a2 2 0 0 1-1.292-1.292Z"/></svg></div>
+                  <div><div style="font-weight: 600; font-size: 1.1rem;">AI Grading</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Automated objective crop quality analysis</div></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
+                  <div style="color: #38BDF8;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                  <div><div style="font-weight: 600; font-size: 1.1rem;">GPS Verification</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Authentic harvest origin mapping</div></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
+                  <div style="color: #4ADE80;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+                  <div><div style="font-weight: 600; font-size: 1.1rem;">Blockchain Provenance</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Immutable supply-chain records on Polygon</div></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);">
+                  <div style="color: #F8FAFC;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                  <div><div style="font-weight: 600; font-size: 1.1rem;">Direct Farmer Payments</div><div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Transparent smart-contract settlements</div></div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="margin-top: auto; font-size: 0.8rem; color: rgba(255,255,255,0.5);">
+              © 2026 FarmChain AI. All rights reserved.
             </div>
           </div>
+        </div>
 
-          <!-- Auth Card -->
-          <div class="card auth-card card-dark animate-fade-in-up" style="background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.14); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55), 0 0 24px rgba(44, 74, 62, 0.2); padding: 32px 30px; border-radius: var(--radius-lg);">
-            <!-- Visual Anchor Header Area -->
-            <div style="text-align: center; margin-bottom: 24px;">
-              <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 9999px; margin-bottom: 12px;">
-                <span style="font-size: 0.8rem;">🔒</span>
-                <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #86EFAC;">${i18n.t('auth.marketBadge')}</span>
-              </div>
-              <h1 style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; line-height: 1.15; margin: 0 0 8px 0; color: #FFFFFF; letter-spacing: -0.02em;">
-                ${isRegisterMode ? i18n.t('auth.createAccount') : `${i18n.t('auth.welcome')} <span style="background: linear-gradient(135deg, #FDE047 0%, #4ADE80 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${i18n.t('auth.back')}</span>`}
-              </h1>
-              <p style="font-size: 0.92rem; color: #E2E8F0; font-weight: 400; line-height: 1.45; margin: 0 auto; max-width: 360px;">
-                ${isRegisterMode ? i18n.t('auth.registerSubtitle') : i18n.t('auth.loginSubtitle')}
-              </p>
-              <!-- Elegant visual accent connecting header to role selector -->
-              <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px;">
-                <div style="flex: 1; max-width: 60px; height: 1px; background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.4));"></div>
-                <span style="font-size: 0.75rem; color: #FCD34D; font-weight: 600;">🌾 🏪 🛒 👤</span>
-                <div style="flex: 1; max-width: 60px; height: 1px; background: linear-gradient(90deg, rgba(74, 222, 128, 0.4), transparent);"></div>
+        <!-- RIGHT: Clean Authentication Card -->
+        <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; position: relative; background: var(--background);">
+          <!-- Top Right Language/Theme Toggle -->
+          <div style="position: absolute; top: 24px; right: 24px;">
+             ${i18n.renderLanguageSelector('auth-header-lang-select', 'padding: 8px 16px; font-size: 14px; font-weight: 600; background: var(--surface); color: var(--text-primary); border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-soft); cursor: pointer;')}
+          </div>
+
+          <div class="saas-card" style="width: 100%; max-width: 460px; padding: 40px; border-radius: 24px;">
+            <div style="text-align: center; margin-bottom: 32px;">
+              <h2 style="font-size: 28px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0;">${isRegister ? 'Create an Account' : 'Welcome back'}</h2>
+              <p style="font-size: 15px; color: var(--text-secondary); margin: 0;">${isRegister ? 'Join the agricultural revolution' : 'Sign in to your account'}</p>
+            </div>
+
+            <!-- Role Selection -->
+            <div style="margin-bottom: 24px;">
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr) 48px; gap: 4px; background: var(--surface-secondary); padding: 4px; border-radius: 12px; border: 1px solid var(--border);" id="role-tabs">
+                <button type="button" class="tab role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer" title="Farmer">${roleIcons.farmer}</button>
+                <button type="button" class="tab role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary" title="Intermediary">${roleIcons.intermediary}</button>
+                <button type="button" class="tab role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer" title="Retailer">${roleIcons.retailer}</button>
+                <button type="button" class="tab role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer" title="Consumer">${roleIcons.consumer}</button>
+                <button type="button" class="tab role-tab ${initialRole === 'admin' ? 'active' : ''}" data-role="admin" title="Admin">${roleIcons.admin}</button>
               </div>
             </div>
 
-            <!-- Role Selector Tabs -->
-            <div style="margin-bottom: 22px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <label class="form-label" style="font-size: 0.78rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #E2E8F0; margin: 0;">${i18n.t('auth.selectRole')}</label>
-                <span style="font-size: 0.7rem; color: #94A3B8; font-weight: 500;">${i18n.t('auth.roleSwitcher')}</span>
-              </div>
-              <div style="display: grid; grid-template-columns: repeat(4, 1fr) 52px; gap: 4px; background: rgba(0, 0, 0, 0.4); padding: 4px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.12);" id="role-tabs">
-                <button type="button" class="tab role-tab ${initialRole === 'farmer' ? 'active' : ''}" data-role="farmer" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">🌾 ${i18n.t('roles.farmer')}</button>
-                <button type="button" class="tab role-tab ${initialRole === 'intermediary' ? 'active' : ''}" data-role="intermediary" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">🏪 ${i18n.t('roles.intermediary')}</button>
-                <button type="button" class="tab role-tab ${initialRole === 'retailer' ? 'active' : ''}" data-role="retailer" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">🛒 ${i18n.t('roles.retailer')}</button>
-                <button type="button" class="tab role-tab ${initialRole === 'consumer' ? 'active' : ''}" data-role="consumer" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #E2E8F0;">👤 ${i18n.t('roles.consumer')}</button>
-                <button type="button" class="tab role-tab ${initialRole === 'admin' ? 'active' : ''}" data-role="admin" title="${i18n.t('roles.admin')}" style="justify-content: center; padding: 8px 4px; font-size: 0.78rem; font-weight: 600; color: #94A3B8;">🔧</button>
-              </div>
-            </div>
-
-            <form id="auth-form" style="display: flex; flex-direction: column; gap: 14px;">
-              ${isRegisterMode ? `
-                <div class="form-group">
-                  <label class="form-label" style="color: #E2E8F0; font-weight: 600;">${i18n.t('auth.fullNameLabel')}</label>
-                  <input type="text" class="form-input" id="auth-name" placeholder="${i18n.t('auth.fullNamePlaceholder')}" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" style="color: #E2E8F0; font-weight: 600;">${i18n.t('auth.locationLabel')}</label>
-                  <input type="text" class="form-input" id="auth-location" placeholder="${i18n.t('auth.locationPlaceholder')}" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
-                </div>
+            <!-- Form -->
+            <form id="auth-form" style="display: flex; flex-direction: column; gap: 16px;">
+              ${isRegister ? `
+                <div><input type="text" class="saas-input" id="auth-name" placeholder="Full Name" required /></div>
+                <div><input type="tel" class="saas-input" id="auth-phone" placeholder="Phone Number" required /></div>
+                <div><input type="text" class="saas-input" id="auth-location" placeholder="Location (e.g. Nashik, MH)" required /></div>
+                ${initialRole === 'farmer' ? `
+                  <div><input type="text" class="saas-input" id="auth-farmsize" placeholder="Farm Size (e.g. 5 Acres)" /></div>
+                  <div><input type="text" class="saas-input" id="auth-crops" placeholder="Primary Crops (e.g. Tomatoes, Onion)" /></div>
+                ` : ''}
               ` : ''}
 
-              <div class="form-group">
-                <label class="form-label" style="color: #E2E8F0; font-weight: 600;">${i18n.t('auth.emailLabel')}</label>
-                <input type="email" class="form-input" id="auth-email" placeholder="${i18n.t('auth.emailPlaceholder')}" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
+              <div>
+                <input type="email" class="saas-input" id="auth-email" placeholder="Email Address" required />
+              </div>
+              <div>
+                <input type="password" class="saas-input" id="auth-password" placeholder="Password" required />
+              </div>
+              
+              ${isRegister ? `
+                <div>
+                  <input type="password" class="saas-input" id="auth-password-confirm" placeholder="Confirm Password" required />
+                </div>
+              ` : ''}
+              
+              <div style="display: flex; justify-content: flex-end; margin-top: -8px; ${isRegister ? 'display: none;' : ''}">
+                <a href="#" style="font-size: 13px; color: var(--primary); font-weight: 500; text-decoration: none;">Forgot password?</a>
               </div>
 
-              <div class="form-group">
-                <label class="form-label" style="color: #E2E8F0; font-weight: 600;">${i18n.t('auth.passwordLabel')}</label>
-                <input type="password" class="form-input" id="auth-password" placeholder="••••••••" style="background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF;" required />
-              </div>
-
-              <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px; justify-content: center; font-weight: 700; font-size: 0.95rem; padding: 12px;" id="submit-auth-btn">
-                ${isRegisterMode ? `🚀 ${i18n.t('auth.completeRegBtn')}` : `🔑 ${i18n.t('auth.signInBtn')}`}
+              <button type="submit" class="saas-btn" id="submit-auth-btn" style="margin-top: 8px;">
+                ${isRegister ? 'Sign Up' : 'Sign In'}
               </button>
             </form>
 
-            <!-- Phone OTP Login (Account Abstraction) -->
-            <div style="display: flex; align-items: center; margin: 20px 0 16px 0; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.8px;">
-              <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);"></div>
-              <span style="padding: 0 12px; color: #E2E8F0;">${i18n.t('auth.orLoginWithoutWallet')}</span>
-              <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);"></div>
-            </div>
-
-            <div style="background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(168, 85, 247, 0.45); border-radius: var(--radius-md); padding: 18px;">
-              <div style="font-size: 0.9rem; font-weight: 700; color: #E9D5FF; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
-                <span style="display: flex; align-items: center; gap: 8px;">📱 ${i18n.t('auth.phoneOtpTitle')}</span>
-                <span class="badge" style="background: rgba(168, 85, 247, 0.3); color: #FAF5FF; border: 1px solid rgba(168, 85, 247, 0.6); font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 4px;">Firebase SMS</span>
-              </div>
-              <p style="font-size: 0.78rem; color: #CBD5E1; margin-bottom: 14px; line-height: 1.45;">
-                ${i18n.t('auth.phoneOtpDesc')}
-              </p>
-              
-              <!-- Phone Input Step -->
-              <div id="otp-phone-step">
-                <label class="form-label" style="font-size: 0.76rem; font-weight: 600; color: #E2E8F0; margin-bottom: 6px; display: block;">
-                  ${i18n.t('auth.phoneNumberLabel')}
-                </label>
-                <div style="display: flex; gap: 8px;">
-                  <div style="display: flex; align-items: center; background: rgba(15, 23, 42, 0.85); padding: 0 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.22); font-size: 0.85rem; font-weight: 700; color: #F8FAFC;">
-                    🇮🇳 +91
-                  </div>
-                  <input type="tel" class="form-input" id="otp-phone" placeholder="98765 43210" maxlength="10" autocomplete="tel-national" style="flex: 1; font-size: 0.95rem; font-family: var(--font-mono); letter-spacing: 1.2px; background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.22); color: #FFFFFF;" />
-                  <button type="button" class="btn btn-primary btn-sm" id="send-otp-btn" style="white-space: nowrap; padding: 8px 16px; font-weight: 700;">📱 ${i18n.t('auth.sendOtpBtn')}</button>
-                </div>
-                <!-- reCAPTCHA Container -->
-                <div id="recaptcha-container" style="margin-top: 10px; display: flex; justify-content: center; min-height: 20px;"></div>
-                <!-- Error Notice Banner -->
-                <div id="otp-error-banner" style="display: none; margin-top: 12px; padding: 12px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: var(--radius-md); font-size: 0.8rem; line-height: 1.45; color: #FCA5A5;"></div>
-              </div>
-
-              <!-- 6-Digit OTP Verification Step -->
-              <div id="otp-verify-section" style="display: none; margin-top: 14px;">
-                <!-- Status Banner: OTP sent to number with change option -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(74, 222, 128, 0.35); border-radius: var(--radius-md); margin-bottom: 12px;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 1rem;">📲</span>
-                    <span style="font-size: 0.82rem; color: #86EFAC; font-weight: 600;">
-                      OTP sent to <strong id="confirmed-phone-display" style="color: #FFFFFF; font-family: var(--font-mono);">+91 XXXXX XXXXX</strong>
-                    </span>
-                  </div>
-                  <button type="button" id="change-phone-btn" style="background: none; border: none; font-size: 0.74rem; color: #FDE047; cursor: pointer; text-decoration: underline; font-weight: 600; padding: 0;">
-                    ${i18n.t('auth.changePhone')}
-                  </button>
-                </div>
-
-                <div style="font-size: 0.78rem; color: #E2E8F0; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-                  <span style="font-weight: 600;">📲 ${i18n.t('auth.enterOtpLabel')}</span>
-                  <span style="font-size: 0.7rem; color: #94A3B8;">Check your physical mobile phone</span>
-                </div>
-
-                <div class="otp-digits-container" id="otp-digits-group">
-                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="0" autocomplete="off" />
-                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="1" autocomplete="off" />
-                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="2" autocomplete="off" />
-                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="3" autocomplete="off" />
-                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="4" autocomplete="off" />
-                  <input type="text" inputmode="numeric" class="otp-digit-input" maxlength="1" data-index="5" autocomplete="off" />
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                  <button type="button" id="resend-otp-btn" style="background: none; border: none; font-size: 0.75rem; color: #C084FC; cursor: pointer; text-decoration: underline; padding: 0; font-weight: 600;">
-                    ${i18n.t('auth.resendCode')}
-                  </button>
-                  <button type="button" class="btn btn-primary btn-sm" id="verify-otp-btn" style="padding: 6px 16px; font-weight: 700;">
-                    ✅ ${i18n.t('auth.verifyOtpBtn')}
-                  </button>
-                </div>
-              </div>
-
-              <div id="otp-success-section" style="display: none; margin-top: 12px; padding: 12px; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.35); border-radius: var(--radius-md); text-align: center; color: #86EFAC; font-weight: 600; font-size: 0.85rem;"></div>
-            </div>
-
-            <div style="display: flex; align-items: center; margin: 20px 0 16px 0; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.8px;">
-              <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);"></div>
-              <span style="padding: 0 12px; color: #E2E8F0;">${i18n.t('auth.orQuickDemo')}</span>
-              <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.18);"></div>
+            <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-secondary);">
+              ${isRegister ? 'Already have an account? ' : 'New to FarmChain? '}
+              <a href="#" id="toggle-mode-btn" style="color: var(--primary); font-weight: 600; text-decoration: none;">${isRegister ? 'Sign In' : 'Create Account'}</a>
             </div>
 
             <!-- Quick Demo Credentials for Judges -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;" id="demo-quick-buttons">
-              ${DEMO_CREDENTIALS.map(demo => `
-                <button class="btn btn-secondary btn-sm demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}" style="font-size: 0.76rem; padding: 8px 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.18); color: #F8FAFC; text-align: left; display: flex; align-items: center; justify-content: space-between;">
-                  <span>${demo.avatar} ${demo.name.split(' ')[0]}</span>
-                  <span style="color: #94A3B8; font-size: 0.7rem; font-weight: 600; text-transform: capitalize;">${i18n.t(`roles.${demo.role}`) || demo.role}</span>
-                </button>
-              `).join('')}
-            </div>
-
-            <div style="text-align: center; margin-top: 22px; font-size: 0.86rem; color: #CBD5E1;">
-              ${isRegisterMode ? i18n.t('auth.alreadyHaveAccount') : i18n.t('auth.dontHaveAccount')}
-              <a href="javascript:void(0)" id="toggle-auth-mode" style="color: #4ADE80; font-weight: 700; margin-left: 6px; text-decoration: underline;">
-                ${isRegisterMode ? i18n.t('auth.signInBtn') : i18n.t('auth.registerNow')}
-              </a>
+            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); ${isRegister ? 'display: none;' : ''}">
+              <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">Quick Demo Access</div>
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;" id="demo-quick-buttons">
+                ${DEMO_CREDENTIALS.map(demo => `
+                  <button class="demo-fill-btn" data-email="${demo.email}" data-pass="${demo.password}" data-role="${demo.role}" style="font-size: 13px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">
+                    <span style="font-weight: 500;">${demo.avatar} ${demo.name.split(' ')[0]}</span>
+                    <span style="color: var(--primary); font-size: 11px; font-weight: 600; text-transform: capitalize;">${i18n.t(`roles.${demo.role}`) || demo.role}</span>
+                  </button>
+                `).join('')}
+              </div>
             </div>
           </div>
         </div>
+
+        <style>
+          @media (min-width: 900px) {
+            #auth-visual-panel { display: flex !important; }
+          }
+          .role-tab { 
+            background: transparent; 
+            border: none; 
+            cursor: pointer; 
+            padding: 10px 4px; 
+            border-radius: 8px; 
+            font-size: 14px;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .role-tab:hover { color: var(--primary); background: rgba(14, 165, 233, 0.05); }
+          .role-tab.active {
+            background: var(--surface);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border);
+            color: var(--primary);
+          }
+          .demo-fill-btn:hover {
+            border-color: var(--primary) !important;
+            box-shadow: var(--shadow-soft);
+          }
+        </style>
       </div>
     `;
-
-    // Role Tab Switching
-    container.querySelectorAll('.role-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        container.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-      });
-    });
-
-    // Toggle Register / Login Mode
-    container.querySelector('#toggle-auth-mode')?.addEventListener('click', () => {
-      isRegisterMode = !isRegisterMode;
-      renderForm();
-    });
 
     // Quick Fill Buttons
     container.querySelectorAll('.demo-fill-btn').forEach(btn => {
@@ -238,10 +201,28 @@ export function renderAuthPage(container) {
           else t.classList.remove('active');
         });
 
-        // Trigger login
-        document.getElementById('auth-form')?.requestSubmit();
+        btn.style.transform = 'scale(0.98)';
+        setTimeout(() => btn.style.transform = 'scale(1)', 150);
       });
     });
+
+    // Toggle Register/Login Mode
+    container.querySelector('#toggle-mode-btn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      isRegisterMode = !isRegisterMode;
+      renderForm();
+    });
+
+    // Role Tab Switching
+    container.querySelectorAll('.role-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        container.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        if (isRegisterMode) renderForm(); // re-render to show/hide role specific inputs
+      });
+    });
+
+
 
     // Handle Form Submit
     container.querySelector('#auth-form')?.addEventListener('submit', async (e) => {

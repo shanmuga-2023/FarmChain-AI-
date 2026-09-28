@@ -165,552 +165,326 @@ function renderHeroCustodyRoute() {
 }
 
 export function renderLanding(container) {
-  const blockCount = blockchain.getBlockCount();
-  const txCount = blockchain.getAllTransactions().length;
-  const products = store.get('products') || [];
-  const users = store.get('users') || {};
-  const userCount = Object.keys(users).length;
-
-  let activeProduceKey = 'mango';
-
   container.innerHTML = `
+    <style>
+      .landing-page {
+        --hud-bg: #050816;
+        --hud-panel: rgba(8, 13, 26, 0.65);
+        --hud-card: rgba(255, 255, 255, 0.04);
+        --hud-border: rgba(255, 255, 255, 0.08);
+        --hud-cyan: #22D3EE;
+        --hud-blue: #38BDF8;
+        --hud-purple: #6366F1;
+        --hud-text: #F8FAFC;
+        --hud-text-sec: #94A3B8;
+        --hud-muted: #64748B;
+        --hud-green: #22C55E;
+        
+        background-color: var(--hud-bg);
+        background-image: 
+          radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.05), transparent 40%),
+          radial-gradient(circle at 80% 70%, rgba(99, 102, 241, 0.08), transparent 40%),
+          linear-gradient(var(--hud-border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--hud-border) 1px, transparent 1px);
+        background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+        min-height: 100vh;
+        font-family: 'Space Grotesk', 'Inter', sans-serif;
+        color: var(--hud-text);
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      [data-theme="light"] .landing-page {
+        --hud-bg: #F4F7FB;
+        --hud-panel: rgba(255, 255, 255, 0.75);
+        --hud-card: rgba(255, 255, 255, 0.75);
+        --hud-border: rgba(0, 0, 0, 0.08);
+        --hud-cyan: #0284C7;
+        --hud-blue: #0369A1;
+        --hud-purple: #4F46E5;
+        --hud-text: #0F172A;
+        --hud-text-sec: #475569;
+        --hud-muted: #94A3B8;
+        --hud-green: #16A34A;
+      }
+
+      .hud-header {
+        position: fixed; top: 0; width: 100%; z-index: 100;
+        padding: 16px 24px;
+        background: var(--hud-panel);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border-bottom: 1px solid var(--hud-border);
+        display: flex; justify-content: space-between; align-items: center;
+      }
+      
+      .hud-logo {
+        font-weight: 800; font-size: 1.2rem; letter-spacing: 2px;
+        color: var(--hud-cyan);
+        text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+      }
+      
+      .hud-nav {
+        display: flex; align-items: center; gap: 24px;
+        font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+      }
+
+      .hud-btn-outline {
+        border: 1px solid var(--hud-cyan);
+        color: var(--hud-cyan);
+        padding: 8px 16px; text-decoration: none;
+        font-weight: 600; letter-spacing: 1px;
+        box-shadow: inset 0 0 10px rgba(34, 211, 238, 0.1);
+        transition: all 0.2s;
+      }
+      
+      .hud-btn-outline:hover {
+        background: rgba(34, 211, 238, 0.1);
+        box-shadow: inset 0 0 15px rgba(34, 211, 238, 0.2), 0 0 15px rgba(34, 211, 238, 0.2);
+      }
+
+      .hud-hero {
+        flex: 1; padding: 140px 24px 80px; display: flex; align-items: center; justify-content: center;
+      }
+
+      .hud-hero-inner {
+        max-width: 1200px; width: 100%; margin: 0 auto;
+        display: flex; gap: 64px; align-items: center; flex-wrap: wrap;
+      }
+
+      .hud-hero-text { flex: 1; min-width: 320px; animation: hudFadeInUp 0.8s ease-out forwards; }
+      
+      .hud-status {
+        font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+        color: var(--hud-green); letter-spacing: 2px; margin-bottom: 24px;
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 6px 12px; border: 1px solid var(--hud-green);
+        background: rgba(34, 197, 94, 0.05);
+      }
+
+      .hud-title {
+        font-size: 4.5rem; font-weight: 800; line-height: 1.1; margin: 0 0 24px 0;
+        letter-spacing: -1px; text-transform: uppercase;
+      }
+      
+      .hud-gradient-text {
+        background: linear-gradient(135deg, var(--hud-cyan), var(--hud-purple));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      }
+
+      .hud-desc {
+        font-size: 1.1rem; color: var(--hud-text-sec); line-height: 1.6;
+        margin: 0 0 40px 0; max-width: 480px; font-weight: 500;
+      }
+
+      .hud-cta {
+        display: inline-flex; align-items: center; justify-content: center;
+        height: 52px; padding: 0 32px; font-size: 1.1rem; font-weight: 700;
+        text-decoration: none; color: #FFF; letter-spacing: 1px;
+        background: linear-gradient(135deg, var(--hud-cyan), var(--hud-purple));
+        border: 1px solid rgba(255,255,255,0.15);
+        box-shadow: 0 0 25px rgba(34, 211, 238, 0.15);
+        transition: all 0.2s;
+      }
+      .hud-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 35px rgba(34, 211, 238, 0.3);
+      }
+
+      .hud-v-card {
+        flex: 1; min-width: 320px;
+        background: var(--hud-card); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+        border: 1px solid var(--hud-border);
+        border-radius: 16px; padding: 24px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        font-family: 'JetBrains Mono', monospace;
+        transition: all 0.3s;
+        animation: hudFloat 6s ease-in-out infinite;
+      }
+      .hud-v-card:hover {
+        border-color: rgba(34, 211, 238, 0.35);
+        box-shadow: 0 0 30px rgba(34, 211, 238, 0.1);
+      }
+
+      .hud-v-header {
+        font-size: 0.8rem; color: var(--hud-text-sec); letter-spacing: 1px;
+        border-bottom: 1px solid var(--hud-border); padding-bottom: 12px; margin-bottom: 20px;
+      }
+      
+      .hud-v-asset {
+        border: 1px dashed var(--hud-cyan); padding: 16px;
+        background: rgba(34, 211, 238, 0.05); margin-bottom: 24px;
+        font-size: 0.9rem; line-height: 1.6;
+      }
+
+      .hud-v-box {
+        border: 1px solid var(--hud-border); padding: 12px;
+        font-size: 0.85rem; line-height: 1.5; background: rgba(255,255,255,0.02);
+      }
+      .hud-v-arrow {
+        text-align: center; color: var(--hud-text-sec); padding: 4px 0; font-size: 1.2rem;
+      }
+      .hud-v-footer {
+        font-size: 0.8rem; color: var(--hud-purple); letter-spacing: 1px;
+        border-top: 1px solid var(--hud-border); padding-top: 12px; margin-top: 20px;
+        text-align: right; font-weight: 700;
+      }
+
+      .hud-features-section { padding: 40px 24px 100px; max-width: 1200px; margin: 0 auto; width: 100%; }
+      .hud-section-title {
+        font-family: 'JetBrains Mono', monospace; color: var(--hud-cyan);
+        font-size: 1rem; letter-spacing: 2px; margin-bottom: 32px;
+      }
+      .hud-features-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;
+      }
+      .hud-f-card {
+        background: var(--hud-card); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+        border: 1px solid var(--hud-border); border-radius: 14px; padding: 24px;
+        transition: all 0.2s;
+      }
+      .hud-f-card:hover {
+        border-color: rgba(34, 211, 238, 0.35); box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
+      }
+      .hud-f-number {
+        font-family: 'JetBrains Mono', monospace; color: var(--hud-cyan); font-size: 1.2rem;
+        margin-bottom: 12px; font-weight: 700;
+      }
+      .hud-f-title {
+        font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;
+      }
+      .hud-f-desc {
+        font-size: 0.95rem; color: var(--hud-text-sec); line-height: 1.5;
+      }
+
+      .hud-footer {
+        border-top: 1px solid var(--hud-border); padding: 32px 24px;
+        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+        font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--hud-muted);
+        background: rgba(0,0,0,0.2);
+      }
+
+      @keyframes hudFadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes hudFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      
+      @media (max-width: 768px) {
+        .hud-title { font-size: 3rem; }
+        .hud-hero { padding-top: 100px; }
+      }
+    </style>
+
     <div class="landing-page">
-      <!-- Navigation -->
-      <nav class="landing-nav" id="landing-nav">
-        <div class="container">
-          <div class="logo" style="cursor: pointer;" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <div class="logo-icon">${ICONS.chain}</div>
-            <span>FarmChain AI</span>
-          </div>
-          <ul class="nav-links">
-            <li><a href="#how-it-works" class="smooth-scroll">${i18n.t('landing.nav.howItWorks')}</a></li>
-            <li><a href="#demos-section" class="smooth-scroll">${i18n.t('landing.nav.demos')}</a></li>
-            <li><a href="#mandi-section" class="smooth-scroll">${i18n.t('landing.nav.mandi')}</a></li>
-            <li><a href="#roles" class="smooth-scroll">${i18n.t('landing.nav.roles')}</a></li>
-            <li>${i18n.renderLanguageSelector()}</li>
-            <li><a href="#roles" class="nav-cta smooth-scroll">${i18n.t('landing.nav.enter')}</a></li>
-          </ul>
+      <!-- Header -->
+      <nav class="hud-header" id="landing-nav">
+        <div class="hud-logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="cursor:pointer;">FARMCHAIN AI</div>
+        <div class="hud-nav">
+          <div id="landing-lang-placeholder"></div>
+          <a href="#/auth" class="hud-btn-outline">LOGIN</a>
         </div>
       </nav>
 
-      <!-- Hero — The Physical Ledger Headline -->
-      <section class="hero">
-        <div class="container">
-          <div class="hero-content">
-            <div class="hero-badge">
-              <span class="hero-badge-dot"></span>
-              ${i18n.t('landing.hero.badge')}
+      <!-- Hero -->
+      <section class="hud-hero">
+        <div class="hud-hero-inner">
+          <div class="hud-hero-text">
+            <div class="hud-status">[● SYSTEM ONLINE]</div>
+            <h1 class="hud-title">TRACE EVERY<br/><span class="hud-gradient-text">HARVEST.</span><br/>TRUST EVERY ORIGIN.</h1>
+            <p class="hud-desc">Track origin. Verify quality. Follow every transaction — from farm to final buyer.</p>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+              <a href="#/auth" class="hud-cta">[ ENTER PLATFORM &rarr; ]</a>
             </div>
-            <h1>
-              ${i18n.t('landing.hero.title')}
-            </h1>
-            <p class="hero-subtitle">
-              ${i18n.t('landing.hero.subtitle')}
-            </p>
-            <div class="hero-actions">
-              <a href="#roles" class="btn btn-primary smooth-scroll">
-                ${i18n.t('landing.hero.enterBtn')}
-              </a>
-              <a href="#demos-section" class="btn btn-secondary smooth-scroll">
-                ${i18n.t('landing.hero.inspectBtn')}
-              </a>
+            
+            <div style="margin-top: 32px; display: flex; gap: 24px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--hud-text-sec);">
+              <div>[ NETWORK: ONLINE ]</div>
+              <div>[ TRACE: ACTIVE ]</div>
             </div>
           </div>
-          <div class="hero-visual">
-            ${renderHeroCustodyRoute()}
+
+          <!-- Right Visual -->
+          <div class="hud-v-card">
+            <div class="hud-v-header">● LIVE TRACE | FARMCHAIN NETWORK</div>
+            <div class="hud-v-body">
+               <div class="hud-v-asset">
+                  <div style="color: var(--hud-cyan); font-size: 0.75rem; margin-bottom: 8px;">[ SCANNING ASSET ]</div>
+                  <strong style="color: var(--hud-text); font-size: 1rem;">Premium Alphonso Mango</strong><br/>
+                  <span style="color: var(--hud-green); font-size: 0.8rem; margin-top: 4px; display: inline-block;">ORIGIN VERIFIED ✓</span>
+               </div>
+               <div class="hud-v-step">
+                  <div class="hud-v-box">
+                    <strong style="color: var(--hud-text);">FARM</strong><br/>Nashik, Maharashtra
+                  </div>
+                  <div class="hud-v-arrow">&darr;</div>
+                  <div class="hud-v-box">
+                    <strong style="color: var(--hud-text);">PROCESSING</strong><br/><span style="color: var(--hud-green);">✓ Verified</span>
+                  </div>
+                  <div class="hud-v-arrow">&darr;</div>
+                  <div class="hud-v-box">
+                    <strong style="color: var(--hud-text);">CONSUMER</strong><br/><span style="color: var(--hud-green);">✓ Authenticated</span>
+                  </div>
+               </div>
+            </div>
+            <div class="hud-v-footer">● BLOCKCHAIN VERIFIED</div>
           </div>
         </div>
       </section>
 
-      <!-- Stats Ticker — Physical Ledger Strip -->
-      <section class="stats-ticker">
-        <div class="container">
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-value">${formatNumber(blockCount)}</div>
-              <div class="stat-label">${i18n.t('landing.stats.blocks')}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">${formatNumber(txCount)}</div>
-              <div class="stat-label">${i18n.t('landing.stats.txs')}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">${formatNumber(products.length || 18)}</div>
-              <div class="stat-label">${i18n.t('landing.stats.batches')}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">${formatNumber(userCount || 24)}</div>
-              <div class="stat-label">${i18n.t('landing.stats.users')}</div>
-            </div>
+      <!-- Features -->
+      <section class="hud-features-section">
+        <div class="hud-section-title">// PLATFORM MODULES</div>
+        <div class="hud-features-grid">
+          <div class="hud-f-card">
+            <div class="hud-f-number">01</div>
+            <div class="hud-f-title">AI VERIFICATION</div>
+            <div class="hud-f-desc">AI-assisted produce grading and quality verification.</div>
+          </div>
+          <div class="hud-f-card">
+            <div class="hud-f-number">02</div>
+            <div class="hud-f-title">BLOCKCHAIN TRACE</div>
+            <div class="hud-f-desc">Immutable supply-chain records from origin to consumer.</div>
+          </div>
+          <div class="hud-f-card">
+            <div class="hud-f-number">03</div>
+            <div class="hud-f-title">LIVE PRICING</div>
+            <div class="hud-f-desc">Transparent market pricing and transaction visibility.</div>
           </div>
         </div>
       </section>
 
-      <!-- Interactive Demonstrators: AI Pricing & QR Traceability -->
-      <section class="demos-section" id="demos-section">
-        <div class="container">
-          <div class="section-header centered">
-            <span class="section-eyebrow">${i18n.t('landing.demos.eyebrow')}</span>
-            <h2>${i18n.t('landing.demos.title')}</h2>
-            <p>${i18n.t('landing.demos.subtitle')}</p>
-          </div>
-
-          <div class="demos-grid">
-            <!-- Demonstrator 1: AI Pricing Calculator -->
-            <div class="demo-card" id="demo-pricing-card">
-              <div class="demo-card-header">
-                <div>
-                  <h3>${i18n.t('landing.demos.pricingTitle')}</h3>
-                  <div style="font-size: var(--text-xs); color: var(--loam-faded);">${i18n.t('landing.demos.pricingSub')}</div>
-                </div>
-                <div class="stamp-seal" id="pricing-stamp-status">
-                  ${ICONS.lock} ${i18n.t('landing.demos.priceLocked')}
-                </div>
-              </div>
-
-              <div class="demo-selector-row">
-                <button class="demo-pill-btn active" data-crop="mango">${i18n.t('crops.mango')}</button>
-                <button class="demo-pill-btn" data-crop="rice">${i18n.t('crops.rice')}</button>
-                <button class="demo-pill-btn" data-crop="onion">${i18n.t('crops.onion')}</button>
-                <button class="demo-pill-btn" data-crop="turmeric">${i18n.t('crops.turmeric')}</button>
-              </div>
-
-              <div class="pricing-equation" id="pricing-equation-box">
-                <!-- Dynamically rendered by updatePricingDemo -->
-              </div>
-
-              <div style="display: flex; gap: 10px; align-items: center; margin-top: auto;">
-                <button class="btn btn-primary btn-sm" id="btn-lock-price">
-                  ${i18n.t('landing.demos.lockBtn')}
-                </button>
-                <span class="stamp-hash" id="demo-lock-hash">Tx: 0x8f2a...4b19</span>
-              </div>
-            </div>
-
-            <!-- Demonstrator 2: QR Trace Simulator -->
-            <div class="demo-card" id="demo-trace-card">
-              <div class="demo-card-header">
-                <div>
-                  <h3>${i18n.t('landing.demos.traceTitle')}</h3>
-                  <div style="font-size: var(--text-xs); color: var(--loam-faded);">${i18n.t('landing.demos.traceSub')}</div>
-                </div>
-                <div class="stamp-seal stamp-verified">
-                  ${ICONS.scan} ${i18n.t('landing.demos.tamperProof')}
-                </div>
-              </div>
-
-              <div style="background: var(--parchment-warm); padding: 14px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-hairline); display: flex; align-items: center; justify-content: space-between;">
-                <div>
-                  <div style="font-weight: 700; font-size: var(--text-sm); color: var(--loam);">${i18n.t('landing.demos.sampleBatch')}</div>
-                  <div style="font-size: var(--text-xs); color: var(--loam-faded); font-family: var(--font-mono);">${i18n.t('landing.demos.sampleMeta')}</div>
-                </div>
-                <button class="btn btn-secondary btn-sm" id="btn-simulate-scan">
-                  ${i18n.t('landing.demos.scanBtn')}
-                </button>
-              </div>
-
-              <div class="trace-timeline-list" id="trace-timeline-container">
-                <div class="trace-item">
-                  <div>
-                    <div class="trace-item-role">${i18n.t('landing.demos.stage1Actor')}</div>
-                    <div class="trace-item-title">${i18n.t('landing.demos.stage1Title')}</div>
-                    <div class="trace-item-meta">${i18n.t('landing.demos.stage1Meta')}</div>
-                  </div>
-                </div>
-                <div class="trace-item">
-                  <div>
-                    <div class="trace-item-role">${i18n.t('landing.demos.stage2Actor')}</div>
-                    <div class="trace-item-title">${i18n.t('landing.demos.stage2Title')}</div>
-                    <div class="trace-item-meta">${i18n.t('landing.demos.stage2Meta')}</div>
-                  </div>
-                </div>
-                <div class="trace-item">
-                  <div>
-                    <div class="trace-item-role">${i18n.t('landing.demos.stage3Actor')}</div>
-                    <div class="trace-item-title">${i18n.t('landing.demos.stage3Title')}</div>
-                    <div class="trace-item-meta">${i18n.t('landing.demos.stage3Meta')}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- How It Works: Chain-of-Custody 4 Stages -->
-      <section class="how-it-works" id="how-it-works">
-        <div class="container">
-          <div class="section-header centered">
-            <span class="section-eyebrow">${i18n.t('landing.how.eyebrow')}</span>
-            <h2>${i18n.t('landing.how.title')}</h2>
-            <p>${i18n.t('landing.how.subtitle')}</p>
-          </div>
-
-          <div class="steps-container">
-            <div class="step-row">
-              <div class="step-content">
-                <h3>${i18n.t('landing.how.step1Title')}</h3>
-                <p>${i18n.t('landing.how.step1Desc')}</p>
-              </div>
-              <div class="step-marker">
-                <div class="step-number">01</div>
-              </div>
-              <div class="step-icon-area">
-                ${ICONS.wheat}
-              </div>
-            </div>
-
-            <div class="step-row">
-              <div class="step-icon-area">
-                ${ICONS.store}
-              </div>
-              <div class="step-marker">
-                <div class="step-number">02</div>
-              </div>
-              <div class="step-content">
-                <h3>${i18n.t('landing.how.step2Title')}</h3>
-                <p>${i18n.t('landing.how.step2Desc')}</p>
-              </div>
-            </div>
-
-            <div class="step-row">
-              <div class="step-content">
-                <h3>${i18n.t('landing.how.step3Title')}</h3>
-                <p>${i18n.t('landing.how.step3Desc')}</p>
-              </div>
-              <div class="step-marker">
-                <div class="step-number">03</div>
-              </div>
-              <div class="step-icon-area">
-                ${ICONS.scan}
-              </div>
-            </div>
-
-            <div class="step-row">
-              <div class="step-icon-area">
-                ${ICONS.shield}
-              </div>
-              <div class="step-marker">
-                <div class="step-number">04</div>
-              </div>
-              <div class="step-content">
-                <h3>${i18n.t('landing.how.step4Title')}</h3>
-                <p>${i18n.t('landing.how.step4Desc')}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Live Mandi Rates Board -->
-      <section class="mandi-section" id="mandi-section">
-        <div class="container">
-          <div class="mandi-header">
-            <div class="mandi-header-left">
-              ${ICONS.signal}
-              <div>
-                <h3>${i18n.t('landing.mandi.title')}</h3>
-                <p>${i18n.t('landing.mandi.subtitle')}</p>
-              </div>
-            </div>
-            <span class="stamp-seal stamp-verified" id="oracle-status-badge">${i18n.t('landing.mandi.oracleBadge')}</span>
-          </div>
-
-          <div class="mandi-ticker-wrap">
-            <div class="mandi-ticker animate" id="mandi-cards-container">
-              <div class="mandi-card">
-                <div class="mandi-card-crop">${i18n.t('crops.rice')} — Punjab APMC</div>
-                <div class="mandi-card-price">${formatCurrency(2450)} <span>/ ${i18n.t('units.quintal')}</span></div>
-                <div class="mandi-card-trend up">↑ ${formatCurrency(24.50)}/${i18n.t('units.kg')} · ${i18n.t('landing.mandi.highDemand')}</div>
-              </div>
-              <div class="mandi-card">
-                <div class="mandi-card-crop">${i18n.t('crops.onion')} — ${i18n.t('locations.nashik')}</div>
-                <div class="mandi-card-price">${formatCurrency(2100)} <span>/ ${i18n.t('units.quintal')}</span></div>
-                <div class="mandi-card-trend steady">→ ${formatCurrency(21.00)}/${i18n.t('units.kg')} · ${i18n.t('landing.mandi.steadyArrival')}</div>
-              </div>
-              <div class="mandi-card">
-                <div class="mandi-card-crop">${i18n.t('crops.wheat')} — Sehore</div>
-                <div class="mandi-card-price">${formatCurrency(2380)} <span>/ ${i18n.t('units.quintal')}</span></div>
-                <div class="mandi-card-trend up">↑ ${formatCurrency(23.80)}/${i18n.t('units.kg')} · ${i18n.t('landing.mandi.consistent')}</div>
-              </div>
-              <div class="mandi-card">
-                <div class="mandi-card-crop">${i18n.t('crops.turmeric')} — ${i18n.t('locations.erode')} APMC</div>
-                <div class="mandi-card-price">${formatCurrency(10800)} <span>/ ${i18n.t('units.quintal')}</span></div>
-                <div class="mandi-card-trend up">↑ ${formatCurrency(108.00)}/${i18n.t('units.kg')} · ${i18n.t('landing.mandi.exportSurge')}</div>
-              </div>
-              <div class="mandi-card">
-                <div class="mandi-card-crop">${i18n.t('crops.mango')} — ${i18n.t('locations.ratnagiri')}</div>
-                <div class="mandi-card-price">${formatCurrency(4500)} <span>/ ${i18n.t('units.crate')}</span></div>
-                <div class="mandi-card-trend up">↑ ${formatCurrency(450)}/${i18n.t('units.dozen')} · ${i18n.t('landing.mandi.primeHarvest')}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Role Selection: 4 Distinct Color Cards -->
-      <section class="roles-section" id="roles">
-        <div class="container">
-          <div class="section-header centered">
-            <span class="section-eyebrow">${i18n.t('landing.roles.eyebrow')}</span>
-            <h2>${i18n.t('landing.roles.title')}</h2>
-            <p>${i18n.t('landing.roles.subtitle')}</p>
-          </div>
-
-          <div class="roles-grid-four">
-            <!-- Role 1: Farmer (Crop Green) -->
-            <div class="role-distinct-card role-farmer-theme" id="role-farmer">
-              <div>
-                <div class="role-card-top">
-                  <span class="role-tag">${i18n.t('landing.roles.farmerTag')}</span>
-                  <div class="role-icon-box" style="background: var(--role-farmer-bg); color: var(--role-farmer);">
-                    ${ICONS.wheat}
-                  </div>
-                </div>
-                <h3>${i18n.t('roles.farmer')}</h3>
-                <p>${i18n.t('landing.roles.farmerDesc')}</p>
-              </div>
-              <button class="btn">${i18n.t('landing.roles.farmerBtn')}</button>
-            </div>
-
-            <!-- Role 2: Intermediary (Grain Gold) -->
-            <div class="role-distinct-card role-intermediary-theme" id="role-intermediary">
-              <div>
-                <div class="role-card-top">
-                  <span class="role-tag">${i18n.t('landing.roles.intermediaryTag')}</span>
-                  <div class="role-icon-box" style="background: var(--role-intermediary-bg); color: var(--role-intermediary);">
-                    ${ICONS.store}
-                  </div>
-                </div>
-                <h3>${i18n.t('roles.intermediary')}</h3>
-                <p>${i18n.t('landing.roles.intermediaryDesc')}</p>
-              </div>
-              <button class="btn">${i18n.t('landing.roles.intermediaryBtn')}</button>
-            </div>
-
-            <!-- Role 3: Retailer (Market Clay) -->
-            <div class="role-distinct-card role-retailer-theme" id="role-retailer">
-              <div>
-                <div class="role-card-top">
-                  <span class="role-tag">${i18n.t('landing.roles.retailerTag')}</span>
-                  <div class="role-icon-box" style="background: var(--role-retailer-bg); color: var(--role-retailer);">
-                    ${ICONS.cart}
-                  </div>
-                </div>
-                <h3>${i18n.t('roles.retailer')}</h3>
-                <p>${i18n.t('landing.roles.retailerDesc')}</p>
-              </div>
-              <button class="btn">${i18n.t('landing.roles.retailerBtn')}</button>
-            </div>
-
-            <!-- Role 4: Consumer (Table Plum) -->
-            <div class="role-distinct-card role-consumer-theme" id="role-consumer">
-              <div>
-                <div class="role-card-top">
-                  <span class="role-tag">${i18n.t('landing.roles.consumerTag')}</span>
-                  <div class="role-icon-box" style="background: var(--role-consumer-bg); color: var(--role-consumer);">
-                    ${ICONS.user}
-                  </div>
-                </div>
-                <h3>${i18n.t('roles.consumer')}</h3>
-                <p>${i18n.t('landing.roles.consumerDesc')}</p>
-              </div>
-              <button class="btn">${i18n.t('landing.roles.consumerBtn')}</button>
-            </div>
-          </div>
-
-          <div style="text-align: center; margin-top: 24px;">
-            <a href="javascript:void(0)" id="role-admin" style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--loam-faded); text-decoration: underline;">
-              ${i18n.t('landing.roles.adminLink')}
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Footer: Physical Ledger Format -->
-      <footer class="landing-footer">
-        <div class="container">
-          <div class="footer-grid">
-            <div class="footer-brand">
-              <div class="logo">
-                <div class="logo-icon">${ICONS.chain}</div>
-                <span>FarmChain AI</span>
-              </div>
-              <p>${i18n.t('landing.footer.brandDesc')}</p>
-            </div>
-            <div class="footer-col">
-              <h4>${i18n.t('landing.footer.col1Title')}</h4>
-              <ul>
-                <li><a href="#how-it-works" class="smooth-scroll">${i18n.t('landing.nav.howItWorks')}</a></li>
-                <li><a href="#demos-section" class="smooth-scroll">${i18n.t('landing.demos.pricingTitle')}</a></li>
-                <li><a href="#mandi-section" class="smooth-scroll">${i18n.t('landing.nav.mandi')}</a></li>
-              </ul>
-            </div>
-            <div class="footer-col">
-              <h4>${i18n.t('landing.footer.col2Title')}</h4>
-              <ul>
-                <li><a href="#demos-section" class="smooth-scroll">${i18n.t('landing.footer.escrowContracts')}</a></li>
-                <li><a href="#demos-section" class="smooth-scroll">${i18n.t('landing.footer.cloneDetection')}</a></li>
-                <li><a href="#roles" class="smooth-scroll">${i18n.t('landing.nav.roles')}</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="footer-bottom">
-            <p>${i18n.t('landing.footer.bottom1')}</p>
-            <p>${i18n.t('landing.footer.bottom2')}</p>
-          </div>
-        </div>
+      <!-- Footer -->
+      <footer class="hud-footer">
+        <div>FARMCHAIN AI <br/> <span style="color: var(--hud-text-sec);">TRACE &bull; VERIFY &bull; CONNECT</span></div>
+        <div>© 2026 FarmChain AI</div>
+        <div>SYSTEM STATUS: <span style="color: var(--hud-green);">● ONLINE</span></div>
       </footer>
     </div>
   `;
-
-  // Function to render AI Pricing Equation
-  function updatePricingDemo(key) {
-    const demoData = getPricingDemoData();
-    const data = demoData[key];
-    if (!data) return;
-
-    const box = container.querySelector('#pricing-equation-box');
-    if (!box) return;
-
-    const cropName = i18n.t(data.cropKey);
-    const origin = i18n.t(data.originKey);
-    const demandReason = i18n.t(data.demandReasonKey);
-    const unit = localizeUnit(data.unit);
-
-    box.innerHTML = `
-      <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline;">
-        <span style="font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: var(--loam);">${cropName}</span>
-        <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--loam-faded);">${origin}</span>
-      </div>
-      <div class="equation-row">
-        <span class="equation-label">${i18n.t('landing.pricing.mspFloor')}</span>
-        <span class="equation-val">${formatCurrency(data.mspFloor)} / ${unit}</span>
-      </div>
-      <div class="equation-row">
-        <span class="equation-label">${i18n.t('landing.pricing.qualityBonus')} (${data.qualityGrade})</span>
-        <span class="equation-val plus">+${formatCurrency(data.qualityBonus)}</span>
-      </div>
-      <div class="equation-row">
-        <span class="equation-label">${i18n.t('landing.pricing.demandFactor')} (${demandReason})</span>
-        <span class="equation-val plus">+${formatCurrency(data.demandBonus)}</span>
-      </div>
-      <div class="equation-row">
-        <span class="equation-label">${i18n.t('landing.pricing.storageIndex')}</span>
-        <span class="equation-val plus">+${formatCurrency(data.storageBonus)}</span>
-      </div>
-      <div class="equation-total-row">
-        <span class="equation-total-label">${i18n.t('landing.pricing.lockedPrice')}</span>
-        <span class="equation-total-price">${formatCurrency(data.total)} <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--loam-faded);">/ ${unit}</span></span>
-      </div>
-    `;
-
-    const hashSpan = container.querySelector('#demo-lock-hash');
-    if (hashSpan) {
-      hashSpan.textContent = `Tx: ${data.hash}`;
+  
+  // Try to render the language selector if possible
+  setTimeout(() => {
+    const langPlaceholder = container.querySelector('#landing-lang-placeholder');
+    if (langPlaceholder && typeof i18n !== 'undefined') {
+      langPlaceholder.innerHTML = i18n.renderLanguageSelector('landing-lang-select', 'background: transparent; border: none; color: var(--hud-text-sec); font-family: "JetBrains Mono", monospace; font-size: 0.85rem; cursor: pointer; outline: none;');
     }
-  }
-
-  // Initialize first pricing demo
-  updatePricingDemo(activeProduceKey);
-
-  // Pill click handlers
-  container.querySelectorAll('.demo-pill-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      container.querySelectorAll('.demo-pill-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeProduceKey = btn.dataset.crop;
-      updatePricingDemo(activeProduceKey);
-    });
-  });
-
-  // Lock price button interaction
-  const lockBtn = container.querySelector('#btn-lock-price');
-  lockBtn?.addEventListener('click', () => {
-    lockBtn.innerHTML = `${i18n.t('landing.demos.stamped')}`;
-    lockBtn.classList.add('is-success');
-    const stampStatus = container.querySelector('#pricing-stamp-status');
-    if (stampStatus) {
-      stampStatus.classList.add('stamp-verified');
-      stampStatus.innerHTML = `${i18n.t('landing.demos.blockSealed')}`;
-    }
-    setTimeout(() => {
-      lockBtn.innerHTML = i18n.t('landing.demos.lockBtn');
-      lockBtn.classList.remove('is-success');
-    }, 2500);
-  });
-
-  // Simulate scan button interaction
-  const scanBtn = container.querySelector('#btn-simulate-scan');
-  scanBtn?.addEventListener('click', () => {
-    scanBtn.innerHTML = i18n.t('landing.demos.verifying');
-    scanBtn.classList.add('is-loading');
-
-    setTimeout(() => {
-      scanBtn.classList.remove('is-loading');
-      scanBtn.innerHTML = i18n.t('landing.demos.authenticated');
-      scanBtn.classList.add('btn-primary');
-      scanBtn.classList.remove('btn-secondary');
-
-      const timeline = container.querySelector('#trace-timeline-container');
-      if (timeline) {
-        timeline.insertAdjacentHTML('beforeend', `
-          <div class="trace-item" style="border-left-color: var(--semantic-success); animation: fadeIn 0.4s var(--ease-out);">
-            <div>
-              <div class="trace-item-role" style="color: var(--semantic-success);">${i18n.t('landing.demos.consumerStamp')}</div>
-              <div class="trace-item-title">${i18n.t('landing.demos.produceAuth')}</div>
-              <div class="trace-item-meta">${i18n.t('landing.demos.cleanProof')}</div>
-            </div>
-          </div>
-        `);
-      }
-    }, 700);
-  });
-
-  // Smooth scroll handler
-  container.querySelectorAll('.smooth-scroll, a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', (e) => {
-      const targetId = anchor.getAttribute('href')?.replace('#', '');
-      if (targetId) {
-        e.preventDefault();
-        const targetElement = container.querySelector(`#${targetId}`) || document.getElementById(targetId);
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }
-    });
-  });
-
-  // Role selection handlers
-  const roleMap = {
-    'role-farmer': 'farmer',
-    'role-intermediary': 'intermediary',
-    'role-retailer': 'retailer',
-    'role-consumer': 'consumer',
-    'role-admin': 'admin',
-  };
-
-  for (const [id, role] of Object.entries(roleMap)) {
-    container.querySelector(`#${id}`)?.addEventListener('click', () => {
-      router.navigate(`/login?role=${role}`);
-    });
-  }
-
-  // Navbar scroll effect
+  }, 0);
+  
+  // Navigation scroll behavior
   const nav = container.querySelector('#landing-nav');
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 40) {
-      nav?.classList.add('scrolled');
-    } else {
-      nav?.classList.remove('scrolled');
-    }
-  });
-
-  // Pause ticker on hover
-  const ticker = container.querySelector('.mandi-ticker');
-  const tickerWrap = container.querySelector('.mandi-ticker-wrap');
-  if (tickerWrap && ticker) {
-    tickerWrap.addEventListener('mouseenter', () => ticker.classList.remove('animate'));
-    tickerWrap.addEventListener('mouseleave', () => ticker.classList.add('animate'));
+  if (nav) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 40) {
+        nav.style.background = 'var(--hud-panel)';
+        nav.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+      } else {
+        nav.style.background = 'var(--hud-panel)';
+        nav.style.boxShadow = 'none';
+      }
+    });
   }
 }

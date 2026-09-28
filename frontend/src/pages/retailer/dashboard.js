@@ -23,39 +23,39 @@ export function renderRetailerDashboard(container) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('retailer.dashboard.greeting', { name: user.name })} 🛒</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('roles.retailer')}</span> <span>›</span> <span>${i18n.t('retailer.dashboard.title')}</span></div>
+              <h2 class="header-title">${i18n.t('retailer.dashboard.greeting', { name: user.name })}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('roles.retailer')}</span> <span>›</span> <span>${i18n.t('retailer.dashboard.title')}</span></div>
             </div>
           </div>
-          <div class="topbar-right" style="display: flex; align-items: center; gap: 10px;">
+          <div class="header-right">
             ${i18n.renderLanguageSelector('retailer-dashboard-lang-select')}
-            <button class="btn-icon notification-btn">🔔<span class="notification-dot"></span></button>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout')}</span></button>
+            <button class="btn-icon notification-btn" aria-label="Notifications" style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; color: var(--text-primary); position: relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notification-dot" style="position: absolute; top: 6px; right: 8px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%;"></span></button>
+            
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
-          <div class="dashboard-stats stagger-children">
+          <div class="dashboard-stats">
             <div class="stat-card">
               <div class="stat-card-icon" style="background: var(--accent-blue-dim); color: var(--accent-blue);">🛍️</div>
               <div class="stat-card-value">${formatNumber(orders.length)}</div>
               <div class="stat-card-label">${i18n.t('retailer.dashboard.statSourced')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">💰</div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
               <div class="stat-card-value">${formatCurrency(revenue)}</div>
               <div class="stat-card-label">${i18n.t('retailer.dashboard.statRevenue')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">📦</div>
+              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
               <div class="stat-card-value">${formatNumber(allProducts.length)}</div>
               <div class="stat-card-label">${i18n.t('retailer.dashboard.statAvailable')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">⛓️</div>
+              <div class="stat-card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
               <div class="stat-card-value">100%</div>
               <div class="stat-card-label">${i18n.t('retailer.dashboard.statVerified')}</div>
             </div>

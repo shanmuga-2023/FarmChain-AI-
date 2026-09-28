@@ -22,7 +22,7 @@ export function renderFarmerDashboard(container) {
   const firstName = user.name.split(' ')[0];
 
   container.innerHTML = `
-    <div class="dashboard-layout dark-theme">
+    <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
         

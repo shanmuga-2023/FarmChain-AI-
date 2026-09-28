@@ -594,6 +594,49 @@
         }
       ],
       "qualityHistory": []
+    },
+    {
+      "batchId": "PROD-1790583748893-ilsaty",
+      "cropName": "Basmati Rice",
+      "quantity": 500,
+      "dataHash": "0x12cebae42853a66d1be98c864279e3ca77a0d91ddeaf85cb6ed55238ae3b7e9d",
+      "currentOwner": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+      "currentStage": "Harvested",
+      "pricePerUnit": 45,
+      "network": "polygonAmoy",
+      "chainId": 80002,
+      "timestamp": 1790583749,
+      "isLiveOnChain": false,
+      "txHash": "0xa6d470389adc7b2c65bfb761e9683f63b655e85f7a2b1565f7de54a830c25fbf",
+      "blockNumber": 10469438,
+      "stageHistory": [
+        {
+          "stage": "Harvested",
+          "stageIndex": 0,
+          "updatedBy": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "location": "Origin Farm",
+          "price": 45,
+          "timestamp": 1790583749,
+          "txHash": "0xa6d470389adc7b2c65bfb761e9683f63b655e85f7a2b1565f7de54a830c25fbf"
+        }
+      ],
+      "ownershipHistory": [
+        {
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "timestamp": 1790583749,
+          "txHash": "0xa6d470389adc7b2c65bfb761e9683f63b655e85f7a2b1565f7de54a830c25fbf"
+        }
+      ],
+      "priceHistory": [
+        {
+          "pricePerUnit": 45,
+          "updatedBy": "0xFee2B36737BDdBB3AB8C0924B013f898e512715F",
+          "timestamp": 1790583749,
+          "txHash": "0xa6d470389adc7b2c65bfb761e9683f63b655e85f7a2b1565f7de54a830c25fbf"
+        }
+      ],
+      "qualityHistory": []
     }
   ],
   "fraudAlerts": []

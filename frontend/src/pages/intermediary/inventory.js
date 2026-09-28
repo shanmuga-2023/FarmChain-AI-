@@ -45,35 +45,35 @@ export function renderIntermediaryInventory(container) {
     <div class="dashboard-layout">
       ${sidebarContainer.innerHTML}
       <main class="dashboard-main">
-        <div class="topbar">
-          <div class="topbar-left">
+        <header class="glass-header">
+          <div class="header-left">
             <div>
-              <div class="topbar-title">${i18n.t('intermediary.inventory.title')} 📦</div>
-              <div class="topbar-breadcrumb"><span>${i18n.t('roles.intermediary')}</span> <span>›</span> <span>${i18n.t('intermediary.inventory.title')}</span></div>
+              <h2 class="header-title">${i18n.t('intermediary.inventory.title')}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;"><span>${i18n.t('roles.intermediary')}</span> <span>›</span> <span>${i18n.t('intermediary.inventory.title')}</span></div>
             </div>
           </div>
-          <div class="topbar-right" style="display: flex; align-items: center; gap: 10px;">
+          <div class="header-right">
             ${i18n.renderLanguageSelector('intermediary-inventory-lang-select')}
             <button class="btn btn-primary btn-sm" onclick="window.location.hash='/intermediary/dashboard'">🏪 ${i18n.t('intermediary.inventory.sourceMore')}</button>
-            <button class="btn btn-secondary btn-sm logout-btn" data-action="logout" style="border-color: rgba(239, 68, 68, 0.3); color: var(--accent-red); padding: 6px 12px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">🚪 <span>${i18n.t('common.logout')}</span></button>
+            
           </div>
-        </div>
+        </header>
 
         <div class="page-content">
           <!-- Inventory Stats -->
-          <div class="dashboard-stats stagger-children">
+          <div class="dashboard-stats">
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">📦</div>
+              <div class="stat-card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
               <div class="stat-card-value">${formatNumber(inventory.length)}</div>
               <div class="stat-card-label">${i18n.t('intermediary.inventory.productTypes')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">📊</div>
+              <div class="stat-card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
               <div class="stat-card-value">${formatNumber(totalStock)}</div>
               <div class="stat-card-label">${i18n.t('intermediary.inventory.totalStock')}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">💰</div>
+              <div class="stat-card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
               <div class="stat-card-value">${formatCurrency(totalInvested)}</div>
               <div class="stat-card-label">${i18n.t('intermediary.dashboard.statTotalInvested')}</div>
             </div>

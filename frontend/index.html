@@ -5,21 +5,55 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FarmChain AI — Blockchain Farm-to-Consumer Marketplace</title>
-  <meta name="description"
-    content="Transparent, blockchain-powered agricultural marketplace connecting farmers, intermediaries, retailers, and consumers with AI-driven pricing and QR traceability." />
+  <meta name="description" content="Transparent, blockchain-powered agricultural marketplace connecting farmers, intermediaries, retailers, and consumers with AI-driven pricing and QR traceability." />
+  
+  <!-- Theme & Icons -->
+  <meta name="theme-color" content="#0EA5E9">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://farm-chain-ai.vercel.app/" />
+  <meta property="og:title" content="FarmChain AI — Blockchain Farm-to-Consumer Marketplace" />
+  <meta property="og:description" content="Transparent, blockchain-powered agricultural marketplace connecting farmers, intermediaries, retailers, and consumers with AI-driven pricing and QR traceability." />
+  <meta property="og:image" content="/preview.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://farm-chain-ai.vercel.app/" />
+  <meta property="twitter:title" content="FarmChain AI — Blockchain Farm-to-Consumer Marketplace" />
+  <meta property="twitter:description" content="Transparent, blockchain-powered agricultural marketplace connecting farmers, intermediaries, retailers, and consumers with AI-driven pricing and QR traceability." />
+  <meta property="twitter:image" content="/preview.png" />
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="/src/styles/index.css" />
   <link rel="stylesheet" href="/src/styles/components.css" />
   <link rel="stylesheet" href="/src/styles/dashboard.css" />
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </head>
 
 <body>
-  <div id="app"></div>
+  <noscript>
+    <div style="font-family: sans-serif; text-align: center; padding: 2rem;">
+      <h1>FarmChain AI 2.0</h1>
+      <p>Transparent, blockchain-powered agricultural marketplace.</p>
+      <strong>Please enable JavaScript to use this application.</strong>
+    </div>
+  </noscript>
+  <div id="app">
+    <!-- Static Skeleton for fast first paint -->
+    <div style="min-height: 100vh; display: flex; flex-direction: column; background: #F8FAFC;">
+      <div style="height: 68px; background: rgba(255,255,255,0.72); border-bottom: 1px solid #BAE6FD;"></div>
+      <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 40px; height: 40px; border: 3px solid #E0F2FE; border-top-color: #0EA5E9; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      </div>
+    </div>
+  </div>
   <script type="module" src="/src/main.js"></script>
 </body>
 

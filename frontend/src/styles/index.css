@@ -1,87 +1,11 @@
 /* ============================================
    FarmChain AI — Design System & Global Styles
-   Terracotta earth-tone identity, editorial layout
+   White + Sky Blue Theme
    ============================================ */
 
-/* --- CSS Custom Properties (Design Tokens — The Trusted Ledger) --- */
-:root {
-  /* Dark Navy Background */
-  --bg-primary: #0a0f1e;
-  --bg-secondary: #0f1629;
-  --bg-tertiary: #151e32;
-  
-  /* Glassmorphism Surfaces */
-  --surface-0: #0a0f1e;
-  --surface-1: rgba(255, 255, 255, 0.03);
-  --surface-2: rgba(255, 255, 255, 0.05);
-  --surface-3: rgba(255, 255, 255, 0.08);
-  --bg-card: rgba(255, 255, 255, 0.05);
-  --bg-glass: rgba(255, 255, 255, 0.05);
-  --bg-glass-hover: rgba(255, 255, 255, 0.08);
+@import './tokens.css';
 
-  /* Primary Brand Colors */
-  --brand-green: #10b981;
-  --brand-violet: #7c3aed;
-  --brand-amber: #f59e0b;
 
-  /* Accent Aliases */
-  --accent: var(--brand-green);
-  --accent-dim: rgba(16, 185, 129, 0.15);
-  --accent-hover: #059669;
-  --accent-muted: rgba(16, 185, 129, 0.4);
-
-  /* Role Colors */
-  --role-farmer: var(--brand-green);
-  --role-farmer-bg: rgba(16, 185, 129, 0.12);
-  --role-intermediary: var(--brand-violet);
-  --role-intermediary-bg: rgba(124, 58, 237, 0.12);
-  --role-retailer: var(--brand-amber);
-  --role-retailer-bg: rgba(245, 158, 11, 0.12);
-  --role-consumer: #3b82f6;
-  --role-consumer-bg: rgba(59, 130, 246, 0.12);
-  --role-admin: #ef4444;
-  --role-admin-bg: rgba(239, 68, 68, 0.12);
-
-  /* Semantic */
-  --semantic-success: #10b981;
-  --semantic-success-dim: rgba(16, 185, 129, 0.12);
-  --semantic-green: #10b981;
-  --semantic-green-dim: rgba(16, 185, 129, 0.12);
-  --semantic-warning: #f59e0b;
-  --semantic-warning-dim: rgba(245, 158, 11, 0.12);
-  --semantic-amber: #f59e0b;
-  --semantic-amber-dim: rgba(245, 158, 11, 0.12);
-  --semantic-error: #ef4444;
-  --semantic-error-dim: rgba(239, 68, 68, 0.12);
-  --semantic-red: #ef4444;
-  --semantic-red-dim: rgba(239, 68, 68, 0.12);
-  --semantic-blue: #3b82f6;
-  --semantic-blue-dim: rgba(59, 130, 246, 0.12);
-
-  /* Borders */
-  --border-hairline: rgba(255, 255, 255, 0.05);
-  --border-rule: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.15);
-  --border-1: var(--border-hairline);
-  --border-2: var(--border-rule);
-  --border-3: var(--border-strong);
-  --border-subtle: var(--border-hairline);
-  --border-medium: var(--border-rule);
-  --border-accent: rgba(16, 185, 129, 0.35);
-
-  /* Text Colors */
-  --text-1: #f1f5f9;
-  --text-2: #cbd5e1;
-  --text-3: #94a3b8;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-accent: var(--brand-green);
-  
-  --font-base: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
 
 /* Automatic contrast mapping for dark cards, auth panels, and dark surfaces */
 .card-dark,
