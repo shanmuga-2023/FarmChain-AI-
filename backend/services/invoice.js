@@ -28,11 +28,11 @@ export function createInvoice(orderData) {
   const now = new Date().toISOString();
 
   const subtotal = (orderData.quantity || 0) * (orderData.pricePerUnit || 0);
-  const deliveryFee = orderData.deliveryFee || Math.round(subtotal * 0.02);
-  const platformFee = Math.round(subtotal * 0.05);
-  const qualityAllocation = Math.round(subtotal * 0.03);
   const farmerPayout = Math.round(subtotal * 0.60);
-  const total = subtotal + deliveryFee;
+  const intermediaryLogistics = Math.round(subtotal * 0.20);
+  const retailerStore = Math.round(subtotal * 0.15);
+  const platformFee = Math.round(subtotal * 0.05);
+  const total = subtotal; // delivery is included in intermediary logistics in this model
 
   const invoiceHash = computeInvoiceHash(invoiceId, orderData.orderId, orderData.batchId, total, now);
 
@@ -57,10 +57,10 @@ export function createInvoice(orderData) {
     unit: orderData.unit || 'kg',
     unitPrice: orderData.pricePerUnit || 0,
     subtotal,
-    deliveryFee,
-    platformFee,
-    qualityAllocation,
     farmerPayout,
+    intermediaryLogistics,
+    retailerStore,
+    platformFee,
     total,
     paymentStatus: orderData.paymentStatus || 'completed',
     deliveryStatus: orderData.deliveryStatus || 'delivered',

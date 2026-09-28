@@ -782,6 +782,15 @@ export const translations = {
       "orderSuccessToast": "Order placed! Payment recorded on blockchain ⛓️",
       "traceBtn": "Trace Journey",
       "buyBtn": "Buy Direct",
+      "orderSuccessTitle": "✅ ORDER SUCCESSFUL",
+      "invoiceGenerated": "Invoice generated successfully.",
+      "invoiceFailed": "Order completed, but invoice generation failed.",
+      "orderId": "Order ID",
+      "txHash": "Transaction Hash",
+      "paymentStatus": "Payment status",
+      "viewInvoiceBtn": "View Invoice",
+      "downloadInvoiceBtn": "Download Invoice",
+      "retryInvoiceBtn": "Retry Invoice",
       "cardOriginBy": "📍 {origin} · By {farmer}"
     },
     "admin": {
@@ -3720,6 +3729,15 @@ export const translations = {
       "orderSuccessToast": "ஆர்டர் செய்யப்பட்டது! பணம் செலுத்தியது பிளாக்செயினில் பதிவு செய்யப்பட்டது ⛓️",
       "traceBtn": "பயணத்தை அறி",
       "buyBtn": "நேரடியாக வாங்கு",
+      "orderSuccessTitle": "✅ ஆர்டர் வெற்றிகரமாக முடிந்தது",
+      "invoiceGenerated": "விலைப்பட்டியல் வெற்றிகரமாக உருவாக்கப்பட்டது.",
+      "invoiceFailed": "ஆர்டர் முடிந்தது, ஆனால் விலைப்பட்டியல் உருவாக்க முடியவில்லை.",
+      "orderId": "ஆர்டர் ஐடி",
+      "txHash": "பரிவர்த்தனை ஹேஷ்",
+      "paymentStatus": "பணம் செலுத்தும் நிலை",
+      "viewInvoiceBtn": "விலைப்பட்டியலைக் காண்க",
+      "downloadInvoiceBtn": "விலைப்பட்டியலைப் பதிவிறக்கு",
+      "retryInvoiceBtn": "மீண்டும் முயற்சிக்க",
       "cardOriginBy": "📍 {origin} · {farmer} மூலம்"
     },
     "admin": {

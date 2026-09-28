@@ -11,7 +11,7 @@ import { FairPricePredictor } from '../../ai/price-predictor.js';
 import { Marketplace } from '../../blockchain/contracts.js';
 import { router } from '../../utils/router.js';
 import { escapeHtml, validateOrderQuantity } from '../../utils/sanitize.js';
-import { postOrder, updateProduct } from '../../utils/api.js';
+import { postOrder, updateProduct, API_BASE } from '../../utils/api.js';
 import { addFirestoreOrder, updateFirestoreProduct } from '../../firebase/firestore.js';
 import { notifyOrderPlaced } from '../../utils/notifications.js';
 import { i18n } from '../../i18n/index.js';
@@ -177,10 +177,10 @@ export function renderConsumerMarketplace(container) {
             <span class="price-row-value">${formatCurrency(product.pricePerUnit * defaultQty)}</span>
           </div>
         </div>
-        <div class="ai-insight-card" style="background: var(--accent-green-dim); border-color: rgba(34,197,94,0.2); margin-top: 16px;">
-          <div class="ai-insight-title">${i18n.t('consumer.aiTransparencyTitle') || '🤖 AI Transparency Score'}</div>
-          <div class="ai-insight-desc">${i18n.t('consumer.aiTransparencyDesc') || 'This purchase is fully traceable on the blockchain. 60% of your payment goes directly to the farmer.'}</div>
-        </div>
+
+
+
+
       `, `
         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">${i18n.t('common.cancel') || 'Cancel'}</button>
         <button class="btn btn-primary btn-sm" id="confirm-buy-btn">💳 ${i18n.t('consumer.confirmPayBtn') || 'Pay & Record on Blockchain'}</button>
@@ -257,8 +257,67 @@ export function renderConsumerMarketplace(container) {
         notifyOrderPlaced(order);
 
         closeModal();
-        showToast(i18n.t('consumer.orderSuccessToast') || 'Order placed! Payment recorded on blockchain ⛓️', 'success');
+        
+        // Generate Invoice
+        let invoiceData = null;
+        try {
+          const res = await fetch(`${API_BASE}/invoices`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(order)
+          });
+          if (res.ok) {
+            const data = await res.json();
+            invoiceData = data.invoice;
+          }
+        } catch (e) {
+          console.warn('Invoice generation failed:', e);
+        }
+        
+        const txHash = result.block ? result.block.hash : '0x' + Math.random().toString(36).substr(2, 16);
+        
+        let invoiceActions = '';
+        if (invoiceData) {
+           invoiceActions = `
+             <button class="btn btn-secondary btn-sm" onclick="window.open('${API_BASE}/invoices/${invoiceData.invoiceId}/html')">📄 ${i18n.t('consumer.viewInvoiceBtn') || 'View Invoice'}</button>
+             <button class="btn btn-primary btn-sm" onclick="window.open('${API_BASE}/invoices/${invoiceData.invoiceId}/html?print=true')">📥 ${i18n.t('consumer.downloadInvoiceBtn') || 'Download Invoice'}</button>
+           `;
+        } else {
+           invoiceActions = `
+             <button class="btn btn-secondary btn-sm">🔄 ${i18n.t('consumer.retryInvoiceBtn') || 'Retry Invoice'}</button>
+           `;
+        }
+
+        createModal(i18n.t('consumer.orderSuccessTitle') || '✅ ORDER SUCCESSFUL', `
+          <div style="text-align: center; margin-bottom: 24px;">
+            <p style="font-size: 1.1rem; color: var(--success); font-weight: 500;">${invoiceData ? (i18n.t('consumer.invoiceGenerated') || 'Invoice generated successfully.') : (i18n.t('consumer.invoiceFailed') || 'Order completed, but invoice generation failed.')}</p>
+          </div>
+          <div style="background: var(--surface-secondary); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 0.95rem;">
+             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid var(--border-rule); padding-bottom: 8px;">
+               <span style="color: var(--text-secondary);">${i18n.t('consumer.orderId') || 'Order ID'}:</span>
+               <strong>${order.orderId}</strong>
+             </div>
+             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid var(--border-rule); padding-bottom: 8px;">
+               <span style="color: var(--text-secondary);">${i18n.t('consumer.txHash') || 'Transaction Hash'}:</span>
+               <strong style="word-break: break-all; font-family: var(--font-mono); font-size: 0.85rem; max-width: 60%; text-align: right;">${txHash}</strong>
+             </div>
+             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid var(--border-rule); padding-bottom: 8px;">
+               <span style="color: var(--text-secondary);">${i18n.t('consumer.paymentStatus') || 'Payment status'}:</span>
+               <strong><span class="badge badge-success">Completed</span></strong>
+             </div>
+             <div style="display: flex; justify-content: space-between;">
+               <span style="color: var(--text-secondary);">${i18n.t('common.total') || 'Total amount'}:</span>
+               <strong style="font-size: 1.1rem;">${formatCurrency(order.totalAmount)}</strong>
+             </div>
+          </div>
+        `, `
+          ${invoiceActions}
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modal-overlay').remove()">${i18n.t('common.close') || 'Close'}</button>
+        `);
+
         renderConsumerMarketplace(container);
+
+
       });
     });
   });

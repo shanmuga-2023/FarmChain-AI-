@@ -380,7 +380,7 @@
   max-height: 85vh;
   overflow-y: auto;
   border-radius: var(--radius-md);
-  background: var(--parchment-card);
+  background: var(--surface);
   border: 1px solid var(--border-rule);
   box-shadow: var(--shadow-lg);
   animation: scaleIn 0.3s ease-out;

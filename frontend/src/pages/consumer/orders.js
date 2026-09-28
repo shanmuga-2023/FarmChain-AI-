@@ -8,6 +8,7 @@ import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
 import { formatCurrency, timeAgo, getStatusBadge, showToast, localizeCropName, localizeUnit } from '../../utils/helpers.js';
 import { escapeHtml } from '../../utils/sanitize.js';
+import { API_BASE } from '../../utils/api.js';
 import { i18n } from '../../i18n/index.js';
 
 export function renderConsumerOrders(container) {
@@ -85,6 +86,7 @@ export function renderConsumerOrders(container) {
                     <th>${i18n.t('common.amount') || 'Amount'}</th>
                     <th>${i18n.t('common.status') || 'Status'}</th>
                     <th>${i18n.t('common.date') || 'Date'}</th>
+                    <th>${i18n.t('invoice.title') || 'Invoice'}</th>
                   </tr>
                 </thead>
                 <tbody id="consumer-orders-tbody">
@@ -104,6 +106,11 @@ export function renderConsumerOrders(container) {
                         <td style="font-weight: 600; color: var(--accent-green);">${formatCurrency(o.totalAmount || 0)}</td>
                         <td><span class="badge ${badge.class}">${badge.icon} ${badge.label}</span></td>
                         <td style="font-size: 0.8rem; color: var(--text-muted);">${o.createdAt ? timeAgo(o.createdAt) : 'N/A'}</td>
+                        <td>
+                           <button class="btn btn-secondary btn-sm" onclick="fetch('${API_BASE}/invoices/order/${o.orderId}').then(r=>r.json()).then(d=>{ if(d.invoice) window.open('${API_BASE}/invoices/'+d.invoice.invoiceId+'/html'); else alert('Invoice not found'); })">
+                             📄 ${i18n.t('consumer.viewInvoiceBtn') || 'View'}
+                           </button>
+                        </td>
                       </tr>
                     `;
                   }).join('')}

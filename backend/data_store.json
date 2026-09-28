@@ -370,6 +370,38 @@
       "totalAmount": 240,
       "status": "pending",
       "createdAt": 1734304400000
+    },
+    {
+      "productId": "PROD-1790574049303-at1mix",
+      "productName": "Organic Basmati Rice",
+      "buyerId": "consumer-001",
+      "buyerName": "Priya Sharma",
+      "buyerRole": "consumer",
+      "sellerId": "farmer-002",
+      "sellerName": "Lakshmi Devi",
+      "quantity": 5,
+      "unit": "kg",
+      "totalAmount": 425,
+      "orderId": "ORD-1790594656522-s5ga5k",
+      "pricePerUnit": 85,
+      "status": "pending",
+      "createdAt": 1790594656603
+    },
+    {
+      "productId": "PROD-1790574049315-8u6c9h",
+      "productName": "Punjab Premium Wheat",
+      "buyerId": "consumer-001",
+      "buyerName": "Priya Sharma",
+      "buyerRole": "consumer",
+      "sellerId": "farmer-003",
+      "sellerName": "Arjun Singh",
+      "quantity": 5,
+      "unit": "kg",
+      "totalAmount": 140,
+      "orderId": "ORD-1790594721042-57fgoo",
+      "pricePerUnit": 28,
+      "status": "pending",
+      "createdAt": 1790594721070
     }
   ],
   "transfers": [
@@ -639,5 +671,73 @@
       "qualityHistory": []
     }
   ],
-  "fraudAlerts": []
+  "fraudAlerts": [],
+  "invoices": [
+    {
+      "invoiceId": "INV-2026-000001",
+      "orderId": "ORD-1790594656522-s5ga5k",
+      "batchId": null,
+      "invoiceDate": "2026-09-28T11:24:16.596Z",
+      "seller": {
+        "id": "farmer-002",
+        "name": "Lakshmi Devi",
+        "location": ""
+      },
+      "buyer": {
+        "id": "consumer-001",
+        "name": "Priya Sharma",
+        "location": ""
+      },
+      "produce": "Organic Basmati Rice",
+      "category": "",
+      "quantity": 5,
+      "unit": "kg",
+      "unitPrice": 85,
+      "subtotal": 425,
+      "farmerPayout": 255,
+      "intermediaryLogistics": 85,
+      "retailerStore": 64,
+      "platformFee": 21,
+      "total": 425,
+      "paymentStatus": "completed",
+      "deliveryStatus": "delivered",
+      "blockchainVerified": false,
+      "invoiceHash": "740043580ac88d05148a8e44bd1ac44c3b4ff597107ebc7d94f41a97fff7c671",
+      "createdAt": "2026-09-28T11:24:16.596Z",
+      "updatedAt": "2026-09-28T11:24:16.596Z"
+    },
+    {
+      "invoiceId": "INV-2026-000002",
+      "orderId": "ORD-1790594721042-57fgoo",
+      "batchId": null,
+      "invoiceDate": "2026-09-28T11:25:21.066Z",
+      "seller": {
+        "id": "farmer-003",
+        "name": "Arjun Singh",
+        "location": ""
+      },
+      "buyer": {
+        "id": "consumer-001",
+        "name": "Priya Sharma",
+        "location": ""
+      },
+      "produce": "Punjab Premium Wheat",
+      "category": "",
+      "quantity": 5,
+      "unit": "kg",
+      "unitPrice": 28,
+      "subtotal": 140,
+      "farmerPayout": 84,
+      "intermediaryLogistics": 28,
+      "retailerStore": 21,
+      "platformFee": 7,
+      "total": 140,
+      "paymentStatus": "completed",
+      "deliveryStatus": "delivered",
+      "blockchainVerified": false,
+      "invoiceHash": "f8f77f69ad5dc4da4ba95e462bf14be9ec8c40d829c9de78c402b26ed7ce9ea9",
+      "createdAt": "2026-09-28T11:25:21.066Z",
+      "updatedAt": "2026-09-28T11:25:21.066Z"
+    }
+  ]
 }
