@@ -55,7 +55,9 @@ export function renderLanding(container) {
       
       /* --- New Landing Page Styles (Matching Dark Glassmorphic Login Design) --- */
       .landing-page {
-        background: radial-gradient(circle at 50% 15%, #2a3462 0%, #151b36 40%, #0a0d1b 100%);
+        background: 
+          linear-gradient(180deg, rgba(10, 13, 27, 0.72) 0%, rgba(15, 23, 42, 0.82) 40%, rgba(10, 13, 27, 0.92) 100%),
+          url('/back.png') center top / cover no-repeat fixed;
         color: #ffffff;
         font-family: 'Inter', sans-serif;
         min-height: 100vh;
