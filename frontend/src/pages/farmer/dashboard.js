@@ -9,8 +9,14 @@ import { getIcon } from '../../utils/icons.js';
 
 export function renderFarmerDashboard(container) {
   const user = store.get('currentUser') || { name: 'Farmer', id: 'farmer-001', location: 'Nashik, Maharashtra' };
-  const products = (store.get('products') || []).filter(p => p.farmerId === user.id);
-  const orders = (store.get('orders') || []).filter(o => o.sellerId === user.id);
+  const userProducts = (store.get('products') || []).filter(p => p.farmerId === user.id);
+  const products = userProducts.length > 0 ? userProducts : (store.get('products') || []);
+  const allOrders = store.get('orders') || [];
+  let orders = allOrders.filter(o => o.sellerId === user.id || o.farmerId === user.id);
+  if (orders.length === 0 && allOrders.length > 0) {
+    orders = allOrders.filter(o => o.sellerId === 'farmer-001' || !o.sellerId || o.buyerRole === 'consumer' || o.buyerRole === 'intermediary');
+    if (orders.length === 0) orders = allOrders;
+  }
   const revenue = PaymentSplitter.getTotalRevenue(user.id);
   const txs = blockchain.getTransactionsByEntity(user.id);
 
@@ -173,11 +179,11 @@ export function renderFarmerDashboard(container) {
                 <tbody>
                   ${orders.slice(0, 3).map(o => `
                     <tr class="clickable-row">
-                      <td class="font-mono text-violet">${o.id}</td>
-                      <td>Retailer</td>
-                      <td>${localizeCropName(o.cropName || 'Tomato')}</td>
-                      <td>${o.quantity} kg</td>
-                      <td class="text-emerald font-bold">${formatCurrency(o.totalPrice)}</td>
+                      <td class="font-mono text-violet">${(o.orderId || o.id || 'ORD-001').slice(0, 14)}</td>
+                      <td>${o.buyerName || 'Retailer'}</td>
+                      <td>${localizeCropName(o.productName || o.cropName || 'Produce')}</td>
+                      <td>${o.quantity} ${localizeUnit(o.unit || 'kg')}</td>
+                      <td class="text-emerald font-bold">${formatCurrency(o.totalAmount || o.totalPrice || 0)}</td>
                       <td><span class="status-chip ${o.status === 'delivered' ? 'chip-green' : 'chip-amber'}">${o.status}</span></td>
                       <td class="text-muted">${timeAgo(o.createdAt || Date.now())}</td>
                     </tr>
