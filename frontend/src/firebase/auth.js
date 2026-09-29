@@ -232,6 +232,34 @@ function getFirebaseErrorMessage(error) {
 }
 
 
+const ACCOUNTS_STORAGE_KEY = 'farmchain_registered_accounts';
+
+export function getRegisteredAccounts() {
+  try {
+    const raw = localStorage.getItem(ACCOUNTS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveRegisteredAccount(account) {
+  try {
+    const accounts = getRegisteredAccounts();
+    const key = normalizeEmail(account.email);
+    accounts[key] = {
+      ...(accounts[key] || {}),
+      ...account,
+      email: key,
+      updatedAt: Date.now()
+    };
+    localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify(accounts));
+  } catch (e) {
+    console.warn('Failed to save registered account to localStorage:', e);
+  }
+}
+
+
 // ============================================================
 // REGISTER WITH EMAIL
 // ============================================================
@@ -245,169 +273,92 @@ export async function registerWithEmail(
   walletAddress = ''
 ) {
   const normalizedEmail = normalizeEmail(email);
+  const targetRole = String(role || 'farmer').toLowerCase();
 
-  try {
-    // --------------------------------------------------------
-    // Firebase unavailable -> local registration
-    // --------------------------------------------------------
+  const userProfile = {
+    id: `user-${Date.now()}`,
+    name: displayName || normalizedEmail.split('@')[0],
+    email: normalizedEmail,
+    role: targetRole,
+    location: location || 'India',
+    walletAddress: walletAddress || '',
+    avatar: getRoleAvatar(targetRole),
+    createdAt: Date.now(),
+    verified: true
+  };
 
-    if (!isFirebaseReady || !auth) {
-      const user = {
-        id: `user-${Date.now()}`,
-        name: displayName,
-        email: normalizedEmail,
-        role: String(role || 'farmer').toLowerCase(),
-        location: location || 'India',
-        walletAddress,
-        avatar: getRoleAvatar(role),
-        createdAt: Date.now(),
-        verified: true,
-        isLocal: true
-      };
+  // 1. Immediately persist credentials locally so account is NEVER lost
+  saveRegisteredAccount({
+    ...userProfile,
+    password
+  });
 
-      store.login(user.role, user.id, user);
+  // 2. Set current session in reactive store
+  store.login(targetRole, userProfile.id, userProfile);
 
-      return {
-        user,
-        isFallback: true
-      };
-    }
+  // 3. Post to backend
+  postUser(userProfile).catch(() => {});
 
-    // --------------------------------------------------------
-    // Firebase registration
-    // --------------------------------------------------------
-
-    const userCredential =
-      await createUserWithEmailAndPassword(
+  // 4. If Firebase is active, synchronize to Firebase Auth and Firestore
+  if (isFirebaseReady && auth) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
         auth,
         normalizedEmail,
         password
       );
 
-    const firebaseUser = userCredential.user;
+      const firebaseUser = userCredential.user;
+      userProfile.id = firebaseUser.uid;
 
-    await updateProfile(firebaseUser, {
-      displayName
-    });
+      // Update local storage with real Firebase UID
+      saveRegisteredAccount({
+        ...userProfile,
+        id: firebaseUser.uid,
+        password
+      });
 
-    const userProfile = {
-      id: firebaseUser.uid,
-      name: displayName,
-      email: normalizedEmail,
-      role: String(role || 'farmer').toLowerCase(),
-      location: location || 'India',
-      walletAddress: walletAddress || '',
-      avatar: getRoleAvatar(role),
-      createdAt: Date.now(),
-      verified: true
-    };
+      await updateProfile(firebaseUser, {
+        displayName: displayName || userProfile.name
+      }).catch(() => {});
 
-    // --------------------------------------------------------
-    // Firestore profile
-    // --------------------------------------------------------
-
-    if (db) {
-      try {
-        await setDoc(
-          doc(db, 'users', firebaseUser.uid),
-          userProfile
-        );
-      } catch (dbError) {
-        console.warn(
-          'Firestore profile save skipped:',
-          dbError.message
-        );
+      if (db) {
+        try {
+          await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+        } catch (dbError) {
+          console.warn('Firestore profile save skipped:', dbError.message);
+        }
       }
-    }
 
-    // --------------------------------------------------------
-    // Backend sync
-    // --------------------------------------------------------
-
-    postUser(userProfile).catch(() => { });
-
-    store.login(
-      userProfile.role,
-      firebaseUser.uid,
-      userProfile
-    );
-
-    return {
-      user: userProfile,
-      firebaseUser
-    };
-
-  } catch (error) {
-
-    console.error(
-      'Firebase registration error:',
-      error.code,
-      error.message
-    );
-
-    // --------------------------------------------------------
-    // Demo account already exists
-    // --------------------------------------------------------
-
-    if (error.code === 'auth/email-already-in-use') {
-
-      const demoMatch = DEMO_CREDENTIALS.find(
-        demo =>
-          demo.email.toLowerCase() === normalizedEmail
-      );
-
-      if (demoMatch) {
-        const demoUser = createDemoUser(demoMatch);
-
-        store.login(
-          demoUser.role,
-          demoUser.id,
-          demoUser
-        );
-
-        return {
-          user: demoUser,
-          isFallback: true
-        };
-      }
-    }
-
-    // --------------------------------------------------------
-    // Firebase provider disabled
-    // --------------------------------------------------------
-
-    if (
-      error.code === 'auth/operation-not-allowed' ||
-      error.code === 'auth/configuration-not-found'
-    ) {
-
-      const user = {
-        id: `user-${Date.now()}`,
-        name: displayName,
-        email: normalizedEmail,
-        role: String(role || 'farmer').toLowerCase(),
-        location: location || 'India',
-        walletAddress: walletAddress || '',
-        avatar: getRoleAvatar(role),
-        createdAt: Date.now(),
-        verified: true,
-        isLocal: true
-      };
-
-      store.login(
-        user.role,
-        user.id,
-        user
-      );
+      store.login(targetRole, firebaseUser.uid, userProfile);
 
       return {
-        user,
+        user: userProfile,
+        firebaseUser
+      };
+    } catch (firebaseErr) {
+      console.warn('Firebase registration error, fallback local account active:', firebaseErr.code, firebaseErr.message);
+
+      if (firebaseErr.code === 'auth/email-already-in-use') {
+        const demoMatch = DEMO_CREDENTIALS.find(d => d.email.toLowerCase() === normalizedEmail);
+        if (demoMatch) {
+          const demoUser = createDemoUser(demoMatch);
+          store.login(demoUser.role, demoUser.id, demoUser);
+          return { user: demoUser, isFallback: true };
+        }
+      }
+
+      return {
+        user: userProfile,
         isFallback: true
       };
     }
-
-    throw error;
   }
+
+  return {
+    user: userProfile,
+    isFallback: true
+  };
 }
 
 
@@ -415,264 +366,171 @@ export async function registerWithEmail(
 // LOGIN WITH EMAIL
 // ============================================================
 
-export async function loginWithEmail(email, password) {
-
+export async function loginWithEmail(email, password, desiredRole = null) {
   const normalizedEmail = normalizeEmail(email);
 
   if (!normalizedEmail || !password) {
-    const error = new Error(
-      'Email and password are required.'
-    );
-
+    const error = new Error('Email and password are required.');
     error.code = 'auth/missing-login-fields';
-
     throw error;
   }
-
 
   // ==========================================================
   // 1. CHECK DEMO ACCOUNT FIRST
   // ==========================================================
-
   const demoMatch = DEMO_CREDENTIALS.find(
-    demo =>
-      demo.email.toLowerCase() === normalizedEmail
+    demo => demo.email.toLowerCase() === normalizedEmail
   );
 
-
   if (demoMatch) {
-
-    // IMPORTANT:
-    // Demo accounts never call Firebase.
-    // This prevents auth/invalid-credential console errors.
-
     if (demoMatch.password !== password) {
-
-      const error = new Error(
-        'Incorrect demo account password.'
-      );
-
+      const error = new Error('Incorrect demo account password.');
       error.code = 'auth/wrong-password';
-
       throw error;
     }
-
 
     const demoUser = createDemoUser(demoMatch);
-
-    store.login(
-      demoUser.role,
-      demoUser.id,
-      demoUser
-    );
-
-    console.info(
-      `Demo login successful: ${normalizedEmail}`
-    );
-
-    return {
-      user: demoUser,
-      isFallback: true
-    };
+    store.login(demoUser.role, demoUser.id, demoUser);
+    console.info(`Demo login successful: ${normalizedEmail}`);
+    return { user: demoUser, isFallback: true };
   }
 
+  // Check persistent registered accounts
+  const registeredAccounts = getRegisteredAccounts();
+  const savedAccount = registeredAccounts[normalizedEmail];
 
   // ==========================================================
-  // 2. REAL FIREBASE ACCOUNT
+  // 2. ATTEMPT REAL FIREBASE ACCOUNT IF READY
   // ==========================================================
-
-  try {
-
-    if (!isFirebaseReady || !auth) {
-
-      const error = new Error(
-        'Firebase Authentication is not configured. Please check your Firebase configuration.'
-      );
-
-      error.code = 'auth/not-configured';
-
-      throw error;
-    }
-
-
-    console.info(
-      `Firebase login attempt: ${normalizedEmail}`
-    );
-
-
-    const userCredential =
-      await signInWithEmailAndPassword(
+  if (isFirebaseReady && auth) {
+    try {
+      console.info(`Firebase login attempt: ${normalizedEmail}`);
+      const userCredential = await signInWithEmailAndPassword(
         auth,
         normalizedEmail,
         password
       );
+      const firebaseUser = userCredential.user;
 
-
-    const firebaseUser =
-      userCredential.user;
-
-
-    // ========================================================
-    // 3. LOAD FIRESTORE PROFILE
-    // ========================================================
-
-    let userProfile = null;
-
-
-    if (db) {
-
-      try {
-
-        const userRef =
-          doc(
-            db,
-            'users',
-            firebaseUser.uid
-          );
-
-
-        const docSnap =
-          await getDoc(userRef);
-
-
-        if (docSnap.exists()) {
-          userProfile = docSnap.data();
+      // 3. LOAD FIRESTORE PROFILE
+      let userProfile = null;
+      if (db) {
+        try {
+          const userRef = doc(db, 'users', firebaseUser.uid);
+          const docSnap = await getDoc(userRef);
+          if (docSnap.exists()) {
+            userProfile = docSnap.data();
+          }
+        } catch (dbError) {
+          console.warn('Firestore profile unavailable:', dbError.message);
         }
-
-      } catch (dbError) {
-
-        // Firestore failure must NOT destroy successful Auth login.
-
-        console.warn(
-          'Firestore profile unavailable:',
-          dbError.message
-        );
       }
-    }
 
+      // 4. RESTORE PROFILE FROM LOCAL REGISTERED ACCOUNTS OR DESIRED ROLE
+      // NEVER blindly default to 'farmer'
+      if (!userProfile) {
+        const resolvedRole = savedAccount?.role || (desiredRole ? String(desiredRole).toLowerCase() : 'farmer');
+        userProfile = {
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName || savedAccount?.name || normalizedEmail.split('@')[0],
+          email: firebaseUser.email || normalizedEmail,
+          role: resolvedRole,
+          location: savedAccount?.location || 'India',
+          walletAddress: savedAccount?.walletAddress || '',
+          avatar: savedAccount?.avatar || getRoleAvatar(resolvedRole),
+          verified: firebaseUser.emailVerified ?? true
+        };
 
-    // ========================================================
-    // 4. CREATE FALLBACK PROFILE
-    // ========================================================
+        if (db) {
+          setDoc(doc(db, 'users', firebaseUser.uid), userProfile).catch(() => {});
+        }
+      }
 
-    if (!userProfile) {
+      // Update registered accounts cache with password
+      saveRegisteredAccount({
+        ...userProfile,
+        password
+      });
 
-      userProfile = {
+      // Sync with backend
+      postUser(userProfile).catch(() => {});
 
-        id: firebaseUser.uid,
-
-        name:
-          firebaseUser.displayName ||
-          normalizedEmail.split('@')[0],
-
-        email:
-          firebaseUser.email ||
-          normalizedEmail,
-
-        role: 'farmer',
-
-        location: 'India',
-
-        avatar: '',
-
-        verified:
-          firebaseUser.emailVerified ?? false
-      };
-    }
-
-
-    // ========================================================
-    // 5. STORE SESSION
-    // ========================================================
-
-    store.login(
-      userProfile.role,
-      userProfile.id,
-      userProfile
-    );
-
-
-    console.info(
-      `Firebase login successful: ${normalizedEmail}`
-    );
-
-
-    return {
-      user: userProfile,
-      firebaseUser
-    };
-
-
-  } catch (error) {
-
-    console.error(
-      'Firebase login failed:',
-      error.code,
-      error.message
-    );
-
-
-    // ========================================================
-    // LOCAL USER FALLBACK
-    // ========================================================
-
-    const rawUsers =
-      store.get('users') || {};
-
-
-    const usersList =
-      Array.isArray(rawUsers)
-        ? rawUsers
-        : Object.values(rawUsers);
-
-
-    const localUser =
-      usersList.find(
-        user =>
-          user &&
-          user.email &&
-          user.email.toLowerCase() === normalizedEmail
-      );
-
-
-    if (localUser) {
-
-      console.info(
-        `Local profile login: ${normalizedEmail}`
-      );
-
-
-      store.login(
-        localUser.role || 'farmer',
-        localUser.id,
-        localUser
-      );
-
+      // 5. STORE SESSION
+      store.login(userProfile.role, userProfile.id, userProfile);
+      console.info(`Firebase login successful: ${normalizedEmail} (Role: ${userProfile.role})`);
 
       return {
-        user: localUser,
-        isFallback: true
+        user: userProfile,
+        firebaseUser
       };
+    } catch (firebaseError) {
+      console.warn('Firebase login failed:', firebaseError.code, firebaseError.message);
+
+      // Check if local registered account can authenticate
+      if (savedAccount) {
+        if (savedAccount.password && savedAccount.password !== password) {
+          const error = new Error('Incorrect password. Please try again.');
+          error.code = 'auth/wrong-password';
+          throw error;
+        }
+
+        const role = savedAccount.role || (desiredRole ? String(desiredRole).toLowerCase() : 'farmer');
+        const user = {
+          ...savedAccount,
+          role,
+          id: savedAccount.id || `user-${Date.now()}`
+        };
+        store.login(role, user.id, user);
+        console.info(`Local registered account login successful: ${normalizedEmail} (Role: ${role})`);
+        return { user, isFallback: true };
+      }
+
+      // Check store users fallback
+      const rawUsers = store.get('users') || {};
+      const usersList = Array.isArray(rawUsers) ? rawUsers : Object.values(rawUsers);
+      const localUser = usersList.find(u => u && u.email && u.email.toLowerCase() === normalizedEmail);
+      if (localUser) {
+        const role = localUser.role || desiredRole || 'farmer';
+        store.login(role, localUser.id, localUser);
+        return { user: localUser, isFallback: true };
+      }
+
+      // Rethrow friendly error
+      const friendlyError = new Error(getFirebaseErrorMessage(firebaseError));
+      friendlyError.code = firebaseError.code || 'auth/login-failed';
+      friendlyError.originalError = firebaseError;
+      throw friendlyError;
+    }
+  }
+
+  // ==========================================================
+  // 3. FIREBASE NOT READY -> LOCAL LOGIN
+  // ==========================================================
+  if (savedAccount) {
+    if (savedAccount.password && savedAccount.password !== password) {
+      const error = new Error('Incorrect password. Please try again.');
+      error.code = 'auth/wrong-password';
+      throw error;
     }
 
-
-    // ========================================================
-    // FRIENDLY ERROR
-    // ========================================================
-
-    const friendlyError =
-      new Error(
-        getFirebaseErrorMessage(error)
-      );
-
-    friendlyError.code =
-      error.code || 'auth/login-failed';
-
-    friendlyError.originalError =
-      error;
-
-    throw friendlyError;
+    const role = savedAccount.role || (desiredRole ? String(desiredRole).toLowerCase() : 'farmer');
+    const user = { ...savedAccount, role };
+    store.login(role, user.id, user);
+    return { user, isFallback: true };
   }
+
+  // Check store users fallback
+  const rawUsers = store.get('users') || {};
+  const usersList = Array.isArray(rawUsers) ? rawUsers : Object.values(rawUsers);
+  const localUser = usersList.find(u => u && u.email && u.email.toLowerCase() === normalizedEmail);
+  if (localUser) {
+    store.login(localUser.role || desiredRole || 'farmer', localUser.id, localUser);
+    return { user: localUser, isFallback: true };
+  }
+
+  const err = new Error('No account found with this email. Please check your credentials or create a new account.');
+  err.code = 'auth/user-not-found';
+  throw err;
 }
 
 

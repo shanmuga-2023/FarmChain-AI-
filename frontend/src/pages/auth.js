@@ -649,7 +649,7 @@ export function renderAuthPage(container) {
           authResult = await registerWithEmail(email, password, name, selectedRole, location, walletAddr);
           showToast(i18n.t('auth.toasts.registered', { role: i18n.t(`roles.${selectedRole}`), name }), 'success');
         } else {
-          authResult = await loginWithEmail(email, password);
+          authResult = await loginWithEmail(email, password, selectedRole);
           const activeRole = authResult?.user?.role || selectedRole;
           showToast(i18n.t('auth.toasts.loggedIn', { role: i18n.t(`roles.${activeRole}`) }), 'success');
         }
