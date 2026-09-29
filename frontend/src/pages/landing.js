@@ -57,7 +57,7 @@ export function renderLanding(container) {
       .landing-page {
         background: 
           linear-gradient(180deg, rgba(10, 13, 27, 0.72) 0%, rgba(15, 23, 42, 0.82) 40%, rgba(10, 13, 27, 0.92) 100%),
-          url('/back.png') center top / cover no-repeat fixed;
+          url('/back1.png') center top / cover no-repeat fixed;
         color: #ffffff;
         font-family: 'Inter', sans-serif;
         min-height: 100vh;
