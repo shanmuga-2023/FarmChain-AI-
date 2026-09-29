@@ -106,6 +106,10 @@ export function renderFarmerOrders(container) {
                             <button class="btn btn-primary btn-sm accept-btn" data-order-id="${o.orderId}">${i18n.t('farmer.orders.acceptBtn')}</button>
                           ` : o.status === 'accepted' ? `
                             <button class="btn btn-primary btn-sm ship-btn" data-order-id="${o.orderId}">${i18n.t('farmer.orders.shipBtn')}</button>
+                          ` : (o.status === 'delivered' || o.status === 'completed') ? `
+                            <button class="btn btn-secondary btn-sm generate-invoice-btn" data-order="${escapeHtml(JSON.stringify(o))}" style="display: inline-flex; align-items: center; gap: 6px;">
+                              ${getIcon('fileText', 14)} <span>${i18n.t('invoice.generate') || 'Generate Invoice'}</span>
+                            </button>
                           ` : `
                             <span style="color: var(--text-muted); font-size: 0.8rem;">—</span>
                           `}
@@ -173,4 +177,31 @@ export function renderFarmerOrders(container) {
 
   // Dynamic re-render on language switch
   
+  // Invoice Generation
+  container.querySelectorAll('.generate-invoice-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const order = JSON.parse(btn.dataset.order);
+      btn.innerHTML = `${getIcon('loader', 14)} <span>Processing...</span>`;
+      btn.disabled = true;
+      try {
+        const res = await fetch(`${API_BASE}/invoices`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(order)
+        });
+        const data = await res.json();
+        if (data.invoice) {
+          window.open(`${API_BASE}/invoices/${data.invoice.invoiceId}/html`);
+        } else {
+          showToast('Invoice could not be generated. Please try again.', 'error');
+        }
+      } catch (e) {
+        console.error(e);
+        showToast('Invoice could not be generated. Please try again.', 'error');
+      } finally {
+        btn.innerHTML = `${getIcon('fileText', 14)} <span>${i18n.t('invoice.generate') || 'Generate Invoice'}</span>`;
+        btn.disabled = false;
+      }
+    });
+  });
 }

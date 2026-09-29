@@ -212,6 +212,7 @@ export function renderConsumerMarketplace(container) {
           return;
         }
 
+        showToast('Processing order...', 'info');
         const orderData = {
           productId: product.productId,
           productName: product.name,
@@ -223,20 +224,23 @@ export function renderConsumerMarketplace(container) {
           quantity: qty,
           unit: product.unit,
           totalAmount: qty * product.pricePerUnit,
-        };
-
-        const result = await Marketplace.placeOrder(orderData);
-
-        // Use blockchain-returned orderId
-        const order = {
-          ...orderData,
-          orderId: result.transaction.orderId,
           pricePerUnit: product.pricePerUnit,
           status: 'pending',
           createdAt: Date.now(),
         };
 
-        store.addItem('orders', order);
+        // Sync to server using REAL API endpoint
+        let savedOrder;
+        try {
+          const res = await postOrder(orderData);
+          savedOrder = res?.data || res || orderData;
+        } catch(e) {
+          console.warn('Backend order sync failed', e);
+          savedOrder = orderData;
+          savedOrder.orderId = `ORD-${Date.now()}`;
+        }
+
+        store.addItem('orders', savedOrder);
 
         // Decrement product quantity
         const newQty = Math.max(0, product.quantity - qty);
@@ -248,14 +252,11 @@ export function renderConsumerMarketplace(container) {
         updateProduct(product.productId, { quantity: newQty }).catch(e => console.warn('API sync failed:', e));
         updateFirestoreProduct(product.productId, { quantity: newQty }).catch(e => console.warn('Firestore sync failed:', e));
 
-        // Sync to server
-        postOrder(order);
-
         // Sync to Firestore
-        addFirestoreOrder(order);
+        addFirestoreOrder(savedOrder).catch(e => console.warn('Firestore order sync failed:', e));
 
         // Trigger real-time order notification
-        notifyOrderPlaced(order);
+        notifyOrderPlaced(savedOrder);
 
         closeModal();
         
@@ -265,7 +266,7 @@ export function renderConsumerMarketplace(container) {
           const res = await fetch(`${API_BASE}/invoices`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(order)
+            body: JSON.stringify(savedOrder)
           });
           if (res.ok) {
             const data = await res.json();
@@ -274,8 +275,6 @@ export function renderConsumerMarketplace(container) {
         } catch (e) {
           console.warn('Invoice generation failed:', e);
         }
-        
-        const txHash = result.block ? result.block.hash : '0x' + Math.random().toString(36).substr(2, 16);
         
         let invoiceActions = '';
         if (invoiceData) {

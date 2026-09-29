@@ -31,8 +31,8 @@ function getSidebarMenus() {
       {
         section: i18n.t('nav.sections.insights') || 'Insights',
         items: [
-          { label: i18n.t('nav.aiPricing') || 'AI Pricing', icon: getIcon('pricing', 18), path: '/farmer/pricing' },
-          { label: i18n.t('assistant.title') || 'AI Assistant', icon: getIcon('assistant', 18), path: '/farmer/assistant' },
+          { label: i18n.t('nav.aiPricing') || 'Pricing', icon: getIcon('pricing', 18), path: '/farmer/pricing' },
+          { label: i18n.t('assistant.title') || 'Aura Bot', icon: getIcon('assistant', 18), path: '/farmer/assistant' },
         ],
       },
     ],

@@ -68,7 +68,7 @@ export function renderFarmingAssistant(container) {
             <input type="file" id="image-upload" accept="image/*" style="display: none;">
 
             <div style="flex: 1; position: relative;">
-              <textarea id="chat-input" placeholder="${i18n.t('assistant.placeholder')}" style="width: 100%; min-height: 44px; max-height: 120px; padding: 12px 16px; border-radius: 22px; border: 1px solid var(--border); background: var(--surface); color: var(--text-primary); resize: none; font-family: inherit; font-size: 0.95rem; line-height: 1.4; outline: none; transition: border-color 0.2s; overflow-y: auto;"></textarea>
+              <textarea id="chat-input" placeholder="${i18n.t('assistant.placeholder')}"></textarea>
             </div>
 
             <button id="send-btn" class="btn btn-primary" style="border-radius: 50%; width: 44px; height: 44px; flex-shrink: 0; padding: 0; display: flex; align-items: center; justify-content: center;" title="${i18n.t('assistant.send')}">
@@ -86,9 +86,14 @@ export function renderFarmingAssistant(container) {
     <style>
       .quick-action-btn { background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
       .quick-action-btn:hover { background: rgba(14,165,233,0.1); border-color: #0ea5e9; color: #0ea5e9; }
-      .chat-bubble { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
-      .chat-bubble.user { background: var(--primary); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
-      .chat-bubble.ai { background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border); border-bottom-left-radius: 4px; align-self: flex-start; }
+      .chat-row { display: flex; gap: 10px; align-items: flex-end; width: 100%; }
+      .chat-row.user { justify-content: flex-end; }
+      .chat-row.ai { justify-content: flex-start; }
+      .chat-bubble { max-width: 75%; padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; box-sizing: border-box; }
+      .chat-bubble.user { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+      .chat-bubble.ai { background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+      #chat-input { box-sizing: border-box; width: 100%; min-height: 44px; max-height: 120px; padding: 12px 16px; border-radius: 22px; border: 1px solid var(--border); background: var(--surface); color: var(--text-primary); resize: none; font-family: inherit; font-size: 0.95rem; line-height: 1.4; outline: none; transition: border-color 0.2s; overflow-y: auto; }
+      #chat-input:focus { border-color: var(--primary); }
       @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
       @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
       .typing-indicator span { display: inline-block; width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; margin: 0 2px; animation: type 1.4s infinite both; }
@@ -110,31 +115,17 @@ export function renderFarmingAssistant(container) {
 
   function appendMessage(sender, text, isHtml = false) {
     const row = document.createElement('div');
-    row.style.display = 'flex';
-    row.style.gap = '10px';
-    row.style.alignItems = 'flex-start';
-    row.style.alignSelf = sender === 'user' ? 'flex-end' : 'flex-start';
-    row.style.maxWidth = '85%';
+    row.className = `chat-row ${sender}`;
 
     if (sender === 'ai') {
       const avatar = document.createElement('div');
-      avatar.style.width = '32px';
-      avatar.style.height = '32px';
-      avatar.style.flexShrink = '0';
-      avatar.style.borderRadius = '10px';
-      avatar.style.background = 'var(--surface)';
-      avatar.style.border = '1px solid var(--border)';
-      avatar.style.padding = '4px';
-      avatar.style.display = 'flex';
-      avatar.style.alignItems = 'center';
-      avatar.style.justifyContent = 'center';
-      avatar.innerHTML = `<img src="/logo.png" alt="AI" style="width: 100%; height: 100%; object-fit: contain;">`;
+      avatar.style.cssText = 'width:32px;height:32px;flex-shrink:0;border-radius:10px;background:var(--surface);border:1px solid var(--border);padding:4px;display:flex;align-items:center;justify-content:center;';
+      avatar.innerHTML = `<img src="/logo.png" alt="AI" style="width:100%;height:100%;object-fit:contain;">`;
       row.appendChild(avatar);
     }
 
     const div = document.createElement('div');
     div.className = `chat-bubble ${sender}`;
-    div.style.flex = '1';
     if (isHtml) div.innerHTML = text;
     else div.textContent = text;
     row.appendChild(div);
@@ -145,29 +136,15 @@ export function renderFarmingAssistant(container) {
 
   function appendTyping() {
     const row = document.createElement('div');
-    row.style.display = 'flex';
-    row.style.gap = '10px';
-    row.style.alignItems = 'flex-start';
-    row.style.alignSelf = 'flex-start';
-    row.style.maxWidth = '85%';
+    row.className = 'chat-row ai';
 
     const avatar = document.createElement('div');
-    avatar.style.width = '32px';
-    avatar.style.height = '32px';
-    avatar.style.flexShrink = '0';
-    avatar.style.borderRadius = '10px';
-    avatar.style.background = 'var(--surface)';
-    avatar.style.border = '1px solid var(--border)';
-    avatar.style.padding = '4px';
-    avatar.style.display = 'flex';
-    avatar.style.alignItems = 'center';
-    avatar.style.justifyContent = 'center';
-    avatar.innerHTML = `<img src="/logo.png" alt="AI" style="width: 100%; height: 100%; object-fit: contain;">`;
+    avatar.style.cssText = 'width:32px;height:32px;flex-shrink:0;border-radius:10px;background:var(--surface);border:1px solid var(--border);padding:4px;display:flex;align-items:center;justify-content:center;';
+    avatar.innerHTML = `<img src="/logo.png" alt="AI" style="width:100%;height:100%;object-fit:contain;">`;
     row.appendChild(avatar);
 
     const div = document.createElement('div');
     div.className = 'chat-bubble ai typing';
-    div.style.flex = '1';
     div.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
     row.appendChild(div);
 

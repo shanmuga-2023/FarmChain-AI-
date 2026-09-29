@@ -665,22 +665,27 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 24px;
-  background: white;
-  border-radius: var(--radius-lg);
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
   width: fit-content;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0,0,0,0.06);
 }
 
 .qr-container canvas,
 .qr-container img {
-  border-radius: var(--radius-sm);
   display: block;
+  border-radius: 4px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
 .qr-label {
-  font-size: 0.8rem;
-  color: #333;
-  font-weight: 600;
+  font-size: 0.82rem;
+  color: #111827;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 /* --- Price Breakdown --- */

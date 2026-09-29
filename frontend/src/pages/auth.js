@@ -39,11 +39,11 @@ export function renderAuthPage(container) {
           <div class="auth-card-left">
             <!-- Header bar: Back arrow -->
             <div style="display: flex; align-items: center; margin-bottom: 20px;">
-              <a href="#/" id="auth-back-btn" title="Back to home" style="color: #94a3b8; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #161c32; border: 1px solid #232b49; transition: all 0.2s ease;">
+              <button type="button" id="auth-back-btn" title="${isRegister ? 'Back to login' : 'Back to home'}" style="color: #94a3b8; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #161c32; border: 1px solid #232b49; transition: all 0.2s ease; cursor: pointer;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="m15 18-6-6 6-6"/>
                 </svg>
-              </a>
+              </button>
             </div>
 
             <!-- Title & Subtitle (matching user screenshot) -->
@@ -589,6 +589,18 @@ export function renderAuthPage(container) {
       e.preventDefault();
       isRegisterMode = !isRegisterMode;
       renderForm();
+    });
+
+    // Back button: Register → Login, Login → Landing
+    container.querySelector('#auth-back-btn')?.addEventListener('click', () => {
+      if (isRegisterMode) {
+        // Go back to login
+        isRegisterMode = false;
+        renderForm();
+      } else {
+        // Go back to landing page
+        window.location.hash = '#/';
+      }
     });
 
     // Role Tab Switching

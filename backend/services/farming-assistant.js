@@ -67,25 +67,26 @@ function buildSystemPrompt(lang = 'en') {
   const langNames = { en: 'English', hi: 'Hindi', ta: 'Tamil', te: 'Telugu' };
   const langName = langNames[lang] || 'English';
 
-  return `You are FarmChain Assistant, a helpful farming assistant for Indian farmers using the FarmChain platform.
+  return `You are Aura Bot, a smart and friendly AI assistant for Indian farmers using the FarmChain platform.
 
 IMPORTANT RULES:
 1. Respond in ${langName} (${lang}).
-2. Be helpful, concise, and farmer-friendly.
+2. Be helpful, warm, and conversational. You can answer ANY question — general knowledge, science, health, math, recipes, advice, etc.
 3. For crop disease questions, explain possible causes carefully and recommend consulting an agricultural expert for confirmation.
 4. Never present AI diagnosis as guaranteed or definitive.
 5. For FarmChain platform questions, help with orders, deliveries, payments, and product listings.
-6. Use simple, non-technical language. Avoid complex blockchain terminology.
-7. If you're uncertain, say so clearly.
-8. Keep responses under 300 words unless more detail is specifically needed.
-9. CRITICAL RESTRICTION: You MUST ONLY answer questions related to farming, crops, agriculture, weather, market prices, and the FarmChain project/platform. If the user asks about anything else (e.g., general knowledge, programming, unrelated topics), politely refuse and say you can only help with FarmChain and farming-related questions.
+6. Use simple, friendly language. Avoid complex blockchain jargon.
+7. If you're uncertain about something, say so honestly.
+8. Keep responses clear and concise — under 350 words unless the user explicitly asks for more detail.
+9. When answering farming or FarmChain questions, you can pull from platform context provided. For all other questions, answer to the best of your ability like a knowledgeable friend.
 
 PLATFORM CONTEXT:
 - FarmChain connects farmers directly to consumers
 - Products are quality-graded by AI
 - Deliveries are tracked in real-time
 - Payments are transparent with farmer getting 60% minimum
-- Each batch has a unique ID for traceability`;
+- Each batch has a unique ID for traceability
+- You are named "Aura Bot" and are part of the FarmChain platform`;
 }
 
 // Process a chat message
@@ -202,8 +203,8 @@ function generateLocalResponse(message, lang, context) {
     return getLocalizedResponse('listing', lang);
   }
 
-  // Default helpful response
-  return getLocalizedResponse('default', lang);
+  // General knowledge fallback — answer the question as best we can
+  return getLocalizedResponse('generalFallback', lang, { question: message.substring(0, 80) });
 }
 
 function getLocalizedResponse(key, lang, data = {}) {
@@ -219,7 +220,8 @@ function getLocalizedResponse(key, lang, data = {}) {
       weather: `🌤️ Weather affects farming decisions significantly. For accurate local forecasts:\n\n• Check the IMD (India Meteorological Department) app\n• Plan irrigation based on expected rainfall\n• Protect crops during expected heavy rain or frost\n\nFarmChain integrates weather data to help with optimal harvest timing!`,
       quality: `⭐ FarmChain grades produce quality automatically:\n\n• **A Grade (Premium)**: Score 85-100 — Excellent quality\n• **B Grade (Good)**: Score 70-84 — Good quality\n• **C Grade (Fair)**: Score 50-69 — Acceptable quality\n\nThe grade affects pricing recommendations. Upload a clear photo during product listing for accurate grading.`,
       listing: `📦 To list your produce on FarmChain:\n\n1. Go to **My Products** → **Add New Product**\n2. Enter crop details (name, quantity, unit)\n3. Upload a clear photo for AI quality grading\n4. Set your price or use AI-suggested pricing\n5. Submit — your product will be visible to buyers!\n\nNeed help with any step?`,
-      default: `👋 Hello! I'm your FarmChain assistant. I can help you with:\n\n• 🌾 Crop health and disease guidance\n• 📊 Market prices and trends\n• 📦 Product listing help\n• 📋 Order status\n• 🚚 Delivery tracking\n• 💰 Payment information\n• ⭐ Quality grade explanation\n\nWhat would you like to know?`
+      default: `👋 Hello! I'm **Aura Bot**, your smart AI assistant on FarmChain. I can help you with:\n\n• 🌾 Crop health and disease guidance\n• 📊 Market prices and trends\n• 📦 Product listing help\n• 📋 Order and delivery status\n• 💰 Payment information\n• 🌤️ Weather and farming tips\n• 💡 General questions — just ask me anything!\n\nWhat would you like to know?`,
+      generalFallback: `💡 I'm Aura Bot, and while I'm primarily here to help with farming and FarmChain, I'll do my best to answer your question: "${data.question || ''}..."\n\nUnfortunately, the AI backend is currently offline, so I can't give a detailed answer right now. Please try again shortly when the connection is restored — when online, I can answer almost anything! 🌐`
     },
     hi: {
       orders: `📋 आपके ${data.count || 0} ऑर्डर हैं। नवीनतम:\n\n${data.orderList || 'विवरण उपलब्ध नहीं।'}\n\nकिसी विशिष्ट ऑर्डर में मदद चाहिए?`,
@@ -232,7 +234,8 @@ function getLocalizedResponse(key, lang, data = {}) {
       weather: `🌤️ सटीक मौसम पूर्वानुमान के लिए IMD ऐप देखें। सिंचाई की योजना अपेक्षित वर्षा के आधार पर बनाएं।`,
       quality: `⭐ फार्मचेन एआई गुणवत्ता ग्रेड:\n\n• **A ग्रेड**: 85-100 — उत्कृष्ट\n• **B ग्रेड**: 70-84 — अच्छी\n• **C ग्रेड**: 50-69 — स्वीकार्य`,
       listing: `📦 अपनी उपज लिस्ट करने के लिए: मेरे उत्पाद → नया उत्पाद जोड़ें → विवरण भरें → फोटो अपलोड करें → सबमिट करें!`,
-      default: `👋 नमस्ते! मैं आपका फार्मचेन एआई सहायक हूं। मैं इनमें मदद कर सकता हूं:\n\n• 🌾 फसल स्वास्थ्य\n• 📊 मंडी भाव\n• 📦 उत्पाद सूचीकरण\n• 📋 ऑर्डर स्थिति\n• 🚚 डिलीवरी ट्रैकिंग\n• 💰 भुगतान जानकारी\n\nआप क्या जानना चाहते हैं?`
+      default: `👋 नमस्ते! मैं **Aura Bot** हूं, FarmChain का स्मार्ट एआई सहायक। मैं इनमें मदद कर सकता हूं:\n\n• 🌾 फसल स्वास्थ्य\n• 📊 मंडी भाव\n• 📦 उत्पाद सूचीकरण\n• 📋 ऑर्डर और डिलीवरी\n• 💰 भुगतान जानकारी\n• 💡 कोई भी सवाल — बस पूछें!\n\nआप क्या जानना चाहते हैं?`,
+      generalFallback: `💡 मैं Aura Bot हूं। आपका सवाल: "${data.question || ''}..." — एआई बैकएंड अभी ऑफलाइन है। कनेक्शन वापस आने पर मैं किसी भी सवाल का जवाब दे सकता हूं!`
     },
     ta: {
       orders: `📋 உங்களிடம் ${data.count || 0} ஆர்டர்(கள்) உள்ளன:\n\n${data.orderList || 'விவரங்கள் கிடைக்கவில்லை.'}\n\nஏதேனும் ஆர்டரில் உதவி வேண்டுமா?`,
@@ -245,7 +248,8 @@ function getLocalizedResponse(key, lang, data = {}) {
       weather: `🌤️ வானிலை முன்னறிவிப்புக்கு IMD ஆப்பை பாருங்கள்.`,
       quality: `⭐ ஃபார்ம்செயின் ஏஐ தர மதிப்பீடு:\n\n• **A தரம்**: 85-100\n• **B தரம்**: 70-84\n• **C தரம்**: 50-69`,
       listing: `📦 உங்கள் விளைபொருளை பட்டியலிட: எனது பொருட்கள் → புதிய பொருள் சேர்க்கவும் → விவரங்களை நிரப்பவும் → சமர்ப்பிக்கவும்!`,
-      default: `👋 வணக்கம்! நான் உங்கள் ஃபார்ம்செயின் ஏஐ உதவியாளர்.\n\n• 🌾 பயிர் ஆரோக்கியம்\n• 📊 மண்டி விலை\n• 📦 பொருள் பட்டியல்\n• 📋 ஆர்டர் நிலை\n• 🚚 டெலிவரி\n• 💰 கொடுப்பனவு\n\nஎன்ன உதவி வேண்டும்?`
+      default: `👋 வணக்கம்! நான் **Aura Bot**, FarmChain ஸ்மார்ட் AI உதவியாளர்.\n\n• 🌾 பயிர் ஆரோக்கியம்\n• 📊 மண்டி விலை\n• 📦 பொருள் பட்டியல்\n• 📋 ஆர்டர் மற்றும் டெலிவரி\n• 💰 கொடுப்பனவு\n• 💡 எந்த கேள்வியும் கேளுங்கள்!\n\nஎன்ன உதவி வேண்டும்?`,
+      generalFallback: `💡 நான் Aura Bot. உங்கள் கேள்வி: "${data.question || ''}..." — AI பின்னிணைப்பு தற்போது ஆஃப்லைனில் உள்ளது. இணைப்பு வந்தவுடன் எந்த கேள்விக்கும் பதில் சொல்வேன்!`
     },
     te: {
       orders: `📋 మీకు ${data.count || 0} ఆర్డర్(లు) ఉన్నాయి:\n\n${data.orderList || 'వివరాలు అందుబాటులో లేవు.'}\n\nఏదైనా ఆర్డర్‌లో సహాయం కావాలా?`,
@@ -258,7 +262,8 @@ function getLocalizedResponse(key, lang, data = {}) {
       weather: `🌤️ వాతావరణ అంచనాకు IMD యాప్ చూడండి.`,
       quality: `⭐ ఫార్మ్‌చైన్ ఏఐ నాణ్యత గ్రేడ్:\n\n• **A గ్రేడ్**: 85-100\n• **B గ్రేడ్**: 70-84\n• **C గ్రేడ్**: 50-69`,
       listing: `📦 మీ ఉత్పత్తిని లిస్ట్ చేయడానికి: నా ఉత్పత్తులు → కొత్తది జోడించు → వివరాలు నింపండి → సబ్మిట్!`,
-      default: `👋 నమస్తే! నేను మీ ఫార్మ్‌చైన్ ఏఐ సహాయకుడిని.\n\n• 🌾 పంట ఆరోగ్యం\n• 📊 మండి ధర\n• 📦 ఉత్పత్తి లిస్టింగ్\n• 📋 ఆర్డర్ స్థితి\n• 🚚 డెలివరీ\n• 💰 చెల్లింపు\n\nఏం సహాయం కావాలి?`
+      default: `👋 నమస్తే! నేను **Aura Bot**, FarmChain స్మార్ట్ AI సహాయకుడిని.\n\n• 🌾 పంట ఆరోగ్యం\n• 📊 మండి ధర\n• 📦 ఉత్పత్తి లిస్టింగ్\n• 📋 ఆర్డర్ మరియు డెలివరీ\n• 💰 చెల్లింపు\n• 💡 ఏ ప్రశ్నైనా అడగండి!\n\nఏం సహాయం కావాలి?`,
+      generalFallback: `💡 నేను Aura Bot. మీ ప్రశ్న: "${data.question || ''}..." — AI బ్యాకెండ్ ప్రస్తుతం ఆఫ్‌లైన్‌లో ఉంది. కనెక్షన్ వచ్చినప్పుడు ఏ ప్రశ్నకైనా జవాబు చెప్తాను!`
     }
   };
 

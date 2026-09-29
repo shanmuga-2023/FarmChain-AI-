@@ -126,10 +126,24 @@ export async function fetchOrders() {
 }
 
 export async function postOrder(order) {
-  return await apiFetch('/orders', {
+  const result = await apiFetch('/orders', {
     method: 'POST',
     body: JSON.stringify(order),
   });
+  
+  // Automatically generate invoice for the new order
+  if (result) {
+    try {
+      await apiFetch('/invoices', {
+        method: 'POST',
+        body: JSON.stringify(order),
+      });
+    } catch(e) {
+      console.warn('Auto invoice generation failed:', e);
+    }
+  }
+  
+  return result;
 }
 
 export async function patchOrderStatus(orderId, updates) {

@@ -6,9 +6,9 @@ import QRCode from 'qrcode';
 
 export async function generateQRCode(data, options = {}) {
   const {
-    width = 200,
-    margin = 2,
-    color = { dark: '#22c55e', light: '#ffffff' },
+    width = 300,
+    margin = 1,
+    color = { dark: '#000000', light: '#ffffff' },
   } = options;
 
   try {
@@ -16,14 +16,16 @@ export async function generateQRCode(data, options = {}) {
       width,
       margin,
       color,
-      errorCorrectionLevel: 'M',
+      errorCorrectionLevel: 'H',
     });
     const img = document.createElement('img');
     img.src = dataUrl;
     img.width = width;
     img.height = width;
     img.alt = 'QR Code';
-    img.style.borderRadius = 'var(--radius-sm)';
+    img.style.borderRadius = '4px';
+    img.style.display = 'block';
+    img.style.imageRendering = 'crisp-edges';
     return img;
   } catch (err) {
     console.error('QR generation failed:', err);

@@ -1148,42 +1148,51 @@ export class FarmerProductWizard {
         pricePerUnit: this.formData.pricePerUnit,
       });
 
-      // Synchronously post to backend API so all clients/consumers can access immediately
-      postProduct(productData).then(saved => {
-        console.log('[FarmChain] Product synced to backend API:', saved);
-      }).catch(err => {
-        console.warn('Backend product sync warning:', err);
-      });
-      addFirestoreProduct(productData).catch(() => {});
-
       // Mint on Polygon Amoy
       const shouldMint = document.getElementById('wizard-mint-onchain')?.checked ?? true;
       if (shouldMint) {
-        createBatchOnChain({
-          batchId: productData.productId,
-          cropName: productData.name,
-          quantity: productData.quantity,
-          price: productData.pricePerUnit
-        }).then(txResult => {
+        showToast('Submitting...', 'info');
+        
+        try {
+          showToast('Transaction Pending...', 'info');
+          const txResult = await createBatchOnChain({
+            batchId: productData.productId,
+            cropName: productData.name,
+            quantity: productData.quantity,
+            price: productData.pricePerUnit
+          });
+          
           console.log('[FarmChain] Batch successfully minted on-chain:', txResult);
           productData.onChainBatchId = productData.productId;
           productData.blockchainVerified = true;
           if (txResult?.txHash) productData.txHash = txResult.txHash;
+          
           store.updateItem('products', p => p.productId === productData.productId, {
             blockchainVerified: true,
             onChainBatchId: productData.productId,
             onChainTxHash: txResult?.txHash
           });
-        }).catch(err => {
+          
+          showToast('Transaction Confirmed', 'success');
+        } catch(err) {
           console.warn('On-chain mint notice:', err.message);
-        });
+        }
       }
+
+      // Synchronously post to backend API so all clients/consumers can access immediately
+      try {
+        const saved = await postProduct(productData);
+        console.log('[FarmChain] Product synced to backend API:', saved);
+      } catch (err) {
+        console.warn('Backend product sync warning:', err);
+      }
+      await addFirestoreProduct(productData).catch(() => {});
 
       this.isSubmitting = false;
       this.isSuccess = true;
       this.render();
 
-      showToast(i18n.t('listingSuccessTitle'), 'success');
+      showToast(i18n.t('listingSuccessTitle') || 'Product Listed Successfully', 'success');
     } catch (err) {
       console.error('Silent listing fallback:', err);
       const fallbackProduct = {

@@ -8,18 +8,33 @@ import { showInvoicePreview } from './invoice-preview.js';
 import { generateInvoiceHTML } from './invoice-template.js';
 import { getIcon } from '../utils/icons.js';
 
-export function renderInvoicePage(container) {
+import { API_BASE } from '../utils/api.js';
+
+export async function renderInvoicePage(container) {
   const user = store.get('currentUser');
   const role = store.get('currentRole');
-  const allInvoices = store.get('invoices') || [];
+  if (!user || !role) return;
 
-  const invoices = allInvoices.filter(inv => {
-    if (role === 'farmer') return inv.seller?.id === user.id;
-    if (role === 'consumer') return inv.buyer?.id === user.id;
-    if (role === 'intermediary' || role === 'retailer') return inv.seller?.id === user.id || inv.buyer?.id === user.id;
-    if (role === 'admin') return true;
-    return false;
-  });
+  container.innerHTML = `
+    <div class="dashboard-layout">
+      <div id="sidebar-temp"></div>
+      <main class="dashboard-main">
+        <div style="padding: 40px; text-align: center;">Loading invoices...</div>
+      </main>
+    </div>
+  `;
+  renderSidebar(container.querySelector('#sidebar-temp'));
+
+  let invoices = [];
+  try {
+    const res = await fetch(`${API_BASE}/invoices?userId=${user.id}&role=${role}`);
+    if (res.ok) {
+      const data = await res.json();
+      invoices = data.invoices || [];
+    }
+  } catch (e) {
+    console.error('Failed to fetch invoices', e);
+  }
 
   const totalRevenue = invoices.reduce((s, inv) => s + (role === 'farmer' ? (inv.farmerPayout || 0) : (inv.total || 0)), 0);
 
@@ -33,8 +48,8 @@ export function renderInvoicePage(container) {
         <header class="glass-header">
           <div class="header-left">
             <div>
-              <h2 class="header-title">${i18n.t('invoice.title')}</h2>
-              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">${i18n.t('invoice.myInvoices')}</div>
+              <h2 class="header-title">${i18n.t('invoice.title') || 'Invoices'}</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">${i18n.t('invoice.myInvoices') || 'Invoice History'}</div>
             </div>
           </div>
         </header>
@@ -45,39 +60,39 @@ export function renderInvoicePage(container) {
             <div class="stat-card">
               <div class="stat-card-icon" style="background: rgba(14,165,233,0.1); color: #0ea5e9;">${getIcon('fileText', 22)}</div>
               <div class="stat-card-value">${invoices.length}</div>
-              <div class="stat-card-label">${i18n.t('invoice.title')}</div>
+              <div class="stat-card-label">${i18n.t('invoice.title') || 'Invoices'}</div>
             </div>
             <div class="stat-card">
               <div class="stat-card-icon" style="background: rgba(34,197,94,0.1); color: #22c55e;">${getIcon('creditCard', 22)}</div>
               <div class="stat-card-value">${formatCurrency(totalRevenue)}</div>
-              <div class="stat-card-label">${role === 'farmer' ? i18n.t('invoice.farmerPayout') : i18n.t('invoice.total')}</div>
+              <div class="stat-card-label">${role === 'farmer' ? (i18n.t('invoice.farmerPayout') || 'Payout') : (i18n.t('invoice.total') || 'Total')}</div>
             </div>
           </div>
 
           ${invoices.length === 0 ? `
             <div class="card" style="text-align: center; padding: 60px 24px;">
               <div style="display: flex; justify-content: center; margin-bottom: 16px; color: var(--text-muted);">${getIcon('fileText', 44)}</div>
-              <h3 style="color: var(--text-primary); margin-bottom: 8px;">${i18n.t('invoice.noInvoices')}</h3>
-              <p style="color: var(--text-secondary); font-size: 0.9rem;">${i18n.t('invoice.generatedAutomatically')}</p>
+              <h3 style="color: var(--text-primary); margin-bottom: 8px;">${i18n.t('invoice.noInvoices') || 'No Invoices Found'}</h3>
+              <p style="color: var(--text-secondary); font-size: 0.9rem;">${i18n.t('invoice.generatedAutomatically') || 'Invoices are generated upon completed transactions.'}</p>
             </div>
           ` : `
             <div class="card">
               <div class="card-header">
-                <div class="card-title">${i18n.t('invoice.myInvoices')}</div>
+                <div class="card-title">${i18n.t('invoice.myInvoices') || 'Invoice History'}</div>
               </div>
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>${i18n.t('invoice.invoiceId')}</th>
-                    <th>${i18n.t('invoice.produce')}</th>
-                    <th>${i18n.t('invoice.quantity')}</th>
-                    <th>${i18n.t('invoice.total')}</th>
-                    <th>${i18n.t('invoice.invoiceDate')}</th>
-                    <th>${i18n.t('common.actions')}</th>
+                    <th>${i18n.t('invoice.invoiceId') || 'Invoice ID'}</th>
+                    <th>${i18n.t('invoice.produce') || 'Produce'}</th>
+                    <th>${i18n.t('invoice.quantity') || 'Quantity'}</th>
+                    <th>${i18n.t('invoice.total') || 'Total'}</th>
+                    <th>${i18n.t('invoice.invoiceDate') || 'Date'}</th>
+                    <th>${i18n.t('common.actions') || 'Actions'}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  ${invoices.map(inv => `
+                  ${invoices.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).map(inv => `
                     <tr>
                       <td><span style="font-weight: 600; color: var(--primary);">${inv.invoiceId}</span></td>
                       <td>${inv.produce || '—'}</td>
@@ -85,9 +100,13 @@ export function renderInvoicePage(container) {
                       <td style="font-weight: 600;">${formatCurrency(inv.total || 0)}</td>
                       <td style="font-size: 0.85rem; color: var(--text-secondary);">${inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString(i18n.getLocale()) : '—'}</td>
                       <td>
-                        <button class="btn btn-sm invoice-preview-btn" data-invoice-id="${inv.invoiceId}" style="font-size: 0.8rem; padding: 6px 12px; background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <button class="btn btn-sm invoice-view-btn" data-invoice-id="${inv.invoiceId}" style="font-size: 0.8rem; padding: 6px 12px; background: var(--surface-secondary); border: 1px solid var(--border); color: var(--text-primary); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
                           ${getIcon('search', 13)}
-                          <span>${i18n.t('invoice.preview')}</span>
+                          <span>${i18n.t('invoice.preview') || 'View'}</span>
+                        </button>
+                        <button class="btn btn-sm btn-primary invoice-dl-btn" data-invoice-id="${inv.invoiceId}" style="font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                          ${getIcon('download', 13)}
+                          <span>Print/DL</span>
                         </button>
                       </td>
                     </tr>
@@ -101,12 +120,19 @@ export function renderInvoicePage(container) {
     </div>
   `;
 
-  // Bind preview buttons
-  container.querySelectorAll('.invoice-preview-btn').forEach(btn => {
+  // Bind view buttons
+  container.querySelectorAll('.invoice-view-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const invoiceId = btn.dataset.invoiceId;
-      const invoice = invoices.find(inv => inv.invoiceId === invoiceId);
-      if (invoice) showInvoicePreview(invoice);
+      window.open(`${API_BASE}/invoices/${invoiceId}/html`);
+    });
+  });
+  
+  // Bind download/print buttons
+  container.querySelectorAll('.invoice-dl-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const invoiceId = btn.dataset.invoiceId;
+      window.open(`${API_BASE}/invoices/${invoiceId}/html?print=true`);
     });
   });
 }

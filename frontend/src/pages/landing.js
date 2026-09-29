@@ -43,7 +43,7 @@ export function renderLanding(container) {
         position: absolute;
         inset: 0;
         opacity: 0;
-        transition: opacity 0.5s ease;
+        transition: opacity 1.2s ease;
         pointer-events: auto;
         z-index: 1;
       }
@@ -556,13 +556,13 @@ export function renderLanding(container) {
 
   const finishIntro = () => {
     if (!cinematicContainer) return;
-    cinematicContainer.style.transition = 'opacity 0.5s ease';
+    cinematicContainer.style.transition = 'opacity 0.8s ease';
     cinematicContainer.style.opacity = '0';
     setTimeout(() => {
       cinematicContainer.style.display = 'none';
       sessionStorage.setItem('farmchainIntroShown', 'true');
       window.scrollTo(0, 0);
-    }, 500);
+    }, 800);
   };
 
   vid.addEventListener('ended', finishIntro);
@@ -580,26 +580,33 @@ export function renderLanding(container) {
     await wait(700); 
 
     // Adjust transition speed for crisp blinking
-    logo.style.transition = 'opacity 0.2s ease-in-out';
+    logo.style.transition = 'opacity 0.15s ease-in-out';
 
     // 2. Blink 1
     setOpacity('0');
-    await wait(300);
+    await wait(200);
     setOpacity('1');
-    await wait(400);
+    await wait(300);
 
     // 3. Blink 2
     setOpacity('0');
-    await wait(300);
+    await wait(200);
     setOpacity('1');
-    await wait(400);
+    await wait(300);
 
-    // 4. Fade logo out smoothly before video
+    // 4. Blink 3
+    setOpacity('0');
+    await wait(200);
+    setOpacity('1');
+    await wait(300);
+
+    // 5. Fade logo out smoothly before video
     logo.style.transition = 'opacity 0.4s ease';
     setOpacity('0');
     await wait(400); // Wait for logo to fully disappear
 
-    // 5. Fade video in and play
+    // 6. Fade video in smoothly and play at fast speed
+    vid.playbackRate = 3;
     vidContainer.style.opacity = '1';
     try {
       await vid.play();

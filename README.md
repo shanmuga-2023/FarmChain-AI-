@@ -85,10 +85,10 @@ Indian farmers routinely lose **40–60% of crop value** to opaque intermediary 
 
 | Role | Core Workflows | Feature Highlights |
 |:-----|:---------------|:-------------------|
-| 🌾 **Farmer** | Dual-Mode Listing Wizard (Voice 🎤 + Manual ⌨️), Live Farm Camera with GPS & Timestamp, Orders | 📸 Live Farm Camera with in-pixel GPS & timestamp, 🎙️ Dual-Mode Wizard, ⛓️ **Mint On-Chain Batch on Polygon Amoy**, 🤫 Zero Blockchain Terminology, 🌐 Full regional localization, 🔬 AI Quality Grade badge, ⛽ ₹0 Gas Paymaster |
-| 🏪 **Intermediary** | Bulk Procurement, Quality Re-Verification, Stage Updates | 🔬 Checkpoint Re-Verification, ⛓️ On-chain stage transitions (`Harvested` → `InTransit` → `QualityChecked`), 🔒 zk-SNARK volume privacy toggle, B2B wholesale routing |
-| 🛒 **Retailer** | Wholesale Sourcing, Shelf QR, Stage Transition | 🔬 Verified AI Quality Grade badge, Live GPS harvest tags, on-chain stage update to `AtRetailer` & `Sold`, printable QR tags |
-| 👤 **Consumer** | Marketplace, Trace, Anti-Cloning, QR Verification | 🟣 **Polygon Amoy On-Chain Verification Badge** with direct PolygonScan link, spatial-temporal QR clone detection, price transparency breakdown |
+| 🌾 **Farmer** | Dual-Mode Listing Wizard (Voice 🎤 + Manual ⌨️), Live Farm Camera with GPS & Timestamp, Orders, Aura Bot | 📸 Live Farm Camera, 🎙️ Dual-Mode Wizard, 🤖 Aura Bot Assistant, ⛓️ **Mint On-Chain Batch on Polygon Amoy**, 🤫 Zero Blockchain Terminology, 🌐 Full regional localization, 🔬 AI Quality Grade badge, ⛽ ₹0 Gas Paymaster |
+| 🏪 **Intermediary** | Bulk Procurement, Quality Re-Verification, Delivery Tracking | 🔬 Checkpoint Re-Verification, ⛓️ On-chain stage transitions (`Harvested` → `InTransit` → `QualityChecked`), 🚚 Live Delivery Tracking, 🔒 zk-SNARK volume privacy toggle |
+| 🛒 **Retailer** | Wholesale Sourcing, Shelf QR, Stage Transition, Delivery Tracking | 🔬 Verified AI Quality Grade badge, 🚚 Live Delivery Tracking, Live GPS harvest tags, on-chain stage update to `AtRetailer` & `Sold`, high-quality pure-black printable QR tags |
+| 👤 **Consumer** | Marketplace, Trace, Anti-Cloning, QR Verification | 🟣 **Polygon Amoy On-Chain Verification Badge** with direct PolygonScan link, spatial-temporal QR clone detection, price transparency & invoice billing breakdown, interactive delivery tracking |
 | 🔧 **Admin** | Security, Fraud, Sybil Detection, Forecasting, Roles | 🛡️ Role management (`addFarmer`, `addInspector`), Quality fraud alerts, 🧪 Sybil QR attack simulation, demand forecasting |
 
 ---

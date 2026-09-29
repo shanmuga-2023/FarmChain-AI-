@@ -443,12 +443,12 @@ export class LiveCamera {
     `;
 
     overlay.innerHTML = `
-      <div style="width: 90%; max-width: 560px; background: var(--bg-card, #1a1a2e); border-radius: 16px; overflow: hidden; border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 25px 60px rgba(0,0,0,0.5);">
+      <div style="width: 90%; max-width: 560px; background: #111827; border-radius: 16px; overflow: hidden; border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 25px 60px rgba(0,0,0,0.5);">
         <!-- Header -->
-        <div style="padding: 14px 18px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(34, 197, 94, 0.1)); border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+        <div style="padding: 14px 18px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(34, 197, 94, 0.12)); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <div style="font-weight: 800; font-size: 0.95rem; color: #fff;">${i18n.t('camera.modalTitle')}</div>
-            <div style="font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-top: 2px;">${i18n.t('camera.modalSub')}</div>
+            <div style="font-weight: 800; font-size: 0.95rem; color: #f8fafc;">${i18n.t('camera.modalTitle')}</div>
+            <div style="font-size: 0.72rem; color: rgba(255,255,255,0.55); margin-top: 2px;">${i18n.t('camera.modalSub')}</div>
           </div>
           <button id="camera-close-btn" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">${i18n.t('common.close')}</button>
         </div>
@@ -481,33 +481,33 @@ export class LiveCamera {
         <!-- Controls -->
         <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
           <!-- GPS Status & Refinement Bar -->
-          <div id="camera-gps-status" style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); border-radius: 10px;">
-            <span style="color: var(--accent-green); display: flex; align-items: center;">${getIcon('mapPin', 18)}</span>
+          <div id="camera-gps-status" style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.25); border-radius: 10px;">
+            <span style="color: #4ade80; display: flex; align-items: center;">${getIcon('mapPin', 18)}</span>
             <div style="flex: 1; min-width: 0;">
               <div id="gps-status-text" style="font-size: 0.78rem; font-weight: 700; color: #22c55e;">${i18n.t('camera.detectingCoords')}</div>
-              <div id="gps-address-text" style="font-size: 0.72rem; color: rgba(255,255,255,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${i18n.t('common.pleaseWait')}</div>
+              <div id="gps-address-text" style="font-size: 0.72rem; color: rgba(255,255,255,0.65); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${i18n.t('common.pleaseWait')}</div>
             </div>
             <div style="display: flex; gap: 4px; align-items: center;">
-              <div id="gps-accuracy-badge" style="font-size: 0.65rem; padding: 2px 8px; background: rgba(34,197,94,0.15); border-radius: 20px; color: #22c55e; font-weight: 600;">--</div>
-              <button id="gps-refresh-btn" title="Refresh GPS" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; padding: 4px 7px; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg></button>
+              <div id="gps-accuracy-badge" style="font-size: 0.65rem; padding: 2px 8px; background: rgba(34,197,94,0.18); border-radius: 20px; color: #4ade80; font-weight: 600;">--</div>
+              <button id="gps-refresh-btn" title="Refresh GPS" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #e2e8f0; border-radius: 6px; padding: 4px 7px; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg></button>
               <button id="gps-edit-btn" title="${i18n.t('common.edit')}" style="background: rgba(168,85,247,0.2); border: 1px solid rgba(168,85,247,0.4); color: #c084fc; border-radius: 6px; padding: 3px 8px; font-size: 0.72rem; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">${getIcon('edit', 12)} ${i18n.t('common.edit')}</button>
             </div>
           </div>
 
           <!-- Inline Manual Location Refinement Box (Toggleable) -->
-          <div id="location-edit-box" style="display: none; padding: 10px; background: rgba(0,0,0,0.3); border: 1px dashed rgba(168,85,247,0.35); border-radius: 8px; flex-direction: column; gap: 8px;">
-            <div style="font-size: 0.72rem; color: rgba(255,255,255,0.6); display: flex; justify-content: space-between; align-items: center;">
+          <div id="location-edit-box" style="display: none; padding: 10px; background: rgba(0,0,0,0.4); border: 1px dashed rgba(168,85,247,0.4); border-radius: 8px; flex-direction: column; gap: 8px;">
+            <div style="font-size: 0.72rem; color: rgba(255,255,255,0.7); display: flex; justify-content: space-between; align-items: center;">
               <span>${i18n.t('camera.refinePrompt')}</span>
               <span id="close-edit-box" style="cursor: pointer; color: #ef4444; display: inline-flex; align-items: center;">${getIcon('x', 14)}</span>
             </div>
             <div style="display: flex; gap: 6px;">
-              <input type="text" id="manual-location-input" placeholder="${i18n.t('camera.searchPlaceholder')}" style="flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 10px; color: #fff; font-size: 0.78rem; outline: none;" />
+              <input type="text" id="manual-location-input" placeholder="${i18n.t('camera.searchPlaceholder')}" style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 6px; padding: 6px 10px; color: #f1f5f9; font-size: 0.78rem; outline: none;" />
               <button id="search-location-btn" style="background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; color: #fff; border-radius: 6px; padding: 6px 12px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">${i18n.t('common.set')}</button>
             </div>
             <div id="quick-preset-container" style="display: flex; gap: 6px; flex-wrap: wrap;">
-              <button class="preset-loc-btn" data-loc="Thuraiyur, Tiruchirappalli, Tamil Nadu" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 2px 8px; font-size: 0.68rem; color: #cbd5e1; cursor: pointer;">Thuraiyur, Trichy</button>
-              <button class="preset-loc-btn" data-loc="Coimbatore, Tamil Nadu" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 2px 8px; font-size: 0.68rem; color: #cbd5e1; cursor: pointer;">Coimbatore</button>
-              <button class="preset-loc-btn" data-loc="Nashik, Maharashtra" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 2px 8px; font-size: 0.68rem; color: #cbd5e1; cursor: pointer;">Nashik</button>
+              <button class="preset-loc-btn" data-loc="Thuraiyur, Tiruchirappalli, Tamil Nadu" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 2px 8px; font-size: 0.68rem; color: #e2e8f0; cursor: pointer;">Thuraiyur, Trichy</button>
+              <button class="preset-loc-btn" data-loc="Coimbatore, Tamil Nadu" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 2px 8px; font-size: 0.68rem; color: #e2e8f0; cursor: pointer;">Coimbatore</button>
+              <button class="preset-loc-btn" data-loc="Nashik, Maharashtra" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 2px 8px; font-size: 0.68rem; color: #e2e8f0; cursor: pointer;">Nashik</button>
             </div>
           </div>
 
@@ -516,7 +516,7 @@ export class LiveCamera {
             <button id="camera-capture-btn" disabled style="flex: 1; padding: 12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; border: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; opacity: 0.5;">
               ${getIcon('camera', 16)} <span>${i18n.t('camera.captureVerify')}</span>
             </button>
-            <button id="camera-retake-btn" style="display: none; flex: 1; padding: 12px; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">
+            <button id="camera-retake-btn" style="display: none; flex: 1; padding: 12px; background: rgba(255,255,255,0.1); color: #f1f5f9; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">
               ${i18n.t('camera.retake')}
             </button>
             <button id="camera-use-btn" style="display: none; flex: 1; padding: 12px; background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; border: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: none; align-items: center; justify-content: center; gap: 6px;">
@@ -586,7 +586,7 @@ export class LiveCamera {
         console.warn('Camera access failed:', err);
         loading.innerHTML = `
           <div style="color: #ef4444; font-size: 0.85rem; font-weight: 600;">${i18n.t('camera.accessDenied')}</div>
-          <div style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-top: 6px;">${i18n.t('camera.demoMode')}</div>
+          <div style="color: rgba(255,255,255,0.6); font-size: 0.75rem; margin-top: 6px;">${i18n.t('camera.demoMode')}</div>
         `;
         captureBtn.disabled = false;
         captureBtn.style.opacity = '1';

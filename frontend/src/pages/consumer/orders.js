@@ -108,8 +108,8 @@ export function renderConsumerOrders(container) {
                         <td><span class="badge ${badge.class}">${badge.icon} ${badge.label}</span></td>
                         <td style="font-size: 0.8rem; color: var(--text-muted);">${o.createdAt ? timeAgo(o.createdAt) : 'N/A'}</td>
                         <td>
-                           <button class="btn btn-secondary btn-sm" onclick="fetch('${API_BASE}/invoices/order/${o.orderId}').then(r=>r.json()).then(d=>{ if(d.invoice) window.open('${API_BASE}/invoices/'+d.invoice.invoiceId+'/html'); else alert('Invoice not found'); })" style="display: inline-flex; align-items: center; gap: 6px;">
-                             ${getIcon('fileText', 14)} <span>${i18n.t('consumer.viewInvoiceBtn') || 'View'}</span>
+                           <button class="btn btn-secondary btn-sm generate-invoice-btn" data-order="${escapeHtml(JSON.stringify(o))}" style="display: inline-flex; align-items: center; gap: 6px;">
+                             ${getIcon('fileText', 14)} <span>${i18n.t('invoice.generate') || 'Generate Invoice'}</span>
                            </button>
                         </td>
                       </tr>
@@ -173,6 +173,34 @@ export function renderConsumerOrders(container) {
       container.querySelectorAll('#consumer-orders-tbody tr').forEach(row => {
         row.style.display = filter === 'all' || row.dataset.status === filter ? '' : 'none';
       });
+    });
+  });
+
+  // Invoice Generation
+  container.querySelectorAll('.generate-invoice-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const order = JSON.parse(btn.dataset.order);
+      btn.innerHTML = `${getIcon('loader', 14)} <span>Processing...</span>`;
+      btn.disabled = true;
+      try {
+        const res = await fetch(`${API_BASE}/invoices`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(order)
+        });
+        const data = await res.json();
+        if (data.invoice) {
+          window.open(`${API_BASE}/invoices/${data.invoice.invoiceId}/html`);
+        } else {
+          showToast('Invoice could not be generated. Please try again.', 'error');
+        }
+      } catch (e) {
+        console.error(e);
+        showToast('Invoice could not be generated. Please try again.', 'error');
+      } finally {
+        btn.innerHTML = `${getIcon('fileText', 14)} <span>${i18n.t('invoice.generate') || 'Generate Invoice'}</span>`;
+        btn.disabled = false;
+      }
     });
   });
 }

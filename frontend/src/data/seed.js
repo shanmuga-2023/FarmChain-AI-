@@ -497,6 +497,47 @@ export async function seedData() {
   }
   store.set('transfers', transfers);
 
+  // Create demo deliveries
+  const deliveries = [];
+  const statuses = ['ORDER_CREATED', 'PICKUP_ASSIGNED', 'PICKED_UP', 'IN_TRANSIT', 'NEAR_DESTINATION', 'OUT_FOR_DELIVERY', 'DELIVERED', 'BUYER_CONFIRMED'];
+  for (const order of orders) {
+    let dStatus = 'IN_TRANSIT';
+    if (order.status === 'delivered') dStatus = 'DELIVERED';
+    else if (order.status === 'pending') dStatus = 'ORDER_CREATED';
+    else if (order.status === 'accepted') dStatus = 'PICKUP_ASSIGNED';
+
+    const delivery = {
+      deliveryId: 'DEL-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+      orderId: order.orderId,
+      produce: order.productName,
+      quantity: order.quantity,
+      unit: order.unit,
+      farmerId: order.sellerId,
+      status: dStatus,
+      estimatedDelivery: Date.now() + Math.random() * 2 * 86400000,
+      batchId: 'BATCH-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+      qualityGrade: 'A',
+      driver: { name: 'Raju Driver', phone: '+91 98765 43210' },
+      events: [
+        { status: 'ORDER_CREATED', timestamp: new Date(Date.now() - 48*3600000).toISOString(), actor: order.sellerId },
+        { status: 'PICKUP_ASSIGNED', timestamp: new Date(Date.now() - 24*3600000).toISOString(), actor: 'admin-001' }
+      ]
+    };
+    
+    // Assign buyer IDs based on role
+    if (order.buyerRole === 'intermediary') delivery.intermediaryId = order.buyerId;
+    if (order.buyerRole === 'retailer') delivery.retailerId = order.buyerId;
+    if (order.buyerRole === 'consumer') delivery.consumerId = order.buyerId;
+    
+    // If delivered, add delivery event
+    if (dStatus === 'DELIVERED') {
+       delivery.events.push({ status: 'DELIVERED', timestamp: new Date(Date.now() - 3600000).toISOString(), actor: delivery.driver.name });
+    }
+
+    deliveries.push(delivery);
+  }
+  store.set('deliveries', deliveries);
+
   console.log('[Seed] Data loaded successfully');
   console.log(`   [Seed] ${registeredProducts.length} products registered`);
   console.log(`   [Seed] ${listings.length} listings created`);

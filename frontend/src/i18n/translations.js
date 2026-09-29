@@ -7,7 +7,7 @@
 export const translations = {
   "en": {
 "assistant": {
-      "title": "AI Farming Assistant",
+      "title": "Aura Bot",
       "subtitle": "Ask anything about your farm",
       "placeholder": "Type your question here...",
       "send": "Send",
@@ -201,7 +201,7 @@ export const translations = {
     "enterAs": "Enter as",
     "myProducts": "My Products",
     "orders": "Orders",
-    "aiPricing": "AI Pricing",
+    "aiPricing": "Pricing",
     "blockchainExplorer": "Market Explorer",
     "traceProduct": "Trace Product",
     "scanQR": "Scan QR Code",
@@ -298,7 +298,7 @@ export const translations = {
         "blockchain": "Blockchain"
       },
       "myProducts": "My Products",
-      "aiPricing": "AI Pricing",
+      "aiPricing": "Pricing",
       "transactions": "Transactions",
       "sourceProducts": "Source Products",
       "myStorefront": "My Storefront",
@@ -1528,7 +1528,7 @@ export const translations = {
   },
   "hi": {
     "assistant": {
-      "title": "एआई कृषि सहायक",
+      "title": "Aura Bot",
       "subtitle": "अपने खेत के बारे में कुछ भी पूछें",
       "placeholder": "अपना प्रश्न यहां लिखें...",
       "send": "भेजें",
@@ -1722,7 +1722,7 @@ export const translations = {
     "enterAs": "के रूप में प्रवेश करें",
     "myProducts": "मेरे उत्पाद",
     "orders": "ऑर्डर",
-    "aiPricing": "AI मूल्य निर्धारण",
+    "aiPricing": "Pricing",
     "blockchainExplorer": "मार्केट एक्सप्लोरर",
     "traceProduct": "उत्पाद ट्रैक करें",
     "scanQR": "QR कोड स्कैन करें",
@@ -1819,7 +1819,7 @@ export const translations = {
         "blockchain": "ब्लॉकचेन"
       },
       "myProducts": "मेरी उपज",
-      "aiPricing": "एआई मूल्य निर्धारण",
+      "aiPricing": "Pricing",
       "transactions": "लेन-देन",
       "sourceProducts": "उपज खरीदें",
       "myStorefront": "मेरी दुकान",
@@ -2997,7 +2997,7 @@ export const translations = {
   },
   "ta": {
 "assistant": {
-      "title": "ஏஐ விவசாய உதவியாளர்",
+      "title": "Aura Bot",
       "subtitle": "உங்கள் பண்ணை பற்றி எதையும் கேளுங்கள்",
       "placeholder": "உங்கள் கேள்வியை இங்கே தட்டச்சு செய்யவும்...",
       "send": "அனுப்பு",
@@ -3191,7 +3191,7 @@ export const translations = {
     "enterAs": "ஆக நுழைக",
     "myProducts": "எனது விளைபொருட்கள்",
     "orders": "ஆர்டர்கள்",
-    "aiPricing": "AI விலை நிர்ணயம்",
+    "aiPricing": "Pricing",
     "blockchainExplorer": "சந்தை எக்ஸ்ப்ளோரர்",
     "traceProduct": "தயாரிப்பைக் கண்காணிக்கவும்",
     "scanQR": "QR குறியீட்டை ஸ்கேன் செய்க",
@@ -3288,7 +3288,7 @@ export const translations = {
         "blockchain": "பிளாக்செயின்"
       },
       "myProducts": "எனது விளைபொருட்கள்",
-      "aiPricing": "AI விலை நிர்ணயம்",
+      "aiPricing": "Pricing",
       "transactions": "பரிவர்த்தனைகள்",
       "sourceProducts": "விளைபொருட்களைப் பெறுக",
       "myStorefront": "எனது கடை",
@@ -4518,7 +4518,7 @@ export const translations = {
   },
   "te": {
     "assistant": {
-      "title": "ఏఐ వ్యవసాయ సహాయకుడు",
+      "title": "Aura Bot",
       "subtitle": "మీ పొలం గురించి ఏదైనా అడగండి",
       "placeholder": "మీ ప్రశ్నను ఇక్కడ టైప్ చేయండి...",
       "send": "పంపు",
@@ -4712,7 +4712,7 @@ export const translations = {
     "enterAs": "గా ప్రవేశించండి",
     "myProducts": "నా ఉత్పత్తులు",
     "orders": "ఆర్డర్లు",
-    "aiPricing": "AI ధర నిర్ణయం",
+    "aiPricing": "Pricing",
     "blockchainExplorer": "మార్కెట్ ఎక్స్‌ప్లోరర్",
     "traceProduct": "ఉత్పత్తిని ట్రాక్ చేయండి",
     "scanQR": "QR కోడ్ స్కాన్ చేయండి",
@@ -4809,7 +4809,7 @@ export const translations = {
         "blockchain": "బ్లాక్‌చైన్"
       },
       "myProducts": "నా ఉత్పత్తులు",
-      "aiPricing": "AI ధరల నిర్ణయం",
+      "aiPricing": "Pricing",
       "transactions": "లావాదేవీలు",
       "sourceProducts": "ఉత్పత్తుల సేకరణ",
       "myStorefront": "నా దుకాణం",
