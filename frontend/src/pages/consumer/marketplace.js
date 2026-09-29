@@ -6,7 +6,7 @@
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, getCropEmoji, showToast, createModal, closeModal, getStatusBadge, localizeCropName, localizeUnit, localizeCategory } from '../../utils/helpers.js';
+import { formatCurrency, getCropEmoji, getProductImage, showToast, createModal, closeModal, getStatusBadge, localizeCropName, localizeUnit, localizeCategory } from '../../utils/helpers.js';
 import { FairPricePredictor } from '../../ai/price-predictor.js';
 import { Marketplace } from '../../blockchain/contracts.js';
 import { router } from '../../utils/router.js';
@@ -66,8 +66,8 @@ export function renderConsumerMarketplace(container) {
 
               return `
                 <div class="product-card marketplace-item" data-category="${p.category}" data-organic="${p.isOrganic}" data-name="${p.name.toLowerCase()}">
-                  <div class="product-card-image" style="display: flex; align-items: center; justify-content: center; background: rgba(14, 165, 233, 0.05); color: var(--primary);">
-                    ${p.photoUrl ? `<img src="${p.photoUrl}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;" />` : getIcon('sprout', 44)}
+                  <div class="product-card-image" style="display: flex; align-items: center; justify-content: center; background: rgba(14, 165, 233, 0.05); position: relative; overflow: hidden; height: 160px;">
+                    <img src="${p.photoUrl || getProductImage(p.name)}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
                     ${p.isOrganic ? `<span class="product-card-badge badge-organic" style="display: inline-flex; align-items: center; gap: 4px;">${getIcon('leaf', 12)} ${i18n.t('common.organic') || 'Organic'}</span>` : ''}
                     ${productCerts.length > 0 ? `<span class="product-card-badge badge-verified" style="top: 40px; display: inline-flex; align-items: center; gap: 4px;">${getIcon('checkCircle', 12)} ${i18n.t('common.certified') || 'Certified'}</span>` : ''}
                   </div>
@@ -149,8 +149,8 @@ export function renderConsumerMarketplace(container) {
 
       createModal(i18n.t('consumer.purchaseModalTitle') || 'Purchase Product', `
         <div style="text-align: center; margin-bottom: 16px;">
-          <div style="width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 14px; background: rgba(14,165,233,0.12); display: flex; align-items: center; justify-content: center; color: var(--primary);">
-            ${getIcon('sprout', 30)}
+          <div style="width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+            <img src="${product.photoUrl || getProductImage(product.name)}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
           </div>
           <h3 style="margin-top: 8px;">${escapeHtml(locCrop)}</h3>
           <p style="color: var(--text-muted);">${i18n.t('consumer.purchaseFrom', { farmer: escapeHtml(product.farmerName), origin: escapeHtml(product.origin) }) || `From ${escapeHtml(product.farmerName)} · ${escapeHtml(product.origin)}`}</p>

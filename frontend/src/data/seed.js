@@ -123,6 +123,7 @@ const PRODUCTS = [
     isOrganic: true,
     description: 'Premium aged Basmati rice, organically grown using traditional methods. No pesticides or chemical fertilizers.',
     emoji: '',
+    photoUrl: '/products/organic-basmati-rice.jpg',
   },
   {
     name: 'Fresh Nashik Onions',
@@ -137,6 +138,7 @@ const PRODUCTS = [
     isOrganic: false,
     description: 'Premium quality red onions from Nashik. Fresh harvest, well-sorted and graded.',
     emoji: '',
+    photoUrl: '/products/fresh-nashik-onions.jpg',
   },
   {
     name: 'Punjab Premium Wheat',
@@ -151,6 +153,7 @@ const PRODUCTS = [
     isOrganic: false,
     description: 'High-quality wheat grain, sun-dried and cleaned. Ideal for premium flour production.',
     emoji: '',
+    photoUrl: '/products/punjab-premium-wheat.jpg',
   },
   {
     name: 'Alphonso Mangoes',
@@ -165,6 +168,7 @@ const PRODUCTS = [
     isOrganic: true,
     description: 'GI-tagged Ratnagiri Alphonso mangoes. Naturally ripened, premium export quality.',
     emoji: '',
+    photoUrl: '/products/alphonso-mangoes.jpg',
   },
   {
     name: 'Organic Turmeric',
@@ -179,6 +183,7 @@ const PRODUCTS = [
     isOrganic: true,
     description: 'High-curcumin Erode turmeric. Organically cultivated, sun-dried and polished.',
     emoji: '',
+    photoUrl: '/products/organic-turmeric.jpg',
   },
   {
     name: 'Fresh Tomatoes',
@@ -193,6 +198,7 @@ const PRODUCTS = [
     isOrganic: false,
     description: 'Farm-fresh, vine-ripened tomatoes. Sorted by size, packed in ventilated crates.',
     emoji: '',
+    photoUrl: '/products/fresh-tomatoes.jpg',
   },
   {
     name: 'Organic Bananas',
@@ -207,6 +213,7 @@ const PRODUCTS = [
     isOrganic: true,
     description: 'Naturally ripened Robusta bananas. Chemical-free cultivation, packed fresh.',
     emoji: '',
+    photoUrl: '/products/organic-bananas.jpg',
   },
   {
     name: 'Green Chillies',
@@ -221,6 +228,22 @@ const PRODUCTS = [
     isOrganic: false,
     description: 'Guntur green chillies. Medium spice level, vibrant green color, freshly picked.',
     emoji: '',
+    photoUrl: '/products/green-chillies.jpg',
+  },
+  {
+    name: 'Desi Tomato',
+    category: 'Vegetables',
+    farmerId: 'farmer-001',
+    farmerName: 'Rajesh Kumar',
+    quantity: 500,
+    unit: 'kg',
+    pricePerUnit: 45,
+    origin: 'Srirangam, Tiruchirappalli, Tamil Nadu',
+    harvestDate: '2026-09-29',
+    isOrganic: true,
+    description: 'Naturally grown indigenous Desi tomatoes. Tangy, rich flavor and juicy texture straight from Srirangam farms.',
+    emoji: '',
+    photoUrl: '/products/desi-tomato.jpg',
   },
 ];
 

@@ -127,8 +127,52 @@ export function getRoleConfig(role) {
   return configs[key] || configs.consumer;
 }
 
-export function getCropEmoji(name) {
-  return getIcon('sprout', 18);
+/**
+ * Map product or crop name to its realistic AI image asset
+ */
+export function getProductImage(name) {
+  if (!name) return '/products/fresh-tomatoes.jpg';
+  const lower = name.toLowerCase().trim();
+  
+  if (lower.includes('desi') && lower.includes('tomato')) {
+    return '/products/desi-tomato.jpg';
+  }
+  if (lower.includes('basmati') || (lower.includes('rice') && lower.includes('organic')) || lower.includes('rice') || lower.includes('paddy')) {
+    return '/products/organic-basmati-rice.jpg';
+  }
+  if (lower.includes('onion') || lower.includes('nashik')) {
+    return '/products/fresh-nashik-onions.jpg';
+  }
+  if (lower.includes('wheat') || lower.includes('punjab') || lower.includes('sharbati')) {
+    return '/products/punjab-premium-wheat.jpg';
+  }
+  if (lower.includes('mango') || lower.includes('alphonso')) {
+    return '/products/alphonso-mangoes.jpg';
+  }
+  if (lower.includes('turmeric')) {
+    return '/products/organic-turmeric.jpg';
+  }
+  if (lower.includes('banana')) {
+    return '/products/organic-bananas.jpg';
+  }
+  if (lower.includes('chilli') || lower.includes('chili') || lower.includes('green chill')) {
+    return '/products/green-chillies.jpg';
+  }
+  if (lower.includes('desi')) {
+    return '/products/desi-tomato.jpg';
+  }
+  if (lower.includes('tomato')) {
+    return '/products/fresh-tomatoes.jpg';
+  }
+  
+  return '/products/organic-basmati-rice.jpg';
+}
+
+export function getCropEmoji(name, size = 20) {
+  const imgUrl = getProductImage(name);
+  const px = typeof size === 'number' ? size : 20;
+  const radius = px >= 36 ? '10px' : px >= 24 ? '6px' : '4px';
+  return `<img src="${imgUrl}" alt="${name || 'Product'}" class="crop-thumbnail-img" style="width: ${px}px; height: ${px}px; object-fit: cover; border-radius: ${radius}; display: inline-block; vertical-align: middle; box-shadow: 0 1px 3px rgba(0,0,0,0.12);" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />`;
 }
 
 /**

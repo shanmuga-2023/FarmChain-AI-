@@ -6,7 +6,7 @@
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, timeAgo, getStatusBadge, showToast, localizeCropName, localizeUnit } from '../../utils/helpers.js';
+import { formatCurrency, timeAgo, getStatusBadge, showToast, localizeCropName, localizeUnit, getProductImage } from '../../utils/helpers.js';
 import { escapeHtml } from '../../utils/sanitize.js';
 import { API_BASE } from '../../utils/api.js';
 import { i18n } from '../../i18n/index.js';
@@ -98,7 +98,12 @@ export function renderConsumerOrders(container) {
                     return `
                       <tr data-status="${o.status}">
                         <td style="font-family: var(--font-display); font-weight: 600; color: var(--accent-cyan);">${escapeHtml((o.orderId || 'N/A').slice(0, 12))}</td>
-                        <td>${escapeHtml(locCrop)}</td>
+                        <td>
+                          <div style="display: flex; align-items: center; gap: 8px;">
+                            <img src="${getProductImage(o.productName)}" alt="${escapeHtml(locCrop)}" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.12);" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
+                            <span style="font-weight: 600;">${escapeHtml(locCrop)}</span>
+                          </div>
+                        </td>
                         <td>
                           <div style="font-weight: 500;">${escapeHtml(o.sellerName || 'N/A')}</div>
                           <div style="font-size: 0.75rem; color: var(--text-muted);">${i18n.t('farmer.role') || 'Farmer'}</div>

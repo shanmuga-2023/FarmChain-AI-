@@ -6,7 +6,7 @@
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, getCropEmoji, showToast, createModal, closeModal, getStatusBadge, localizeCropName, localizeUnit, localizeCategory } from '../../utils/helpers.js';
+import { formatCurrency, getCropEmoji, getProductImage, showToast, createModal, closeModal, getStatusBadge, localizeCropName, localizeUnit, localizeCategory } from '../../utils/helpers.js';
 import { escapeHtml, validateOrderQuantity } from '../../utils/sanitize.js';
 import { Marketplace } from '../../blockchain/contracts.js';
 import { FairPricePredictor } from '../../ai/price-predictor.js';
@@ -64,8 +64,8 @@ export function renderRetailerSource(container) {
               const locUnit = localizeUnit(p.unit);
               return `
                 <div class="product-card source-item" data-category="${escapeHtml(p.category)}" data-organic="${p.isOrganic}" data-name="${escapeHtml((p.name || '').toLowerCase())}">
-                  <div class="product-card-image" style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); position: relative;">
-                    ${getCropEmoji(p.name, 40)}
+                  <div class="product-card-image" style="height: 140px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); position: relative; overflow: hidden;">
+                    <img src="${p.photoUrl || getProductImage(p.name)}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
                     ${p.isOrganic ? `<span class="product-card-badge badge-organic" style="display: inline-flex; align-items: center; gap: 4px;">${getIcon('sprout', 10)} ${i18n.t('common.organic') || 'Organic'}</span>` : ''}
                   </div>
                   <div class="product-card-body">
@@ -147,8 +147,8 @@ export function renderRetailerSource(container) {
 
       createModal(i18n.t('retailer.sourceProductModalTitle') || 'Source Product', `
         <div style="text-align: center; margin-bottom: 16px;">
-          <div style="display: flex; justify-content: center; margin-bottom: 8px;">
-            ${getCropEmoji(product.name, 48)}
+          <div style="width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+            <img src="${product.photoUrl || getProductImage(product.name)}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
           </div>
           <h3 style="margin-top: 8px;">${escapeHtml(locCrop)}</h3>
           <p style="color: var(--text-muted);">${i18n.t('retailer.modalFrom', { farmer: escapeHtml(product.farmerName), origin: escapeHtml(product.origin) }) || `From ${escapeHtml(product.farmerName)} · ${escapeHtml(product.origin)}`}</p>

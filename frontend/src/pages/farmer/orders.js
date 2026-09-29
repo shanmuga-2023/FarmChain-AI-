@@ -4,7 +4,7 @@
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, formatNumber, timeAgo, getStatusBadge, showToast, localizeCropName, localizeUnit } from '../../utils/helpers.js';
+import { formatCurrency, formatNumber, timeAgo, getStatusBadge, showToast, localizeCropName, localizeUnit, getProductImage } from '../../utils/helpers.js';
 import { Marketplace } from '../../blockchain/contracts.js';
 import { patchOrderStatus } from '../../utils/api.js';
 import { updateFirestoreOrderStatus } from '../../firebase/firestore.js';
@@ -93,7 +93,12 @@ export function renderFarmerOrders(container) {
                     return `
                       <tr data-status="${o.status}">
                         <td style="font-family: var(--font-display); font-weight: 600; color: var(--accent-cyan);">${o.orderId?.slice(0, 12) || 'N/A'}</td>
-                        <td>${localizeCropName(o.productName) || 'N/A'}</td>
+                        <td>
+                          <div style="display: flex; align-items: center; gap: 8px;">
+                            <img src="${getProductImage(o.productName)}" alt="${localizeCropName(o.productName) || 'Crop'}" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.12);" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
+                            <span style="font-weight: 600;">${localizeCropName(o.productName) || 'N/A'}</span>
+                          </div>
+                        </td>
                         <td>
                           <div style="font-weight: 500;">${o.buyerName || 'N/A'}</div>
                           <div style="font-size: 0.75rem; color: var(--text-muted);">${i18n.t(`roles.${o.buyerRole}`) || o.buyerRole || ''}</div>

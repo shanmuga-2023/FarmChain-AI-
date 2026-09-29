@@ -8,7 +8,7 @@
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, formatDateTime, truncateHash, getCropEmoji, showToast, localizeCropName, localizeUnit } from '../../utils/helpers.js';
+import { formatCurrency, formatDateTime, truncateHash, getCropEmoji, getProductImage, showToast, localizeCropName, localizeUnit } from '../../utils/helpers.js';
 import { blockchain } from '../../blockchain/core.js';
 import { generateProductQR, createQRDisplay } from '../../utils/qr.js';
 import { createDoughnutChart } from '../../components/charts.js';
@@ -662,7 +662,12 @@ function renderFullTrace(container, sidebarContainer, product, products, certs, 
 
           <!-- Product Hero -->
           <div class="trace-hero animate-fade-in">
-            <div class="trace-hero-qr" id="trace-qr-container"></div>
+            <div style="display: flex; flex-direction: column; gap: 12px; align-items: center; flex-shrink: 0;">
+              <div style="width: 140px; height: 140px; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.12); border: 2px solid var(--border);">
+                <img src="${product.photoUrl || getProductImage(product.name)}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
+              </div>
+              <div class="trace-hero-qr" id="trace-qr-container"></div>
+            </div>
             <div class="trace-hero-info">
               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
                 ${product.isOrganic ? `<span class="badge badge-success"><span style="vertical-align: middle; margin-right: 4px;">${getIcon('sprout', 12)}</span> ${i18n.t('common.organicCertified') || 'Organic Certified'}</span>` : ''}

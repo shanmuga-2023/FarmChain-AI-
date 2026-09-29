@@ -8,7 +8,7 @@
 
 import { store } from '../../data/store.js';
 import { i18n } from '../../i18n/index.js';
-import { formatCurrency, getCropEmoji, showToast, formatDateTime, localizeCategory, localizeUnit, localizeCropName, localizeLocation } from '../../utils/helpers.js';
+import { formatCurrency, getCropEmoji, getProductImage, showToast, formatDateTime, localizeCategory, localizeUnit, localizeCropName, localizeLocation } from '../../utils/helpers.js';
 import { startVoiceRecognition, isSpeechSupported } from '../../utils/voice.js';
 import { CropGrader } from '../../ai/crop-grader.js';
 import { FairPricePredictor } from '../../ai/price-predictor.js';
@@ -548,7 +548,7 @@ export class FarmerProductWizard {
           <div style="display: flex; gap: 18px; align-items: center; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1.5px solid #E4DCCB;">
             <!-- Crop Photo Thumbnail -->
             <div style="width: 88px; height: 88px; border-radius: 14px; overflow: hidden; background: #F1ECE0; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); color: #64748B;">
-              ${this.photoData ? `<img src="${this.photoData}" style="width: 100%; height: 100%; object-fit: cover;" />` : getIcon('sprout', 36)}
+              <img src="${this.photoData || getProductImage(this.formData.name)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
             </div>
 
             <div style="flex: 1;">
@@ -1125,7 +1125,7 @@ export class FarmerProductWizard {
         pricePerUnit: this.formData.pricePerUnit,
         emoji: getCropEmoji(this.formData.name),
         status: 'available',
-        photoUrl: this.photoData || '',
+        photoUrl: this.photoData || getProductImage(this.formData.name),
         isLiveCapture: !!this.captureProof,
         captureProof: this.captureProof,
         origin: this.formData.origin || this.user.location || 'Tamil Nadu, India',
@@ -1209,7 +1209,7 @@ export class FarmerProductWizard {
         harvestDate: this.formData.harvestDate,
         isOrganic: this.formData.isOrganic,
         status: 'available',
-        photoUrl: this.photoData || '',
+        photoUrl: this.photoData || getProductImage(this.formData.name),
         isLiveCapture: !!this.captureProof,
         captureProof: this.captureProof,
         aiQualityScore: this.photoGrade?.score || 85,

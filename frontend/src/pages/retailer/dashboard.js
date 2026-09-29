@@ -5,7 +5,7 @@
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
 import { createBarChart, createDoughnutChart } from '../../components/charts.js';
-import { formatCurrency, formatNumber, getStatusBadge, showToast, getCropEmoji, createModal, closeModal, localizeCropName, localizeUnit, localizeCategory, localizeLocation } from '../../utils/helpers.js';
+import { formatCurrency, formatNumber, getStatusBadge, showToast, getCropEmoji, getProductImage, createModal, closeModal, localizeCropName, localizeUnit, localizeCategory, localizeLocation } from '../../utils/helpers.js';
 import { PaymentSplitter, Marketplace } from '../../blockchain/contracts.js';
 import { generateProductQR, createQRDisplay } from '../../utils/qr.js';
 import { i18n } from '../../i18n/index.js';
@@ -161,8 +161,8 @@ export function renderRetailerDashboard(container) {
             <div class="data-grid" style="margin-top: 16px;">
               ${allProducts.slice(0, 6).map(p => `
                 <div class="product-card">
-                  <div class="product-card-image" style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); position: relative;">
-                    ${getCropEmoji(p.name, 40)}
+                  <div class="product-card-image" style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); position: relative; overflow: hidden;">
+                    <img src="${p.photoUrl || getProductImage(p.name)}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
                     ${p.isOrganic ? `<span class="product-card-badge badge-organic" style="display: inline-flex; align-items: center; gap: 4px;">${getIcon('sprout', 10)} ${i18n.t('farmer.products.organicBadge')}</span>` : ''}
                   </div>
                   <div class="product-card-body">

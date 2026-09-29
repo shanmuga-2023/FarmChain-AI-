@@ -6,7 +6,7 @@
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, getCropEmoji, showToast, createModal, closeModal, getStatusBadge, timeAgo, localizeCropName, localizeUnit, localizeCategory } from '../../utils/helpers.js';
+import { formatCurrency, getCropEmoji, getProductImage, showToast, createModal, closeModal, getStatusBadge, timeAgo, localizeCropName, localizeUnit, localizeCategory } from '../../utils/helpers.js';
 import { escapeHtml, validateProductInput } from '../../utils/sanitize.js';
 import { updateProduct, deleteProduct } from '../../utils/api.js';
 import { i18n } from '../../i18n/index.js';
@@ -106,9 +106,9 @@ export function renderAdminProducts(container) {
                     return `
                       <tr class="admin-product-row" data-category="${p.category}" data-name="${escapeHtml((p.name || '').toLowerCase())}">
                         <td>
-                          <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.06); color: var(--text-primary);">
-                              ${getCropEmoji(p.name)}
+                          <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 38px; height: 38px; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.06); flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
+                              <img src="${p.photoUrl || getProductImage(p.name)}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
                             </div>
                             <div>
                               <div style="font-weight: 600;">${escapeHtml(locCrop)}</div>

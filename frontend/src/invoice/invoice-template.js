@@ -1,7 +1,7 @@
 // frontend/src/invoice/invoice-template.js
 // HTML invoice template generator — used for preview and print
 import { i18n } from '../i18n/index.js';
-import { formatCurrency } from '../utils/helpers.js';
+import { formatCurrency, getProductImage } from '../utils/helpers.js';
 
 export function generateInvoiceHTML(invoice, opts = {}) {
   if (!invoice) return '';
@@ -53,7 +53,12 @@ export function generateInvoiceHTML(invoice, opts = {}) {
         </thead>
         <tbody>
           <tr style="border-bottom: 1px solid ${isPrint ? '#f3f4f6' : 'var(--border)'};">
-            <td style="padding: 14px 0; font-weight: 600; font-size: 15px;">${invoice.produce || '—'}</td>
+            <td style="padding: 14px 0; font-weight: 600; font-size: 15px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="${getProductImage(invoice.produce)}" alt="${invoice.produce || ''}" style="width: 36px; height: 36px; border-radius: 6px; object-fit: cover; border: 1px solid ${isPrint ? '#e5e7eb' : 'var(--border)'}; flex-shrink: 0;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
+                <span>${invoice.produce || '—'}</span>
+              </div>
+            </td>
             <td style="padding: 14px 0; text-align: center; font-size: 14px;">${invoice.quantity || 0} ${invoice.unit || 'kg'}</td>
             <td style="padding: 14px 0; text-align: center; font-size: 14px;">${formatCurrency(invoice.unitPrice || 0)}/${invoice.unit || 'kg'}</td>
             <td style="padding: 14px 0; text-align: right; font-weight: 600; font-size: 15px;">${formatCurrency(invoice.subtotal || 0)}</td>

@@ -5,7 +5,7 @@
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
 import { createLineChart, createBarChart } from '../../components/charts.js';
-import { formatCurrency, formatNumber, timeAgo, getStatusBadge, showToast, getCropEmoji, createModal, closeModal, localizeCropName, localizeUnit, localizeLocation } from '../../utils/helpers.js';
+import { formatCurrency, formatNumber, timeAgo, getStatusBadge, showToast, getCropEmoji, getProductImage, createModal, closeModal, localizeCropName, localizeUnit, localizeLocation } from '../../utils/helpers.js';
 import { Marketplace, PaymentSplitter, OwnershipTransfer } from '../../blockchain/contracts.js';
 import { blockchain } from '../../blockchain/core.js';
 import { validateOrderQuantity } from '../../utils/sanitize.js';
@@ -246,8 +246,8 @@ export function renderIntermediaryDashboard(container) {
             <div class="data-grid" style="margin-top: 16px;">
               ${allProducts.filter(p => p.farmerId !== user.id).slice(0, 4).map(p => `
                 <div class="product-card">
-                  <div class="product-card-image" style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03);">
-                    ${getCropEmoji(p.name, 40)}
+                  <div class="product-card-image" style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03); overflow: hidden;">
+                    <img src="${p.photoUrl || getProductImage(p.name)}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
                   </div>
                   <div class="product-card-body">
                     <div class="product-card-name">${localizeCropName(p.name)}</div>
@@ -311,8 +311,8 @@ export function renderIntermediaryDashboard(container) {
       const product = JSON.parse(btn.dataset.product);
       createModal(i18n.t('intermediary.dashboard.orderModalTitle'), `
         <div style="text-align: center; margin-bottom: 16px;">
-          <div style="display: flex; justify-content: center; margin-bottom: 8px;">
-            ${getCropEmoji(product.name, 48)}
+          <div style="width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+            <img src="${product.photoUrl || getProductImage(product.name)}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
           </div>
           <h3 style="margin-top: 8px;">${localizeCropName(product.name)}</h3>
           <p style="color: var(--text-muted);">${i18n.t('intermediary.dashboard.fromFarmer', { name: product.farmerName, origin: localizeLocation(product.origin) })}</p>

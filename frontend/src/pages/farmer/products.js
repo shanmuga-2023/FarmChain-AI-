@@ -7,7 +7,7 @@
 
 import { store } from '../../data/store.js';
 import { renderSidebar } from '../../components/sidebar.js';
-import { formatCurrency, formatNumber, formatDate, formatDateTime, getCropEmoji, showToast, createModal, closeModal, getStatusBadge, localizeCropName, localizeUnit, localizeLocation, localizeCategory } from '../../utils/helpers.js';
+import { formatCurrency, formatNumber, formatDate, formatDateTime, getCropEmoji, getProductImage, showToast, createModal, closeModal, getStatusBadge, localizeCropName, localizeUnit, localizeLocation, localizeCategory } from '../../utils/helpers.js';
 import { FairPricePredictor } from '../../ai/price-predictor.js';
 import { generateProductQR, createQRDisplay } from '../../utils/qr.js';
 import { validateProductInput } from '../../utils/sanitize.js';
@@ -225,15 +225,8 @@ function renderProductCard(product) {
     <div class="saas-card" style="display: flex; flex-direction: column; overflow: hidden;">
       
       <!-- Image Section -->
-      <div style="height: 160px; position: relative; background: linear-gradient(180deg, rgba(14,165,233,0.1) 0%, rgba(14,165,233,0.02) 100%); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; ${product.photoUrl ? 'cursor: pointer;' : ''}" ${product.photoUrl ? `onclick="window._showProductProof && window._showProductProof('${product.productId}')"` : ''}>
-        ${product.photoUrl ? `
-          <img src="${product.photoUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" />
-        ` : `
-          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-tertiary);">
-            ${getIcon('sprout', 44)}
-            <span style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">${localizeCropName(product.name)}</span>
-          </div>
-        `}
+      <div style="height: 160px; position: relative; background: linear-gradient(180deg, rgba(14,165,233,0.1) 0%, rgba(14,165,233,0.02) 100%); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;" onclick="window._showProductProof && window._showProductProof('${product.productId}')">
+        <img src="${product.photoUrl || getProductImage(product.name)}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='/products/fresh-tomatoes.jpg';" />
         
         <div style="position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
           ${product.isOrganic ? `<span class="fc-badge fc-badge-success" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">${getIcon('leaf', 12)} Organic</span>` : ''}
