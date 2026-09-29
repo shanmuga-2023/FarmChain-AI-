@@ -73,12 +73,16 @@ export class Blockchain {
   }
 
   async addBlock(data) {
+    if (!this.chain || this.chain.length === 0) {
+      await this.initialize();
+    }
     const previousBlock = this.getLatestBlock();
+    const previousHash = previousBlock ? previousBlock.hash : '0';
     const newBlock = new Block(
       this.chain.length,
       Date.now(),
       data,
-      previousBlock.hash
+      previousHash
     );
     await newBlock.mineBlock(this.difficulty);
     this.chain.push(newBlock);

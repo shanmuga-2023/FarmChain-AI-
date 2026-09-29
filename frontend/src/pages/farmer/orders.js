@@ -217,30 +217,96 @@ export function renderFarmerOrders(container) {
 
   // Accept/Ship handlers
   container.querySelectorAll('.accept-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
       const orderId = btn.dataset.orderId;
       const targetOrder = orders.find(o => (o.orderId || o.id) === orderId);
-      await Marketplace.acceptOrder(orderId, user.id);
-      store.updateItem('orders', o => (o.orderId || o.id) === orderId, { status: 'accepted' });
-      patchOrderStatus(orderId, { status: 'accepted' });
-      updateFirestoreOrderStatus(orderId, 'accepted');
-      if (targetOrder) notifyOrderStatusChanged(targetOrder, 'accepted');
-      showToast(i18n.t('farmer.orders.acceptedToast'), 'success');
-      renderFarmerOrders(container);
+      
+      btn.disabled = true;
+      btn.innerHTML = `${getIcon('loader', 14)} <span>Accepting...</span>`;
+
+      try {
+        // 1. Immediately update local store so UI is always responsive
+        store.updateItem('orders', o => (o.orderId || o.id) === orderId, { status: 'accepted' });
+
+        // 2. Blockchain ledger recording
+        try {
+          await Marketplace.acceptOrder(orderId, user.id);
+        } catch (bcErr) {
+          console.warn('Blockchain record warning:', bcErr);
+        }
+
+        // 3. Sync with backend API & Firestore
+        try {
+          patchOrderStatus(orderId, { status: 'accepted' });
+        } catch {}
+        try {
+          updateFirestoreOrderStatus(orderId, 'accepted');
+        } catch {}
+
+        // 4. Dispatch notification
+        try {
+          if (targetOrder) {
+            notifyOrderStatusChanged({ ...targetOrder, status: 'accepted' }, 'accepted');
+          }
+        } catch (notifErr) {
+          console.warn('Notification warning:', notifErr);
+        }
+
+        showToast(i18n.t('farmer.orders.acceptedToast') || 'Order accepted successfully!', 'success');
+      } catch (err) {
+        console.error('Error accepting order:', err);
+        showToast('Error updating order status', 'error');
+      } finally {
+        renderFarmerOrders(container);
+      }
     });
   });
 
   container.querySelectorAll('.ship-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
       const orderId = btn.dataset.orderId;
       const targetOrder = orders.find(o => (o.orderId || o.id) === orderId);
-      await Marketplace.shipOrder(orderId, user.id);
-      store.updateItem('orders', o => (o.orderId || o.id) === orderId, { status: 'shipped' });
-      patchOrderStatus(orderId, { status: 'shipped' });
-      updateFirestoreOrderStatus(orderId, 'shipped');
-      if (targetOrder) notifyOrderStatusChanged(targetOrder, 'shipped');
-      showToast(i18n.t('farmer.orders.shippedToast'), 'success');
-      renderFarmerOrders(container);
+
+      btn.disabled = true;
+      btn.innerHTML = `${getIcon('loader', 14)} <span>Shipping...</span>`;
+
+      try {
+        // 1. Immediately update local store
+        store.updateItem('orders', o => (o.orderId || o.id) === orderId, { status: 'shipped' });
+
+        // 2. Blockchain ledger recording
+        try {
+          await Marketplace.shipOrder(orderId, user.id);
+        } catch (bcErr) {
+          console.warn('Blockchain record warning:', bcErr);
+        }
+
+        // 3. Sync with backend API & Firestore
+        try {
+          patchOrderStatus(orderId, { status: 'shipped' });
+        } catch {}
+        try {
+          updateFirestoreOrderStatus(orderId, 'shipped');
+        } catch {}
+
+        // 4. Dispatch notification
+        try {
+          if (targetOrder) {
+            notifyOrderStatusChanged({ ...targetOrder, status: 'shipped' }, 'shipped');
+          }
+        } catch (notifErr) {
+          console.warn('Notification warning:', notifErr);
+        }
+
+        showToast(i18n.t('farmer.orders.shippedToast') || 'Order marked as shipped!', 'success');
+      } catch (err) {
+        console.error('Error shipping order:', err);
+        showToast('Error updating order status', 'error');
+      } finally {
+        renderFarmerOrders(container);
+      }
     });
   });
 

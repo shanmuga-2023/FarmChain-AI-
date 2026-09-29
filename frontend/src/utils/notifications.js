@@ -193,5 +193,5 @@ export function notifyOrderStatusChanged(order, newStatus) {
   saveNotifications(all);
 
   const localized = getLocalizedNotification(newNotification);
-  showToast(`${statusEmoji} ${localized.message || `Order Update: ${order.productName} is now ${statusLabel}`}`, 'info');
+  showToast(localized.message || `Order Update: ${order.productName || 'produce'} is now ${statusLabel}`, 'info');
 }
